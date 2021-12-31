@@ -1,11 +1,9 @@
 [submodule "Utils"]
 	path = Utils
 	url = https://github.com/Micro-Tears-Collection/Utils
-
 [submodule "UtilsText"]
 	path = UtilsText
 	url = https://github.com/Micro-Tears-Collection/UtilsText
-
 [submodule "UtilsFPS"]
 	path = UtilsFPS
 	url = https://github.com/Micro-Tears-Collection/UtilsFPS
