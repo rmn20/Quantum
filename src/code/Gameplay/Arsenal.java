@@ -19,6 +19,17 @@ public class Arsenal {
 
         weapons = null;
     }
+	
+	public final void removeAll() {
+        for (int i = hasHand?0:1; i < weapons.length; ++i) {
+            if (weapons[i] != null) {
+                weapons[i].reset();
+                weapons[i] = null;
+            }
+        }
+
+        current = hasHand?-1:0;
+	}
 
     public final Weapon currentWeapon() {
         if (current >= 0 && current < weapons.length) return weapons[current];

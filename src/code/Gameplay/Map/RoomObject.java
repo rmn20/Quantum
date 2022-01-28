@@ -288,6 +288,9 @@ public abstract class RoomObject {
         } else if(hcName.indexOf("OPENTITLESCREEN()")==0) {
             gs.openTitleScreenScript();
             return;
+        } else if(hcName.indexOf("REMOVEARSENAL()")==0) {
+            player.arsenal.removeAll();
+            return;
         } else if(hcName.indexOf("IF")==0) {
             boolean i=readBoolean(newName.substring(2,newName.length()),player,house,gs,this);
             if(num==name.length-1) continue;
