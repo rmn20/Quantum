@@ -42,7 +42,7 @@ public final class Magazine {
         if (frame >= 0) frame++;
         
 
-        if (frame > reloadTime * 50 / FPS.frameTime) {
+        if (frame > reloadTime * 50 / (FPS.frameTime==0?1:FPS.frameTime)) {
             frame = -1;
             recount();
         }

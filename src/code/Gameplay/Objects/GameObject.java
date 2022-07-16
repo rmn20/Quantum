@@ -94,7 +94,7 @@ public abstract class GameObject extends RoomObject {
     }
 
     public boolean isTimeToRenew() {
-        return isDead() && frame > 25 * 50 / FPS.frameTime;
+        return isDead() && frame > 25 * 50 / (FPS.frameTime==0?1:FPS.frameTime);
     }
 
     public final void setHp(int hp) {

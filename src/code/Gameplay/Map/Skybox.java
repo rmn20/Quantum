@@ -198,7 +198,7 @@ public class Skybox {
                     (  ( (tex[0]&0x00FF00)*255)  &0x00FF0000  )   
                     ) >>>8;
             
-            while( rx3 - rx1 > 6 ) {
+            while( rx3 - rx1 >= 6 ) {
                 rgb[rx1]=rgb[rx1+1]=rgb[rx1+2]=rgb[rx1+3]=rgb[rx1+4]=rgb[rx1+5]=col;
                 rx1+=6;
             }
@@ -241,7 +241,7 @@ public class Skybox {
             int rx3 = rx1+g3d.width;
             
             
-            while( rx3 - rx1 <= 6 ) {
+            while( rx3 - rx1 >= 6 ) {
                 rgb[rx1]=col;
                 rgb[rx1+1]=col;
                 rgb[rx1+2]=col;
@@ -265,7 +265,7 @@ public class Skybox {
                     (  ( (tex[0]&0x00FF00)*255)  &0x00FF0000  )   
                     ) >>>8;
             
-            while( rx2 - rx1 <= 6 ) {
+            while( rx2 - rx1 >= 6 ) {
                 rgb[rx1]=rgb[rx1+1]=rgb[rx1+2]=rgb[rx1+3]=rgb[rx1+4]=rgb[rx1+5]=col;
                 rx1+=6;
             }
@@ -372,7 +372,7 @@ public class Skybox {
     }
 	
 	private void fillLine(int[] rgb, int x1, int x2, int col) {
-		while(x2 - x1 <= 6) {
+		while(x2 - x1 >= 6) {
 			rgb[x1] = col;
 			rgb[x1 + 1] = col;
 			rgb[x1 + 2] = col;
