@@ -478,9 +478,7 @@ public final class Weapon {
             v3.set(p4v.c.x - posx, p4v.c.y - posy, p4v.c.z - posz);
             v4.set(p4v.d.x - posx, p4v.d.y - posy, p4v.d.z - posz);
 
-        }
-
-        if (meshr instanceof Polygon3V) {
+        } else if (meshr instanceof Polygon3V) {
             Polygon3V p3v = (Polygon3V) meshr;
             posx = (p3v.a.x + p3v.b.x + p3v.c.x) / 3;
             posy = (p3v.a.y + p3v.b.y + p3v.c.y) / 3;

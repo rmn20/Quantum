@@ -32,19 +32,9 @@ public final class RayCast {
         for(int i=0; i<elements.length; i++) {
             RenderObject poly = elements[i];
             long dis = Long.MAX_VALUE;
-            byte mat = -1;
+            int mat = -1;
             
-            if(poly instanceof Polygon3V) {
-                Polygon3V p = (Polygon3V) poly;
-
-                normal.x = p.nx; normal.y = p.ny; normal.z = p.nz;
-                
-                v1.x = p.a.x; v1.y = p.a.y; v1.z = p.a.z;
-                v2.x = p.b.x; v2.y = p.b.y; v2.z = p.b.z;
-                v3.x = p.c.x; v3.y = p.c.y; v3.z = p.c.z;
-                dis = rayTracing(ray, v1, v2, v3, normal, start, dir, colPoint, v1);
-                mat = p.tex;
-            } else  if(poly instanceof Polygon4V) {
+            if(poly instanceof Polygon4V) {
                 Polygon4V p = (Polygon4V) poly;
                 
                 normal.x = p.nx; normal.y = p.ny; normal.z = p.nz;
@@ -54,6 +44,16 @@ public final class RayCast {
                 v3.x = p.c.x; v3.y = p.c.y; v3.z = p.c.z;
                 v4.x = p.d.x; v4.y = p.d.y; v4.z = p.d.z;
                 dis = rayTracing(ray, v1, v2, v3, v4, normal, start, dir, colPoint, v1);
+                mat = p.tex;
+            } else if(poly instanceof Polygon3V) {
+                Polygon3V p = (Polygon3V) poly;
+
+                normal.x = p.nx; normal.y = p.ny; normal.z = p.nz;
+                
+                v1.x = p.a.x; v1.y = p.a.y; v1.z = p.a.z;
+                v2.x = p.b.x; v2.y = p.b.y; v2.z = p.b.z;
+                v3.x = p.c.x; v3.y = p.c.y; v3.z = p.c.z;
+                dis = rayTracing(ray, v1, v2, v3, normal, start, dir, colPoint, v1);
                 mat = p.tex;
             }
             
@@ -102,7 +102,7 @@ public final class RayCast {
             RenderObject poly = elements[i];
             
             long dis = Long.MAX_VALUE;
-            byte mat = -1;
+            int mat = -1;
             
             if(poly instanceof Polygon3V) {
                 Polygon3V p = (Polygon3V) poly;

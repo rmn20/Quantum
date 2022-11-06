@@ -168,16 +168,9 @@ public final class PauseScreen extends Selectable {
             int lvl = hasSave?Main.getContinueLevel():gameScreen.levelNumber;
             gameScreen.destroy();
             gameScreen = null;
-
-            GameScreen gs = new GameScreen(this.main, lvl, null);
-            if(hasSave) {
-                Main.loadGame(gs.player, getWidth(), getHeight(), gs.scene);
-                gs.scene.getG3D().updateFov((int) gs.player.fov);
-                Main.loadPosition(gs.player);
-                Main.loadObjects(gs.player, getWidth(), getHeight(), gs.scene, gs.levelNumber);
-            }
-            gs.start();
-            Main.setCurrent(gs);
+            
+            LoadingScreen ls = new LoadingScreen(main, lvl, hasSave, true);
+            Main.setCurrent(ls);
 
         } else if(index == 2 && Main.pauseScreenSave) {
             if(gameScreen.player.getHp() > 0) {

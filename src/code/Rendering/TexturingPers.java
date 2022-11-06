@@ -78,10 +78,10 @@ x1++;
     public static final void paint(DirectX7 g3d, Texture texture,
             Vertex a, int au, int av,
             Vertex b, int bu, int bv,
-            Vertex c, int cu, int cv,int fogc,byte dmode,int qz,int q,
+            Vertex c, int cu, int cv,int fogc,int dmode,int qz,int q,
             int al,int bl,int cl,
             int ag,int bg,int cg,
-            int ab,int bb,int cb,short nx,short ny,short nz) {
+            int ab,int bb,int cb,int nx,int ny,int nz) {
         
         if (DeveloperMenu.renderPolygonsOverwrite) {
             TexturingAffine.paintOverwrite(g3d, a, b, c);
@@ -97,9 +97,9 @@ x1++;
                 if(bu == 255) bu = 256;
                 if(cu == 255) cu = 256;
             }
-            au = au * texture.rImg.w / 256;
-            bu = bu * texture.rImg.w / 256;
-            cu = cu * texture.rImg.w / 256;
+            au = (au * texture.rImg.w) >> 8;
+            bu = (bu * texture.rImg.w) >> 8;
+            cu = (cu * texture.rImg.w) >> 8;
         }
         
         if (texture.rImg.h != 256) {
@@ -108,22 +108,22 @@ x1++;
                 if(bv == 255) bv = 256;
                 if(cv == 255) cv = 256;
             }
-            av = av * texture.rImg.h / 256;
-            bv = bv * texture.rImg.h / 256;
-            cv = cv * texture.rImg.h / 256;
+            av = (av * texture.rImg.h) >> 8;
+            bv = (bv * texture.rImg.h) >> 8;
+            cv = (cv * texture.rImg.h) >> 8;
         }
 
-        if (dmode == (byte) 8) {
+        if (dmode == 8) {
             TexturingAffine.paintFill(g3d, a, b, c, texture, au, av);
             return;
         }
 
-        if (dmode == (byte) 10) {
+        if (dmode == 10) {
             TexturingAffine.paintDitherGradient(g3d, texture, a, al, b, bl, c, cl);
             return;
         }
 
-        if (dmode == (byte) 11) {
+        if (dmode == 11) {
             al = 0xff + a.rz * 0xFF / DirectX7.waterDistance;
             if (al > 0xFF) al = 0xFF;
             if (al < 0) al = 0;
@@ -137,7 +137,7 @@ x1++;
             return;
         }
 
-        if (dmode == (byte) 12) {
+        if (dmode == 12) {
             al = 0xff + a.rz * 0xFF / DirectX7.fDist;
             if (al > 0xFF) al = 0xFF;
             if (al < 0) al = 0;
@@ -301,12 +301,7 @@ x1++;
         if(tempII == 0) return;
         du = (u_start-u_end)/tempII; //
         dv = (v_start-v_end)/tempII; //
-
-        boolean x2pixel = (Math.abs(du) + Math.abs(dv)) < FP >> 1 && Math.abs(du) < FP >> 1 && Math.abs(dv) < FP >> 1 && Main.pixelsQ <= 1;
-        boolean x4pixel = (Math.abs(du) + Math.abs(dv)) < FP >> 2 && Math.abs(du) < FP >> 2 && Math.abs(dv) < FP >> 2 && Main.pixelsQ == 0;
-
-
-
+        
         x_start = x_end = a.sx<<fp;
         wz_start = wz_end = awz<<fp;
         uz_start = uz_end = auz<<fp;
@@ -371,7 +366,7 @@ x1++;
                                 x_end, wz_end, uz_end, vz_end,
                                 dx_start, dwz_start, duz_start, dvz_start,
                                 dx_end, dwz_end, duz_end, dvz_end,
-                                dwz, duz, dvz, fogc, q, x2pixel, x4pixel);
+                                dwz, duz, dvz, fogc, q);
                         break;
 
                     }
@@ -381,7 +376,7 @@ x1++;
                                 x_end, wz_end, uz_end, vz_end,
                                 dx_start, dwz_start, duz_start, dvz_start,
                                 dx_end, dwz_end, duz_end, dvz_end,
-                                dwz, duz, dvz, fogc, qz, q, x2pixel, x4pixel);
+                                dwz, duz, dvz, fogc, qz, q);
                         break;
                     }
                     case 2: {
@@ -399,7 +394,7 @@ x1++;
                                 x_end, wz_end, uz_end, vz_end,
                                 dx_start, dwz_start, duz_start, dvz_start,
                                 dx_end, dwz_end, duz_end, dvz_end,
-                                dwz, duz, dvz, fogc, qz, q, a, b, c, x2pixel, x4pixel, f_start, f_end, df_start, df_end, df);
+                                dwz, duz, dvz, fogc, qz, q, a, b, c, f_start, f_end, df_start, df_end, df);
                         break;
                     }
                     case 4: {
@@ -417,7 +412,7 @@ x1++;
                                 x_end, wz_end, uz_end, vz_end,
                                 dx_start, dwz_start, duz_start, dvz_start,
                                 dx_end, dwz_end, duz_end, dvz_end,
-                                dwz, duz, dvz, fogc, qz, q, a, b, c, x2pixel, x4pixel, f_start, f_end, df_start, df_end, df);
+                                dwz, duz, dvz, fogc, qz, q, a, b, c, f_start, f_end, df_start, df_end, df);
                         break;
                     }
                     case 6: {
@@ -426,7 +421,7 @@ x1++;
                                 x_end, wz_end, uz_end, vz_end,
                                 dx_start, dwz_start, duz_start, dvz_start,
                                 dx_end, dwz_end, duz_end, dvz_end,
-                                dwz, duz, dvz, fogc, qz, q, a, b, c, x2pixel, x4pixel, f_start, f_end, df_start, df_end, df);
+                                dwz, duz, dvz, fogc, qz, q, a, b, c, f_start, f_end, df_start, df_end, df);
                         break;
                     }
                     case 7: {
@@ -444,7 +439,7 @@ x1++;
                                 x_end, wz_end, uz_end, vz_end,
                                 dx_start, dwz_start, duz_start, dvz_start,
                                 dx_end, dwz_end, duz_end, dvz_end,
-                                dwz, duz, dvz, fogc, qz, q, a, b, c, x2pixel, x4pixel, f_start, f_end, df_start, df_end, df);
+                                dwz, duz, dvz, fogc, qz, q, a, b, c, f_start, f_end, df_start, df_end, df);
                         break;
                     }
                     case 13: {
@@ -463,7 +458,7 @@ x1++;
                                 x_end, wz_end, uz_end, vz_end,
                                 dx_start, dwz_start, duz_start, dvz_start,
                                 dx_end, dwz_end, duz_end, dvz_end,
-                                dwz, duz, dvz, fogc, qz, q, a, b, c, x2pixel, x4pixel, f_start, f_end, df_start, df_end, df);
+                                dwz, duz, dvz, fogc, qz, q, a, b, c, f_start, f_end, df_start, df_end, df);
                         }
                         break;
                     }
@@ -554,7 +549,7 @@ x1++;
                             x_end, wz_end, uz_end, vz_end,
                             dx_start, dwz_start, duz_start, dvz_start,
                             dx_end, dwz_end, duz_end, dvz_end,
-                            dwz, duz, dvz, fogc, q, x2pixel, x4pixel);
+                            dwz, duz, dvz, fogc, q);
                     break;
                 }
                 case 1: {
@@ -563,7 +558,7 @@ x1++;
                             x_end, wz_end, uz_end, vz_end,
                             dx_start, dwz_start, duz_start, dvz_start,
                             dx_end, dwz_end, duz_end, dvz_end,
-                            dwz, duz, dvz, fogc, qz, q, x2pixel, x4pixel);
+                            dwz, duz, dvz, fogc, qz, q);
                     break;
                 }
                 case 2: {
@@ -581,7 +576,7 @@ x1++;
                             x_end, wz_end, uz_end, vz_end,
                             dx_start, dwz_start, duz_start, dvz_start,
                             dx_end, dwz_end, duz_end, dvz_end,
-                            dwz, duz, dvz, fogc, qz, q, a, b, c, x2pixel, x4pixel, f_start, f_end, df_start, df_end, df);
+                            dwz, duz, dvz, fogc, qz, q, a, b, c, f_start, f_end, df_start, df_end, df);
                     break;
                 }
                 case 4: {
@@ -599,7 +594,7 @@ x1++;
                             x_end, wz_end, uz_end, vz_end,
                             dx_start, dwz_start, duz_start, dvz_start,
                             dx_end, dwz_end, duz_end, dvz_end,
-                            dwz, duz, dvz, fogc, qz, q, a, b, c, x2pixel, x4pixel, f_start, f_end, df_start, df_end, df);
+                            dwz, duz, dvz, fogc, qz, q, a, b, c, f_start, f_end, df_start, df_end, df);
                     break;
                 }
                 case 6: {
@@ -608,7 +603,7 @@ x1++;
                             x_end, wz_end, uz_end, vz_end,
                             dx_start, dwz_start, duz_start, dvz_start,
                             dx_end, dwz_end, duz_end, dvz_end,
-                            dwz, duz, dvz, fogc, qz, q, a, b, c, x2pixel, x4pixel, f_start, f_end, df_start, df_end, df);
+                            dwz, duz, dvz, fogc, qz, q, a, b, c, f_start, f_end, df_start, df_end, df);
                     break;
                 }
                 case 7: {
@@ -626,7 +621,7 @@ x1++;
                             x_end, wz_end, uz_end, vz_end,
                             dx_start, dwz_start, duz_start, dvz_start,
                             dx_end, dwz_end, duz_end, dvz_end,
-                            dwz, duz, dvz, fogc, qz, q, a, b, c, x2pixel, x4pixel, f_start, f_end, df_start, df_end, df);
+                            dwz, duz, dvz, fogc, qz, q, a, b, c, f_start, f_end, df_start, df_end, df);
                     break;
                 }
                 case 13: {
@@ -645,7 +640,7 @@ x1++;
                                 x_end, wz_end, uz_end, vz_end,
                                 dx_start, dwz_start, duz_start, dvz_start,
                                 dx_end, dwz_end, duz_end, dvz_end,
-                                dwz, duz, dvz, fogc, qz, q, a, b, c, x2pixel, x4pixel, f_start, f_end, df_start, df_end, df);
+                                dwz, duz, dvz, fogc, qz, q, a, b, c, f_start, f_end, df_start, df_end, df);
                     }
 
                     break;
@@ -661,7 +656,7 @@ x1++;
             int x_end, int wz_end, int uz_end, int vz_end,
             final int dx_start,final int dwz_start,final int duz_start,final int dvz_start,
             final int dx_end, final int dwz_end, final int duz_end, final int dvz_end,
-            final int dwz, final int duz, final int dvz,int fogc,int sz2,boolean x2pixel,boolean x4pixel) {
+            final int dwz, final int duz, final int dvz,int fogc,int sz2) {
 
         if(sz2>999) {
             TexturingFloors.paintFloor(g3d, texture, y_start, y_end,
@@ -795,14 +790,14 @@ static final void paintMiniTrianglePers_1(final DirectX7 g3d, final Texture text
             int x_end, int wz_end, int uz_end, int vz_end,
             final int dx_start, final int dwz_start, final int duz_start, final int dvz_start,
             final int dx_end, final int dwz_end, final int duz_end, final int dvz_end,
-            final int dwz, final int duz, final int dvz,int fogc,int sz2,int q,boolean x2pixel,boolean x4pixel) {
+            final int dwz, final int duz, final int dvz,int fogc,int sz2,int q) {
     if(Main.fogQ==0) {
         paintMiniTrianglePers_0(g3d, texture, y_start, y_end,
                     x_start, wz_start, uz_start, vz_start,
                     x_end, wz_end, uz_end, vz_end,
                     dx_start, dwz_start, duz_start, dvz_start,
                     dx_end, dwz_end, duz_end, dvz_end,
-                    dwz, duz, dvz, fogc,q,x2pixel,x4pixel);
+                    dwz, duz, dvz, fogc,q);
         return;
     }
     if(sz2>999) {
@@ -1103,7 +1098,7 @@ static final void paintMiniTrianglePers_3(final DirectX7 g3d, final Texture text
             int x_end, int wz_end, int uz_end, int vz_end,
             final int dx_start, final int dwz_start, final int duz_start, final int dvz_start,
             final int dx_end, final int dwz_end, final int duz_end, final int dvz_end,
-            final int dwz, final int duz, final int dvz,int fogc,int sz2,int q,Vertex a,Vertex b,Vertex c,boolean x2pixel,boolean x4pixel,
+            final int dwz, final int duz, final int dvz,int fogc,int sz2,int q,Vertex a,Vertex b,Vertex c,
             int f_start,int f_end,
 final int df_start,final int df_end,
 final int df
@@ -1123,7 +1118,7 @@ final int df
                     x_end, wz_end, uz_end, vz_end,
                     dx_start, dwz_start, duz_start, dvz_start,
                     dx_end, dwz_end, duz_end, dvz_end,
-                    dwz, duz, dvz, fogc,q,x2pixel,x4pixel);
+                    dwz, duz, dvz, fogc,q);
         return;
     }
     if(q>999) {
@@ -1583,7 +1578,7 @@ static final void paintMiniTrianglePers_5(final DirectX7 g3d, final Texture text
             final int dx_start, final int dwz_start, final int duz_start, final int dvz_start,
             final int dx_end, final int dwz_end, final int duz_end, final int dvz_end,
             final int dwz, final int duz, final int dvz,int fogc,int sz2,int q,Vertex a,Vertex b,Vertex c,
-            boolean x2pixel,boolean x4pixel,int f_start,int f_end,
+            int f_start,int f_end,
 final int df_start,final int df_end,
 final int df) {
     if( ((texture.drawmode==9 || texture.drawmode==13) && Main.fogQ>=1) || (Main.fogQ==2 && Main.forceLQFog==false && texture.drawmode==6)) {
@@ -1601,7 +1596,7 @@ final int df) {
                     x_end, wz_end, uz_end, vz_end,
                     dx_start, dwz_start, duz_start, dvz_start,
                     dx_end, dwz_end, duz_end, dvz_end,
-                    dwz, duz, dvz, fogc,q,x2pixel,x4pixel); return; 
+                    dwz, duz, dvz, fogc,q); return; 
         
     }
         final int[] tex = texture.rImg.img;
@@ -1945,7 +1940,7 @@ static final void paintMiniTrianglePers_13(final DirectX7 g3d, final Texture tex
                     x_end, wz_end, uz_end, vz_end,
                     dx_start, dwz_start, duz_start, dvz_start,
                     dx_end, dwz_end, duz_end, dvz_end,
-                    dwz, duz, dvz, fogc,q,false,false); return; 
+                    dwz, duz, dvz, fogc,q); return; 
         
     }
     if(q>999 && texture.drawmode==13) {

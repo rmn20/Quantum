@@ -62,16 +62,23 @@ public class Arsenal {
         if (current != -1 && weapons[current] == null) previous();
     }
 
-    // ? Прорисовка оружия и полоски перезарядки
+    //Прорисовка оружия
     public final void drawWeapon(Graphics g, int y, int width, int height, GameScreen gs) {
-        if (currentWeapon() == null) return;
-        
         Weapon weapon = currentWeapon();
+        if(weapon == null) return;
+        
         if (!gs.player.zoom || !weapon.hasZoom) {
             weapon.draw(g, 0, y, width, height);
         } else {
             weapon.drawSight(g, 0, y, width, height);
         }
+    }
+
+    //Прорисовка полоски перезарядки
+    public final void drawReloadAnimation(Graphics g, int y, int width, int height) {
+        Weapon weapon = currentWeapon();
+        if(weapon == null) return;
+        
         if (weapon.isReloading()) {
             width /= 2;
             int maxY = Math.max(height / 50, 6);

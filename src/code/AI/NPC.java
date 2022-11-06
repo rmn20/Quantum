@@ -13,7 +13,6 @@ import code.Rendering.Meshes.MeshImage;
 import code.Rendering.Meshes.Sprite;
 import code.Rendering.MultyTexture;
 import code.Rendering.Vertex;
-import code.utils.FPS;
 import java.util.Vector;
 
 public final class NPC extends Bot {
@@ -244,9 +243,6 @@ public final class NPC extends Bot {
             House house = scene.getHouse();
             Vector objs = house.getObjects();
             
-            //Forget if enemy is dead or if npc can't see enemy
-            if(enemy != null && (enemy.isDead() || (!canSeeCheck(this,enemy) && visiblityCheck))) enemy = null;
-            
             //Remove killed
             if(unicalEnemies != null && !unicalEnemies.isEmpty()) {
                 for(int i = 0; i < unicalEnemies.size(); ++i) {
@@ -258,6 +254,9 @@ public final class NPC extends Bot {
                     }
                 }
             }
+            
+            //Forget if enemy is dead
+            if(enemy != null && enemy.isDead()) enemy = null;
             
             GameObject oldenemy = enemy;
             enemy = findBot(objs, this, toAttack);
@@ -305,8 +304,19 @@ public final class NPC extends Bot {
                 
                 state = -1;
                 
+                //forget bot if bot is a new enemy and enemy isnt visible
+                if(bot != null && 
+                   bot == enemy && 
+                   enemy != oldenemy && 
+                   !notCollided(house, bot)
+                  ) {
+                    bot = null;
+                    enemy = null;
+                }
+                
                 if(bot != null) {
-                    if(notCollided(house, bot) && scene.getHouse().isNear(getPart(), bot.getPart())) {
+                    
+                    if(scene.getHouse().isNear(getPart(), bot.getPart())) {
                         Matrix mat = bot.getCharacter().getTransform();
                         dir.set(mat.m03, mat.m13, mat.m23);
                         walkingToEnemy = true;
@@ -411,12 +421,20 @@ public final class NPC extends Bot {
             
             if(obj instanceof Bot && !attackOnDamageOnlyPlayer) tf = ((Bot) obj).fraction;
             
+            boolean canAttack = false;
+            
             if(tf != -1) {
-                if(unicalEnemies != null && !contains(toAttack, tf) && !unicalEnemies.contains(obj)) {
-                        unicalEnemies.addElement(obj);
+                boolean inToAttack = contains(toAttack, tf);
+                canAttack |= inToAttack;
+                
+                if(unicalEnemies != null && !inToAttack) {
+                        if(!unicalEnemies.contains(obj)) unicalEnemies.addElement(obj);
+                        canAttack |= true;
                 }
             }
-            if (getHp() - dmg > 0) setSprite(damageFront, damageSide, damageBack);
+            if(getHp() - dmg > 0) setSprite(damageFront, damageSide, damageBack);
+            
+            if(enemy == null && canAttack) enemy = obj;
         }
         
         return super.damage(obj, dmg);

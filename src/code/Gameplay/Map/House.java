@@ -75,6 +75,7 @@ public final class House {
 
     private Vector getNearRooms(int part) {
         roomsToRender.removeAllElements();
+        
         if(part != -1) {
             if(rooms[part] != null) roomsToRender.addElement(rooms[part]);
 
@@ -218,6 +219,16 @@ public final class House {
     public final void getNearObjects(Vector buf, int part) {
         buf.removeAllElements();
         if(part == -1) return;
+        
+        if(rooms.length == 1) {
+            Vector list2 = rooms[0].getObjects();
+            
+            for(int i=list2.size()-1; i>=0; i--) {
+                buf.addElement(list2.elementAt(i));
+            }
+            
+            return;
+        }
 
         rooms[part].getObjects(buf);
         Room[] near = neighbours[part];
@@ -232,6 +243,16 @@ public final class House {
     public final Vector getNearObjects(int part) {
         tmpObj.removeAllElements();
         if(part == -1) return tmpObj;
+        
+        if(rooms.length == 1) {
+            Vector list2 = rooms[0].getObjects();
+            
+            for(int i=list2.size()-1; i>=0; i--) {
+                tmpObj.addElement(list2.elementAt(i));
+            }
+            
+            return tmpObj;
+        }
 
         rooms[part].getObjects(tmpObj);
 

@@ -15,13 +15,13 @@ import code.utils.Main;
  */
 public class ColorLightedPolygon3V extends Polygon3V {
 
-    public volatile byte ar,ag,ab;
-    public volatile byte br,bg,bb;
-    public volatile byte cr,cg,cb;
+    public volatile int ar,ag,ab;
+    public volatile int br,bg,bb;
+    public volatile int cr,cg,cb;
     
     private static int q,sz2;
-    private static short sizex,sizey,sizeu,sizev;
-    private static byte addmip,fog;
+    private static int sizex,sizey,sizeu,sizev;
+    private static int addmip,fog;
     
     public ColorLightedPolygon3V(ColorLightedPolygon3V p) {
         super((Polygon3V)p);
@@ -32,15 +32,15 @@ public class ColorLightedPolygon3V extends Polygon3V {
     
     public ColorLightedPolygon3V(Vertex a2, Vertex b2, Vertex c2, byte au, byte av, byte bu, byte bv, byte cu, byte cv) {
         super(a2, b2, c2, au, av, bu, bv, cu, cv);
-        ar=ag=ab=br=bg=bb=cr=cg=cb=127;
+        ar=ag=ab=br=bg=bb=cr=cg=cb=255;
     }
     
 public final void render(DirectX7 g3d, Texture texture) {
         if(Main.persQ==0 && Main.mipMapping==false) {renderFast(g3d,texture); return;}
 fog=texture.drawmode;
 
-sizex=(short)size(a.sx, b.sx, c.sx);
-sizey=(short)size(a.sy, b.sy, c.sy);
+sizex=size(a.sx, b.sx, c.sx);
+sizey=size(a.sy, b.sy, c.sy);
 
 int[] al=getLight(a,ar,ag,ab,g3d);
 int[] bl=getLight(b,br,bg,bb,g3d);
@@ -61,9 +61,9 @@ q=(ny>4000 || ny<-4000) ? 9999999 : Main.q;
 if(Main.mipMapping==true && texture.mip!=null) {
 texture.rImg=texture.mip[0];
 if(texture.drawmode<10 || texture.drawmode>12) {
-addmip=(byte)( q>999 ? 2 : 3);
-sizeu=(short)(size(au&0xff, bu&0xff, cu&0xff)*texture.rImg.w>>8);
-sizev=(short)(size(av&0xff, bv&0xff, cv&0xff)*texture.rImg.h>>8);
+addmip=q>999 ? 2 : 3;
+sizeu=size(au, bu, cu)*texture.rImg.w>>8;
+sizev=size(av, bv, cv)*texture.rImg.h>>8;
 if(((sizex+sizey)>>1)*addmip<sizeu+sizev) {
 texture.rImg=texture.mip[1];
 if(texture.mip!=null) {
@@ -88,16 +88,16 @@ if(sizex<texture.rImg.w || sizey<texture.rImg.w)  {
         if(( texture.perspectiveCorrection && (sizex>30-(Main.persQ<3?0:15) || sizey>30-(Main.persQ<3?0:15) ) )&& Main.persQ!=0 || Main.persQ==4) {
             TexturingPers.paint(g3d,
                     texture,
-                a, ((int)(au&0xff)), ((int)(av&0xff)),
-                b, ((int)(bu&0xff)), ((int)(bv&0xff)),
-                c, ((int)(cu&0xff)), ((int)(cv&0xff)),DirectX7.fogc,fog,sz2,q,al[0],bl[0],cl[0],al[1],bl[1],cl[1],al[2],bl[2],cl[2],nx,ny,nz);
+                a, au, av&0xff,
+                b, bu, bv&0xff,
+                c, cu, cv&0xff,DirectX7.fogc,fog,sz2,q,al[0],bl[0],cl[0],al[1],bl[1],cl[1],al[2],bl[2],cl[2],nx,ny,nz);
         } else {
 
             TexturingAffine.paint(g3d,
                     texture,
-                a, ((int)(au&0xff)), ((int)(av&0xff)),
-                b, ((int)(bu&0xff)), ((int)(bv&0xff)),
-                c, ((int)(cu&0xff)), ((int)(cv&0xff)),DirectX7.fogc,fog,sz2,al[0],bl[0],cl[0],al[1],bl[1],cl[1],al[2],bl[2],cl[2],nx,ny,nz);
+                a, au&0xff, av&0xff,
+                b, bu&0xff, bv&0xff,
+                c, cu&0xff, cv&0xff,DirectX7.fogc,fog,sz2,al[0],bl[0],cl[0],al[1],bl[1],cl[1],al[2],bl[2],cl[2],nx,ny,nz);
     }
     
 }
@@ -113,9 +113,9 @@ if(texture.drawmode==1) if(fog==1) szCalcfogAdd();
 
             TexturingAffine.paint(g3d,
                     texture,
-                a, (au&0xff), (av&0xff),
-                b, (bu&0xff), (bv&0xff),
-                c, (cu&0xff), (cv&0xff),DirectX7.fogc,texture.drawmode,sz2,ar+128,br+128,cr+128,ag+128,bg+128,cg+128,ab+128,bb+128,cb+128,nx,ny,nz);
+                a, (au), (av),
+                b, (bu), (bv),
+                c, (cu), (cv),DirectX7.fogc,texture.drawmode,sz2,ar,br,cr,ag,bg,cg,ab,bb,cb,nx,ny,nz);
     
     
 }

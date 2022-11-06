@@ -324,7 +324,7 @@ public class LevelLoader {
 
 
         loadLights(oldF, lvl);
-        House house = HouseCreator.create(meshes, false, lvl.get("LIGHTMAP"));
+        House house = HouseCreator.create(meshes, false, lvl.get("LIGHTMAP"), getBoolean("OPTIMIZE_LEVEL_MODEL", lvl, setting, true));
 
         Respawn start = null;
         String tmp = lvl.get("START");
@@ -1220,7 +1220,7 @@ public class LevelLoader {
         t.moneyOnDeath = getInt("MONEYONDEATH", obj, Main.settings, key, t.moneyOnDeath);
         t.damageSleepTime = getInt("SLEEPONDAMAGE", obj, Main.settings, key, t.damageSleepTime);
         t.maxEnemyDistance = getLong("MAXENEMYDISTANCE", obj, Main.settings, key, t.maxEnemyDistance);
-        t.visiblityCheck = getInt("VISIBLITY_CHECK", obj, Main.settings, key, 0)==1;
+        t.visiblityCheck = getInt("VISIBILITY_CHECK", obj, Main.settings, key, 0)==1;
         t.deathFall = (byte) getInt("FALL_ON_DEATH", obj, Main.settings, key, 1);
         t.hasBlood = (byte) getInt("HAS_BLOOD", obj, Main.settings, key, 1) == 1;
         

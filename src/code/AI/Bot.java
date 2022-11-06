@@ -131,13 +131,16 @@ public abstract class Bot extends GameObject {
 
     protected final boolean notCollided(House house, GameObject obj) {
         if(!cleverPathfinfing) {
-            return getPart()==obj.getPart();
+            return getPart() == obj.getPart();
         }
+        
         Matrix objMat = obj.getCharacter().getTransform();
         Matrix mat = character.getTransform();
+        
         ray.reset();
         ray.getStart().set(mat.m03, mat.m13 + character.getHeight(), mat.m23);
         ray.getDir().set(objMat.m03 - mat.m03, objMat.m13 - mat.m13, objMat.m23 - mat.m23);
+        
         house.rayCast(getPart(), ray, false);
         return !ray.isCollision();
     }
@@ -177,22 +180,23 @@ public abstract class Bot extends GameObject {
     }
     
     public static boolean canSeeCheck(GameObject observer, GameObject observable) {
-        int lookDir = MathUtils.getAnglez(
-                0, 0, 
+        Vector3D lookDir = new Vector3D(
                 observer.getCharacter().transform.m02, 
-                observer.getCharacter().transform.m22);
+                0, 
+                observer.getCharacter().transform.m22
+                );
+        lookDir.setLength(4096);
 
-        int observableDir = MathUtils.getAnglez(
-                observer.getCharacter().transform.m03, 
-                observer.getCharacter().transform.m23,
-                observable.getCharacter().transform.m03, 
-                observable.getCharacter().transform.m23);
+        Vector3D observableDir = new Vector3D(
+                observable.getCharacter().transform.m03 - observer.getCharacter().transform.m03, 
+                0,
+                observable.getCharacter().transform.m23 - observer.getCharacter().transform.m23
+                );
+        observableDir.setLength(4096);
 
-        int angleDistance = MathUtils.angleDistance(lookDir, observableDir);
+        boolean result = lookDir.dot(observableDir) > 0;
 
-        boolean result = angleDistance < 90;
-
-        result |= observer.character.distance(observable.character) < 150;
+        result |= observer.character.distance(observable.character) < 2500*2500;
         
         return result;
     }
@@ -240,6 +244,7 @@ public abstract class Bot extends GameObject {
             Portal portal=portals[i];
             if (portal.getRoom()!=null && portal.getRoom().getId() == part2) return portal;
         }
+        
         return null;
     }
 

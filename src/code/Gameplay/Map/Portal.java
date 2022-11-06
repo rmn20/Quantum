@@ -160,18 +160,19 @@ public class Portal {
     }
 
     private final boolean isNeighbor(RenderObject el) {
-        if(el instanceof Polygon3V) {
-            Polygon3V p = (Polygon3V) el;
-            if( isMyVertex(p.a) ) return true;
-            if( isMyVertex(p.b) ) return true;
-            if( isMyVertex(p.c) ) return true;
-        } else if(el instanceof Polygon4V) {
+        if(el instanceof Polygon4V) {
             Polygon4V p = (Polygon4V) el;
             if( isMyVertex(p.a) ) return true;
             if( isMyVertex(p.b) ) return true;
             if( isMyVertex(p.c) ) return true;
             if( isMyVertex(p.d) ) return true;
+        } else if(el instanceof Polygon3V) {
+            Polygon3V p = (Polygon3V) el;
+            if( isMyVertex(p.a) ) return true;
+            if( isMyVertex(p.b) ) return true;
+            if( isMyVertex(p.c) ) return true;
         }
+        
         return false;
     }
     

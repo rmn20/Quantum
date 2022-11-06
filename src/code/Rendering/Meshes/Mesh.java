@@ -70,18 +70,7 @@ public class Mesh {
 
     private static void replace(RenderObject[] polygons, Vertex oldVertex, Vertex newVertex) {
         for(int i = 0; i < polygons.length; i++) {
-            if(polygons[i] instanceof Polygon3V) {
-                Polygon3V poly = (Polygon3V) polygons[i];
-                if(poly.a == oldVertex) {
-                    poly.a = newVertex;
-                }
-                if(poly.b == oldVertex) {
-                    poly.b = newVertex;
-                }
-                if(poly.c == oldVertex) {
-                    poly.c = newVertex;
-                }
-            }
+            
             if(polygons[i] instanceof Polygon4V) {
                 Polygon4V poly = (Polygon4V) polygons[i];
                 if(poly.a == oldVertex) {
@@ -95,6 +84,17 @@ public class Mesh {
                 }
                 if(poly.d == oldVertex) {
                     poly.d = newVertex;
+                }
+            } else if(polygons[i] instanceof Polygon3V) {
+                Polygon3V poly = (Polygon3V) polygons[i];
+                if(poly.a == oldVertex) {
+                    poly.a = newVertex;
+                }
+                if(poly.b == oldVertex) {
+                    poly.b = newVertex;
+                }
+                if(poly.c == oldVertex) {
+                    poly.c = newVertex;
                 }
             }
         }
@@ -264,11 +264,11 @@ public class Mesh {
         for(int i=0; i<polygons.length; i++) {
             RenderObject ro =  polygons[i];
             
-            if(ro instanceof Polygon3V) {
-                Polygon3V p = (Polygon3V)ro;
-                p.calculateNormals(p.a, p.b, p.c);
-            } else if(ro instanceof Polygon4V) {
+            if(ro instanceof Polygon4V) {
                 Polygon4V p = (Polygon4V)ro;
+                p.calculateNormals(p.a, p.b, p.c);
+            } else if(ro instanceof Polygon3V) {
+                Polygon3V p = (Polygon3V)ro;
                 p.calculateNormals(p.a, p.b, p.c);
             }
             
@@ -357,7 +357,7 @@ public class Mesh {
         return norm;
     }
     
-    private byte getVertexLit(byte orig, Vertex norm, Vertex v, Room room) {
+    private byte getVertexLit(int orig, Vertex norm, Vertex v, Room room) {
         long lit=0;
         Light[] lights=room.lights;
         Vertex tmp=new Vertex(v.sx,v.sy,v.rz);

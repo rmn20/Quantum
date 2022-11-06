@@ -40,60 +40,9 @@ public final class SphereCast {
         for(int i=0; i<elements.length; i++) {
             RenderObject poly = elements[i];
             int dis = Integer.MAX_VALUE;
-            byte mat = -1;
+            int mat = -1;
             
-            if(poly instanceof Polygon3V) {
-                Polygon3V p = (Polygon3V) poly;
-                final Vertex a = p.a;
-                final Vertex b = p.b;
-                final Vertex c = p.c;
-                mat = p.tex;
-                
-                
-                final int ax = a.x, ay = a.y, az = a.z;
-                final int bx = b.x, by = b.y, bz = b.z;
-                final int cx = c.x, cy = c.y, cz = c.z;
-                
-                int maxx=ax;
-                if(bx>maxx) maxx=bx;
-                if(cx>maxx) maxx=cx;
-                
-                int minx=ax;
-                if(bx<minx) minx=bx;
-                if(cx<minx) minx=cx;
-                
-                int maxy=ay;
-                if(by>maxy) maxy=by;
-                if(cy>maxy) maxy=cy;
-                
-                int miny=ay;
-                if(by<miny) miny=by;
-                if(cy<miny) miny=cy;
-                
-                int maxz=az;
-                if(bz>maxz) maxz=bz;
-                if(cz>maxz) maxz=cz;
-                
-                int minz=az;
-                if(bz<minz) minz=bz;
-                if(cz<minz) minz=cz;
-                
-                if(maxx < pos.x-rad) continue;
-                if(minx > pos.x+rad) continue;
-                if(maxz < pos.z-rad) continue;
-                if(minz > pos.z+rad) continue;
-                if(maxy < pos.y-rad) continue;
-                if(miny > pos.y+rad) continue;
-
-                v1.x=ax; v1.y=ay; v1.z=az;
-                v2.x=bx; v2.y=by; v2.z=bz;
-                v3.x=cx; v3.y=cy; v3.z=cz;
-                nor.x=p.nx;
-                nor.y=p.ny;
-                nor.z=p.nz;
-                if(recalc) MathUtils2.calcNormal(nor, v1, v2, v3);
-                dis = distanceSphereToPolygon(v1, v2, v3, nor, pos, rad);
-            } else if(poly instanceof Polygon4V) {
+            if(poly instanceof Polygon4V) {
                 Polygon4V p = (Polygon4V) poly;
                 final Vertex a = p.a;
                 final Vertex b = p.b;
@@ -152,6 +101,57 @@ public final class SphereCast {
                 nor.z=p.nz;
                 if(recalc) MathUtils2.calcNormal(nor, v1, v2, v4);
                 dis = distanceSphereToPolygon(v1, v2, v3, v4, nor, pos, rad);
+            } else if(poly instanceof Polygon3V) {
+                Polygon3V p = (Polygon3V) poly;
+                final Vertex a = p.a;
+                final Vertex b = p.b;
+                final Vertex c = p.c;
+                mat = p.tex;
+                
+                
+                final int ax = a.x, ay = a.y, az = a.z;
+                final int bx = b.x, by = b.y, bz = b.z;
+                final int cx = c.x, cy = c.y, cz = c.z;
+                
+                int maxx=ax;
+                if(bx>maxx) maxx=bx;
+                if(cx>maxx) maxx=cx;
+                
+                int minx=ax;
+                if(bx<minx) minx=bx;
+                if(cx<minx) minx=cx;
+                
+                int maxy=ay;
+                if(by>maxy) maxy=by;
+                if(cy>maxy) maxy=cy;
+                
+                int miny=ay;
+                if(by<miny) miny=by;
+                if(cy<miny) miny=cy;
+                
+                int maxz=az;
+                if(bz>maxz) maxz=bz;
+                if(cz>maxz) maxz=cz;
+                
+                int minz=az;
+                if(bz<minz) minz=bz;
+                if(cz<minz) minz=cz;
+                
+                if(maxx < pos.x-rad) continue;
+                if(minx > pos.x+rad) continue;
+                if(maxz < pos.z-rad) continue;
+                if(minz > pos.z+rad) continue;
+                if(maxy < pos.y-rad) continue;
+                if(miny > pos.y+rad) continue;
+
+                v1.x=ax; v1.y=ay; v1.z=az;
+                v2.x=bx; v2.y=by; v2.z=bz;
+                v3.x=cx; v3.y=cy; v3.z=cz;
+                nor.x=p.nx;
+                nor.y=p.ny;
+                nor.z=p.nz;
+                if(recalc) MathUtils2.calcNormal(nor, v1, v2, v3);
+                dis = distanceSphereToPolygon(v1, v2, v3, nor, pos, rad);
             }
             
             if(mat!=-1) {

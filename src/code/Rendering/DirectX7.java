@@ -141,10 +141,25 @@ this.buffer.resetTex();
         TMPElement[] buffer2 = buffer.getBuffer();
 
         int i = buffer.getSize()-1;
+        
+        for(; i>=5; i-=5) {
+            TMPElement element = buffer2[i];
+            element.obj.render(this, element.tex);
+            element = buffer2[i-1];
+            element.obj.render(this, element.tex);
+            element = buffer2[i-2];
+            element.obj.render(this, element.tex);
+            element = buffer2[i-3];
+            element.obj.render(this, element.tex);
+            element = buffer2[i-4];
+            element.obj.render(this, element.tex);
+        }
+        
         for(; i>=0; i--) {
             TMPElement element = buffer2[i];
             element.obj.render(this, element.tex);
         }
+        
         buffer.reset();
    }
    

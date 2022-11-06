@@ -24,6 +24,7 @@ import code.Gameplay.Objects.NPCSpawner;
 import code.HUD.Base.GameKeyboard;
 import code.HUD.DeveloperMenu;
 import code.HUD.GameHelp;
+import code.HUD.LoadingScreen;
 import code.HUD.Menu;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
@@ -745,7 +746,6 @@ public final class Main extends MIDlet {
                 }
 
                 if(version <= -2) {
-
                     if(playerHasInventory) player.items.loadSave(dis);
                 }
 
@@ -854,36 +854,26 @@ public final class Main extends MIDlet {
 
     }
 
-    public static final void loadLevel(boolean loadSave, boolean loadpos, int levelNumber, Object hudInfo, Main main, Menu menu) {
-        loadLevel(loadSave, loadpos, levelNumber, hudInfo, main, menu, 1);
+    public static final void loadLevel(boolean loadSave, boolean loadPos, int levelNumber, Object hudInfo, Main main, Menu menu) {
+        loadLevel(loadSave, loadPos, levelNumber, hudInfo, main, menu, 1);
 
     }
 
-    public static final void loadLevel(boolean loadSave, boolean loadpos, int levelNumber, Object hudInfo, Main main, Menu menu, int helpState) {
+    public static final void loadLevel(boolean loadSave, boolean loadPos, int levelNumber, Object hudInfo, Main main, Menu menu, int helpState) {
         try {
             System.gc();
             Thread.sleep(5L);
 
             if(!GameHelp.needToShow(levelNumber, helpState, false)) {
                 if(menu != null) menu.destroy();
-
-                GameScreen gs = new GameScreen(main, levelNumber, hudInfo);
-                if(loadSave == true) {
-                    Main.loadGame(gs.player, gs.getWidth(), gs.getHeight(), gs.scene);
-                    gs.scene.getG3D().updateFov((int) gs.player.fov);
-                    Main.loadObjects(gs.player, gs.getWidth(), gs.getHeight(), gs.scene, gs.levelNumber);
-                    if(loadpos) Main.loadPosition(gs.player);
-                }
-                gs.player.copyNewToUsed();
-                gs.start();
-                gs.scene.deleteUsedObjects(gs.player);
-                gs.scene.removeKilledBots();
-                setCurrent(gs);
+            
+                LoadingScreen ls = new LoadingScreen(main, levelNumber, loadSave, loadPos);
+                setCurrent(ls);
 
             } else {
                 GameHelp gh = new GameHelp(main, menu, levelNumber, false, hudInfo, helpState);
                 GameHelp.loadSave = loadSave;
-                GameHelp.loadpos = loadpos;
+                GameHelp.loadpos = loadPos;
                 setCurrent(gh);
             }
 

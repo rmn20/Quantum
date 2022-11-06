@@ -545,8 +545,8 @@ public class LightMapper implements Runnable {
         
     }
     
-    private static final byte mul(int mul, byte bri) {
-        return (byte)(int)(Math.max(0,Math.min((bri+128)*mul>>8,255))-128);
+    private static final int mul(int mul, int bri) {
+        return (bri*mul)>>8;
     }
     
     private static void calculateLights(House house, Room room, Mesh[] meshes) {
@@ -622,8 +622,8 @@ public class LightMapper implements Runnable {
         
     }
     
-    private final static byte add(int add, byte bri) {
-        return (byte)Math.max(-128,Math.min(add+bri,127));
+    private final static int add(int add, int bri) {
+        return add + bri;
     }
     
     private static void calculateGI(House house, Room room, Mesh[] meshes, Mesh[] oldMeshes, Mesh reflection) {
@@ -929,7 +929,7 @@ public class LightMapper implements Runnable {
     }
     
     private static Vector3D getPolColor(MultyTexture mt, RenderObject ro, int lit) {
-        byte tex = 0;
+        int tex = 0;
         int u = 0, v = 0;
         int origLightR = 0, origLightG = 0, origLightB = 0;
         Vector3D out = new Vector3D();
@@ -1548,15 +1548,15 @@ public class LightMapper implements Runnable {
           for(int x=0;x<objs.length;x++) {
               if(objs[x] instanceof LightedPolygon3V) {
                   LightedPolygon3V pol=(LightedPolygon3V)objs[x];
-                  dos.writeByte(pol.la);
-                  dos.writeByte(pol.lb);
-                  dos.writeByte(pol.lc);
+                  dos.writeByte(pol.la - 128);
+                  dos.writeByte(pol.lb - 128);
+                  dos.writeByte(pol.lc - 128);
               } else if(objs[x] instanceof LightedPolygon4V) {
                   LightedPolygon4V pol=(LightedPolygon4V)objs[x];
-                  dos.writeByte(pol.la);
-                  dos.writeByte(pol.lb);
-                  dos.writeByte(pol.lc);
-                  dos.writeByte(pol.ld);
+                  dos.writeByte(pol.la - 128);
+                  dos.writeByte(pol.lb - 128);
+                  dos.writeByte(pol.lc - 128);
+                  dos.writeByte(pol.ld - 128);
               } else if(objs[x] instanceof ColorLightedPolygon3V) {
                   ColorLightedPolygon3V pol=(ColorLightedPolygon3V)objs[x];
                   boolean colored=!(
@@ -1564,17 +1564,17 @@ public class LightMapper implements Runnable {
                           pol.br==pol.bg && pol.bg==pol.bb &&
                           pol.cr==pol.cg && pol.cg==pol.cb);
                   
-                  dos.writeByte(pol.ar);
-                  dos.writeByte(pol.br);
-                  dos.writeByte(pol.cr);
+                  dos.writeByte(pol.ar - 128);
+                  dos.writeByte(pol.br - 128);
+                  dos.writeByte(pol.cr - 128);
                   dos.writeBoolean(colored);
                   if(colored) {
-                      dos.writeByte(pol.ag);
-                      dos.writeByte(pol.ab);
-                      dos.writeByte(pol.bg);
-                      dos.writeByte(pol.bb);
-                      dos.writeByte(pol.cg);
-                      dos.writeByte(pol.cb);
+                      dos.writeByte(pol.ag - 128);
+                      dos.writeByte(pol.ab - 128);
+                      dos.writeByte(pol.bg - 128);
+                      dos.writeByte(pol.bb - 128);
+                      dos.writeByte(pol.cg - 128);
+                      dos.writeByte(pol.cb - 128);
                   }
               } else if(objs[x] instanceof ColorLightedPolygon4V) {
                   ColorLightedPolygon4V pol=(ColorLightedPolygon4V)objs[x];
@@ -1584,20 +1584,20 @@ public class LightMapper implements Runnable {
                           pol.cr==pol.cg && pol.cg==pol.cb &&
                           pol.dr==pol.dg && pol.dg==pol.db);
                   
-                  dos.writeByte(pol.ar);
-                  dos.writeByte(pol.br);
-                  dos.writeByte(pol.cr);
-                  dos.writeByte(pol.dr);
+                  dos.writeByte(pol.ar - 128);
+                  dos.writeByte(pol.br - 128);
+                  dos.writeByte(pol.cr - 128);
+                  dos.writeByte(pol.dr - 128);
                   dos.writeBoolean(colored);
                   if(colored) {
-                      dos.writeByte(pol.ag);
-                      dos.writeByte(pol.ab);
-                      dos.writeByte(pol.bg);
-                      dos.writeByte(pol.bb);
-                      dos.writeByte(pol.cg);
-                      dos.writeByte(pol.cb);
-                      dos.writeByte(pol.dg);
-                      dos.writeByte(pol.db);
+                      dos.writeByte(pol.ag - 128);
+                      dos.writeByte(pol.ab - 128);
+                      dos.writeByte(pol.bg - 128);
+                      dos.writeByte(pol.bb - 128);
+                      dos.writeByte(pol.cg - 128);
+                      dos.writeByte(pol.cb - 128);
+                      dos.writeByte(pol.dg - 128);
+                      dos.writeByte(pol.db - 128);
                   }
               }
           }
@@ -1623,27 +1623,27 @@ public class LightMapper implements Runnable {
           for(int x=0;x<objs.length;x++) {
               if(objs[x] instanceof LightedPolygon3V) {
                   LightedPolygon3V pol=(LightedPolygon3V)objs[x];
-                  pol.la=dis.readByte();
-                  pol.lb=dis.readByte();
-                  pol.lc=dis.readByte();
+                  pol.la=dis.readByte() + 128;
+                  pol.lb=dis.readByte() + 128;
+                  pol.lc=dis.readByte() + 128;
               } else if(objs[x] instanceof LightedPolygon4V) {
                   LightedPolygon4V pol=(LightedPolygon4V)objs[x];
-                  pol.la=dis.readByte();
-                  pol.lb=dis.readByte();
-                  pol.lc=dis.readByte();
-                  pol.ld=dis.readByte();
+                  pol.la=dis.readByte() + 128;
+                  pol.lb=dis.readByte() + 128;
+                  pol.lc=dis.readByte() + 128;
+                  pol.ld=dis.readByte() + 128;
               } else if(objs[x] instanceof ColorLightedPolygon3V) {
                   ColorLightedPolygon3V pol=(ColorLightedPolygon3V)objs[x];
-                  pol.ar = dis.readByte();
-                  pol.br = dis.readByte();
-                  pol.cr = dis.readByte();
+                  pol.ar = dis.readByte() + 128;
+                  pol.br = dis.readByte() + 128;
+                  pol.cr = dis.readByte() + 128;
                   if (dis.readBoolean()) {
-                      pol.ag = dis.readByte();
-                      pol.ab = dis.readByte();
-                      pol.bg = dis.readByte();
-                      pol.bb = dis.readByte();
-                      pol.cg = dis.readByte();
-                      pol.cb = dis.readByte();
+                      pol.ag = dis.readByte() + 128;
+                      pol.ab = dis.readByte() + 128;
+                      pol.bg = dis.readByte() + 128;
+                      pol.bb = dis.readByte() + 128;
+                      pol.cg = dis.readByte() + 128;
+                      pol.cb = dis.readByte() + 128;
                       if(Main.fogQ==1) objs[x] = new LightedPolygon3V(pol);
                   } else {
                       pol.ag = pol.ab = pol.ar;
@@ -1653,19 +1653,19 @@ public class LightMapper implements Runnable {
                   }
               } else if(objs[x] instanceof ColorLightedPolygon4V) {
                   ColorLightedPolygon4V pol=(ColorLightedPolygon4V)objs[x];
-                  pol.ar = dis.readByte();
-                  pol.br = dis.readByte();
-                  pol.cr = dis.readByte();
-                  pol.dr = dis.readByte();
+                  pol.ar = dis.readByte() + 128;
+                  pol.br = dis.readByte() + 128;
+                  pol.cr = dis.readByte() + 128;
+                  pol.dr = dis.readByte() + 128;
                   if (dis.readBoolean()) {
-                      pol.ag = dis.readByte();
-                      pol.ab = dis.readByte();
-                      pol.bg = dis.readByte();
-                      pol.bb = dis.readByte();
-                      pol.cg = dis.readByte();
-                      pol.cb = dis.readByte();
-                      pol.dg = dis.readByte();
-                      pol.db = dis.readByte();
+                      pol.ag = dis.readByte() + 128;
+                      pol.ab = dis.readByte() + 128;
+                      pol.bg = dis.readByte() + 128;
+                      pol.bb = dis.readByte() + 128;
+                      pol.cg = dis.readByte() + 128;
+                      pol.cb = dis.readByte() + 128;
+                      pol.dg = dis.readByte() + 128;
+                      pol.db = dis.readByte() + 128;
                       if(Main.fogQ==1) objs[x] = new LightedPolygon4V(pol);
                   } else {
                       pol.ag = pol.ab = pol.ar;

@@ -16,11 +16,11 @@ public class TexturingAffine {
     public static final void paint(DirectX7 g3d, Texture texture,
             Vertex a, int au, int av,
             Vertex b, int bu, int bv,
-            Vertex c, int cu, int cv,int fogc,byte fog,int sz2,
+            Vertex c, int cu, int cv,int fogc,int fog,int sz2,
             int af,int bf,int cf,
             int ag,int bg,int cg,
             int ab,int bb,int cb,
-            short nx,short ny,short nz) {
+            int nx,int ny,int nz) {
         if(DeveloperMenu.renderPolygonsOverwrite) {
             TexturingAffine.paintOverwrite(g3d, a, b, c);
             return;
@@ -1427,7 +1427,7 @@ x1++;
 static final void paintAffine_5(DirectX7 g3d, Texture texture,
             Vertex a, int au, int av,
             Vertex b, int bu, int bv,
-            Vertex c, int cu, int cv,int fogc,int sz2,int af,int bf,int cf,short nx,short ny,short nz) {
+            Vertex c, int cu, int cv,int fogc,int sz2,int af,int bf,int cf,int nx,int ny,int nz) {
 
 
     //----------------------------
@@ -1680,7 +1680,7 @@ x1++;
 static final void paintAffine_9(DirectX7 g3d, Texture texture,
             Vertex a, int au, int av,
             Vertex b, int bu, int bv,
-            Vertex c, int cu, int cv,int fogc,int sz2,int ar,int br,int cr,short nx,short ny,short nz) {
+            Vertex c, int cu, int cv,int fogc,int sz2,int ar,int br,int cr,int nx,int ny,int nz) {
 
 
     //----------------------------
@@ -1936,7 +1936,7 @@ static final void paintAffine_13(DirectX7 g3d, Texture texture,
             int ar,int br,int cr,
             int ag,int bg,int cg,
             int ab,int bb,int cb,
-            short nx,short ny,short nz) {
+            int nx,int ny,int nz) {
 
 
     //----------------------------

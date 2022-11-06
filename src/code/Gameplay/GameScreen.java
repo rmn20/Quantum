@@ -472,9 +472,12 @@ public final class GameScreen extends MyCanvas {
 
         if(!Main.hideHud) {
 
-            if(!playerDied && player.arsenal.current != -1 && player.show2D()) {
+            if(!playerDied && player.arsenal.current != -1) {
                 g.setClip(0, screenY, g3d.getWidth(), g3d.getHeight());
-                player.arsenal.drawWeapon(g, screenY, g3d.getWidth(), g3d.getHeight(), this);
+                
+                if(player.show2D()) player.arsenal.drawWeapon(g, screenY, g3d.getWidth(), g3d.getHeight(), this);
+                player.arsenal.drawReloadAnimation(g, screenY, g3d.getWidth(), g3d.getHeight());
+                
                 g.setClip(0, 0, width, height);
                 if(!redrawInfo) g.setClip(0, screenY, width, g3d.getHeight());
             }

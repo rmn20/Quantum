@@ -65,51 +65,9 @@ public class HeightComputer {
             RenderObject el = polygons[i];
             int polyY = Integer.MAX_VALUE;
             int cx = Integer.MAX_VALUE, cz = Integer.MAX_VALUE, cy = Integer.MAX_VALUE;
-            byte mat = -1;
+            int mat = -1;
             
-            if(el instanceof Polygon3V) {
-                Polygon3V p = (Polygon3V) el;
-                Vertex a = p.a;
-                Vertex b = p.b;
-                Vertex c = p.c;
-                mat = p.tex;
-               
-                final int ax = a.x, az = a.z;
-                final int bx = b.x, bz = b.z;
-                
-                int maxx=ax;
-                if(bx>maxx) maxx=bx;
-                if(c.x>maxx) maxx=c.x;
-                
-                int minx=ax;
-                if(bx<minx) minx=bx;
-                if(c.x<minx) minx=c.x;
-                
-                int maxz=az;
-                if(bz>maxz) maxz=bz;
-                if(c.z>maxz) maxz=c.z;
-                
-                int minz=az;
-                if(bz<minz) minz=bz;
-                if(c.z<minz) minz=c.z;
-                
-                if( minx > x ) continue;
-                if( minz > z ) continue;
-                if( maxx < x ) continue;
-                if( maxz < z ) continue;
-                
-                if(el.ny >= 0) {//нормаль повернута вниз
-                    if(el.ny>2048 && ((a.y + b.y + c.y) / 3)>y) height.setUnderRoof(true);
-                    continue;
-                } 
-                
-                if(MathUtils2.isPointOnPolygon(x, z, a.x, a.z, b.x, b.z, c.x, c.z, p.ny) ) {
-                    polyY = (y - ((x-ax)*p.nx + (y-a.y)*p.ny + (z-az)*p.nz) / p.ny);
-                    cx = (a.x + b.x + c.x) / 3;
-                    cz = (a.z + b.z + c.z) / 3;
-                    cy = (a.y + b.y + c.y) / 3;
-                }
-            } else if(el instanceof Polygon4V) {
+            if(el instanceof Polygon4V) {
                 Polygon4V p = (Polygon4V) el;
                 Vertex a = p.a;
                 Vertex b = p.b;
@@ -156,6 +114,48 @@ public class HeightComputer {
                     cx = (ax + bx + c.x + dx) >> 2;
                     cz = (az + bz + c.z + dz) >> 2;
                     cy = (a.y + b.y + c.y + d.y) >> 2;
+                }
+            } else if(el instanceof Polygon3V) {
+                Polygon3V p = (Polygon3V) el;
+                Vertex a = p.a;
+                Vertex b = p.b;
+                Vertex c = p.c;
+                mat = p.tex;
+               
+                final int ax = a.x, az = a.z;
+                final int bx = b.x, bz = b.z;
+                
+                int maxx=ax;
+                if(bx>maxx) maxx=bx;
+                if(c.x>maxx) maxx=c.x;
+                
+                int minx=ax;
+                if(bx<minx) minx=bx;
+                if(c.x<minx) minx=c.x;
+                
+                int maxz=az;
+                if(bz>maxz) maxz=bz;
+                if(c.z>maxz) maxz=c.z;
+                
+                int minz=az;
+                if(bz<minz) minz=bz;
+                if(c.z<minz) minz=c.z;
+                
+                if( minx > x ) continue;
+                if( minz > z ) continue;
+                if( maxx < x ) continue;
+                if( maxz < z ) continue;
+                
+                if(el.ny >= 0) {//нормаль повернута вниз
+                    if(el.ny>2048 && ((a.y + b.y + c.y) / 3)>y) height.setUnderRoof(true);
+                    continue;
+                } 
+                
+                if(MathUtils2.isPointOnPolygon(x, z, a.x, a.z, b.x, b.z, c.x, c.z, p.ny) ) {
+                    polyY = (y - ((x-ax)*p.nx + (y-a.y)*p.ny + (z-az)*p.nz) / p.ny);
+                    cx = (a.x + b.x + c.x) / 3;
+                    cz = (a.z + b.z + c.z) / 3;
+                    cy = (a.y + b.y + c.y) / 3;
                 }
             }
             
