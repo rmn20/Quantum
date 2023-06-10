@@ -358,7 +358,7 @@ public final class NPC extends Bot {
     }
 
     private void walk(int spd) {
-        moveZ(spd);
+        character.moveZ(spd);
         setSprite(walkFront, walkSide, walkBack);
     }
 

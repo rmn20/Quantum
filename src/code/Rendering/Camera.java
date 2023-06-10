@@ -26,12 +26,23 @@ public class Camera {
     public Camera() {
     }
 
-    public void set(Matrix pos, float newRotX, float newRotY) {
-        tmp.set(pos);
+    public void set(Matrix pos, float newRotX, float newRotY, boolean absolutePos, boolean absoluteRot) {
+        if(absoluteRot) {
+			tmp.setIdentity();
+			newRotX = 0;
+			newRotY = 0;
+			tmp.setPosition(pos.m03, pos.m13, pos.m23);
+		} else tmp.set(pos);
+		
+		if(absolutePos) tmp.setPosition(0, 0, 0);
+		
         tmp.translate(x, y, z);
         tmp2.setRotX(rotX);
         tmp.mul(tmp2);
         tmp.rotY(rotY);
+		
+		newRotX += rotX;
+		newRotY += rotY;
         
         if(fset || smoothSteps == 1) {
             camera.set(tmp);

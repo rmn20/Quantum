@@ -320,9 +320,9 @@ public final class Main extends MIDlet {
                     || osName.indexOf("android") > -1;
         }
         if(maxQuality) {
-            displaySize = 100;
+            //displaySize = 100;
             frameskip = true;
-            setPersQ(4);
+            setPersQ(3);
         }
 
         updateLevelCount();
@@ -837,8 +837,8 @@ public final class Main extends MIDlet {
                     player.getCharacter().getTransform().setIdentity();
                     player.getCharacter().getTransform().setPosition(dis.readInt(), dis.readInt(), dis.readInt());
 
-                    player.rotateY = dis.readInt() / 4096.0F;
-                    player.rotateX = dis.readInt() / 4096.0F;
+					player.rotYn(dis.readInt() / 4096.0F);
+					player.rotXn(dis.readInt() / 4096.0F);
                     player.getCharacter().getSpeed().set(dis.readInt(), dis.readInt(), dis.readInt());
                     player.updateMatrix();
 

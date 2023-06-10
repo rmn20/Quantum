@@ -181,6 +181,12 @@ public static void collisionTest(Character body1, Character body2) {
       }
    }
 
+   public final void moveFree(Vector3D v) {
+      if(fly || onFloor) {
+         speed.add(v.x, v.y, v.z);
+      }
+   }
+
    public final void moveX(int d) {
       if(onFloor || fly) {
          speed.x += transform.m00 * d >> 14;

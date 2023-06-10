@@ -372,16 +372,16 @@ public class LightMapper implements Runnable {
         for(int i=0;i<objs.length;i++) {
             if(objs[i] instanceof LightedPolygon3V) {
                 LightedPolygon3V pol=(LightedPolygon3V)objs[i];
-                pol.la=pol.lb=pol.lc=-128;
+                pol.la=pol.lb=pol.lc=0;
             } else if(objs[i] instanceof LightedPolygon4V) {
                 LightedPolygon4V pol=(LightedPolygon4V)objs[i];
-                pol.la=pol.lb=pol.lc=pol.ld=-128;
+                pol.la=pol.lb=pol.lc=pol.ld=0;
             } else if(objs[i] instanceof ColorLightedPolygon3V) {
                 ColorLightedPolygon3V pol=(ColorLightedPolygon3V)objs[i];
-                pol.ar=pol.ag=pol.ab=pol.br=pol.bg=pol.bb=pol.cr=pol.cg=pol.cb=-128;
+                pol.ar=pol.ag=pol.ab=pol.br=pol.bg=pol.bb=pol.cr=pol.cg=pol.cb=0;
             } else if(objs[i] instanceof ColorLightedPolygon4V) {
                 ColorLightedPolygon4V pol=(ColorLightedPolygon4V)objs[i];
-                pol.ar=pol.ag=pol.ab=pol.br=pol.bg=pol.bb=pol.cr=pol.cg=pol.cb=pol.dr=pol.dg=pol.db=-128;
+                pol.ar=pol.ag=pol.ab=pol.br=pol.bg=pol.bb=pol.cr=pol.cg=pol.cb=pol.dr=pol.dg=pol.db=0;
             }
             
             if(perPolygonSleep!=0 && (i&3)==0) try{Thread.sleep(perPolygonSleep);} catch(Exception e) {};
@@ -405,9 +405,9 @@ public class LightMapper implements Runnable {
                 int litB=skySunLight(house,room,meshes,pol.b,pol.nx,pol.ny,pol.nz,tmp,pol).average();
                 int litC=skySunLight(house,room,meshes,pol.c,pol.nx,pol.ny,pol.nz,tmp,pol).average();
                 
-                pol.la=(byte)Math.min(127,pol.la+litA);
-                pol.lb=(byte)Math.min(127,pol.lb+litB);
-                pol.lc=(byte)Math.min(127,pol.lc+litC);
+                pol.la=Math.min(255,pol.la+litA);
+                pol.lb=Math.min(255,pol.lb+litB);
+                pol.lc=Math.min(255,pol.lc+litC);
                 
             } else if(objs[i] instanceof LightedPolygon4V) {
                 
@@ -419,10 +419,10 @@ public class LightMapper implements Runnable {
                 int litC=skySunLight(house,room,meshes,pol.c,pol.nx,pol.ny,pol.nz,tmp,pol).average();
                 int litD=skySunLight(house,room,meshes,pol.d,pol.nx,pol.ny,pol.nz,tmp,pol).average();
                 
-                pol.la=(byte)Math.min(127,pol.la+litA);
-                pol.lb=(byte)Math.min(127,pol.lb+litB);
-                pol.lc=(byte)Math.min(127,pol.lc+litC);
-                pol.ld=(byte)Math.min(127,pol.ld+litD);
+                pol.la=Math.min(255,pol.la+litA);
+                pol.lb=Math.min(255,pol.lb+litB);
+                pol.lc=Math.min(255,pol.lc+litC);
+                pol.ld=Math.min(255,pol.ld+litD);
                 
             } else if(objs[i] instanceof ColorLightedPolygon3V) {
                 
@@ -432,15 +432,15 @@ public class LightMapper implements Runnable {
                 Vector3D litB=skySunLight(house,room,meshes,pol.b,pol.nx,pol.ny,pol.nz,tmp,pol);
                 Vector3D litC=skySunLight(house,room,meshes,pol.c,pol.nx,pol.ny,pol.nz,tmp,pol);
                 
-                pol.ar=(byte)Math.min(127,pol.ar+litA.x);
-                pol.ag=(byte)Math.min(127,pol.ag+litA.y);
-                pol.ab=(byte)Math.min(127,pol.ab+litA.z);
-                pol.br=(byte)Math.min(127,pol.br+litB.x);
-                pol.bg=(byte)Math.min(127,pol.bg+litB.y);
-                pol.bb=(byte)Math.min(127,pol.bb+litB.z);
-                pol.cr=(byte)Math.min(127,pol.cr+litC.x);
-                pol.cg=(byte)Math.min(127,pol.cg+litC.y);
-                pol.cb=(byte)Math.min(127,pol.cb+litC.z);
+                pol.ar=Math.min(255,pol.ar+litA.x);
+                pol.ag=Math.min(255,pol.ag+litA.y);
+                pol.ab=Math.min(255,pol.ab+litA.z);
+                pol.br=Math.min(255,pol.br+litB.x);
+                pol.bg=Math.min(255,pol.bg+litB.y);
+                pol.bb=Math.min(255,pol.bb+litB.z);
+                pol.cr=Math.min(255,pol.cr+litC.x);
+                pol.cg=Math.min(255,pol.cg+litC.y);
+                pol.cb=Math.min(255,pol.cb+litC.z);
             } else if(objs[i] instanceof ColorLightedPolygon4V) {
                 
                 ColorLightedPolygon4V pol=(ColorLightedPolygon4V)objs[i];
@@ -451,18 +451,18 @@ public class LightMapper implements Runnable {
                 Vector3D litC=skySunLight(house,room,meshes,pol.c,pol.nx,pol.ny,pol.nz,tmp,pol);
                 Vector3D litD=skySunLight(house,room,meshes,pol.d,pol.nx,pol.ny,pol.nz,tmp,pol);
                 
-                pol.ar=(byte)Math.min(127,pol.ar+litA.x);
-                pol.ag=(byte)Math.min(127,pol.ag+litA.y);
-                pol.ab=(byte)Math.min(127,pol.ab+litA.z);
-                pol.br=(byte)Math.min(127,pol.br+litB.x);
-                pol.bg=(byte)Math.min(127,pol.bg+litB.y);
-                pol.bb=(byte)Math.min(127,pol.bb+litB.z);
-                pol.cr=(byte)Math.min(127,pol.cr+litC.x);
-                pol.cg=(byte)Math.min(127,pol.cg+litC.y);
-                pol.cb=(byte)Math.min(127,pol.cb+litC.z);
-                pol.dr=(byte)Math.min(127,pol.dr+litD.x);
-                pol.dg=(byte)Math.min(127,pol.dg+litD.y);
-                pol.db=(byte)Math.min(127,pol.db+litD.z);
+                pol.ar=Math.min(255,pol.ar+litA.x);
+                pol.ag=Math.min(255,pol.ag+litA.y);
+                pol.ab=Math.min(255,pol.ab+litA.z);
+                pol.br=Math.min(255,pol.br+litB.x);
+                pol.bg=Math.min(255,pol.bg+litB.y);
+                pol.bb=Math.min(255,pol.bb+litB.z);
+                pol.cr=Math.min(255,pol.cr+litC.x);
+                pol.cg=Math.min(255,pol.cg+litC.y);
+                pol.cb=Math.min(255,pol.cb+litC.z);
+                pol.dr=Math.min(255,pol.dr+litD.x);
+                pol.dg=Math.min(255,pol.dg+litD.y);
+                pol.db=Math.min(255,pol.db+litD.z);
             }
             if(perPolygonSleep!=0) try{Thread.sleep(perPolygonSleep);} catch(Exception e) {};
         }
@@ -546,7 +546,7 @@ public class LightMapper implements Runnable {
     }
     
     private static final int mul(int mul, int bri) {
-        return (bri*mul)>>8;
+        return (bri*mul+1)>>8;
     }
     
     private static void calculateLights(House house, Room room, Mesh[] meshes) {
@@ -645,9 +645,9 @@ public class LightMapper implements Runnable {
                 pol.la=add(lA,pol.la);
                 pol.lb=add(lB,pol.lb);
                 pol.lc=add(lC,pol.lc);
-                pol2.la=(byte)Math.max(-128,Math.min(127,lA-128));
-                pol2.lb=(byte)Math.max(-128,Math.min(127,lB-128));
-                pol2.lc=(byte)Math.max(-128,Math.min(127,lC-128));
+                pol2.la=Math.max(0,Math.min(255,lA));
+                pol2.lb=Math.max(0,Math.min(255,lB));
+                pol2.lc=Math.max(0,Math.min(255,lC));
             } else if(objs[i] instanceof LightedPolygon4V) {
                 
                 LightedPolygon4V pol=(LightedPolygon4V)objs[i];
@@ -664,10 +664,10 @@ public class LightMapper implements Runnable {
                 pol.lb=add(lB,pol.lb);
                 pol.lc=add(lC,pol.lc);
                 pol.ld=add(lD,pol.ld);
-                pol2.la=(byte)Math.max(-128,Math.min(127,lA-128));
-                pol2.lb=(byte)Math.max(-128,Math.min(127,lB-128));
-                pol2.lc=(byte)Math.max(-128,Math.min(127,lC-128));
-                pol2.ld=(byte)Math.max(-128,Math.min(127,lC-128));
+                pol2.la=Math.max(0,Math.min(255,lA));
+                pol2.lb=Math.max(0,Math.min(255,lB));
+                pol2.lc=Math.max(0,Math.min(255,lC));
+                pol2.ld=Math.max(0,Math.min(255,lC));
             } else if(objs[i] instanceof ColorLightedPolygon3V) {
                 
                 ColorLightedPolygon3V pol=(ColorLightedPolygon3V)objs[i];
@@ -688,15 +688,15 @@ public class LightMapper implements Runnable {
                 pol.cg=add(lC.y,pol.cg);
                 pol.cb=add(lC.z,pol.cb);
                 
-                pol2.ar=(byte)Math.max(-128,Math.min(127,lA.x-128));
-                pol2.ag=(byte)Math.max(-128,Math.min(127,lA.y-128));
-                pol2.ab=(byte)Math.max(-128,Math.min(127,lA.z-128));
-                pol2.br=(byte)Math.max(-128,Math.min(127,lB.x-128));
-                pol2.bg=(byte)Math.max(-128,Math.min(127,lB.y-128));
-                pol2.bb=(byte)Math.max(-128,Math.min(127,lB.z-128));
-                pol2.cr=(byte)Math.max(-128,Math.min(127,lC.x-128));
-                pol2.cg=(byte)Math.max(-128,Math.min(127,lC.y-128));
-                pol2.cb=(byte)Math.max(-128,Math.min(127,lC.z-128));
+                pol2.ar=Math.max(0,Math.min(255,lA.x));
+                pol2.ag=Math.max(0,Math.min(255,lA.y));
+                pol2.ab=Math.max(0,Math.min(255,lA.z));
+                pol2.br=Math.max(0,Math.min(255,lB.x));
+                pol2.bg=Math.max(0,Math.min(255,lB.y));
+                pol2.bb=Math.max(0,Math.min(255,lB.z));
+                pol2.cr=Math.max(0,Math.min(255,lC.x));
+                pol2.cg=Math.max(0,Math.min(255,lC.y));
+                pol2.cb=Math.max(0,Math.min(255,lC.z));
             } else if(objs[i] instanceof ColorLightedPolygon4V) {
                 
                 ColorLightedPolygon4V pol=(ColorLightedPolygon4V)objs[i];
@@ -724,18 +724,18 @@ public class LightMapper implements Runnable {
                 pol.dg=add(lD.y,pol.dg);
                 pol.db=add(lD.z,pol.db);
                 
-                pol2.ar=(byte)Math.max(-128,Math.min(127,lA.x-128));
-                pol2.ag=(byte)Math.max(-128,Math.min(127,lA.y-128));
-                pol2.ab=(byte)Math.max(-128,Math.min(127,lA.z-128));
-                pol2.br=(byte)Math.max(-128,Math.min(127,lB.x-128));
-                pol2.bg=(byte)Math.max(-128,Math.min(127,lB.y-128));
-                pol2.bb=(byte)Math.max(-128,Math.min(127,lB.z-128));
-                pol2.cr=(byte)Math.max(-128,Math.min(127,lC.x-128));
-                pol2.cg=(byte)Math.max(-128,Math.min(127,lC.y-128));
-                pol2.cb=(byte)Math.max(-128,Math.min(127,lC.z-128));
-                pol2.dr=(byte)Math.max(-128,Math.min(127,lD.x-128));
-                pol2.dg=(byte)Math.max(-128,Math.min(127,lD.y-128));
-                pol2.db=(byte)Math.max(-128,Math.min(127,lD.z-128));
+                pol2.ar=Math.max(0,Math.min(255,lA.x));
+                pol2.ag=Math.max(0,Math.min(255,lA.y));
+                pol2.ab=Math.max(0,Math.min(255,lA.z));
+                pol2.br=Math.max(0,Math.min(255,lB.x));
+                pol2.bg=Math.max(0,Math.min(255,lB.y));
+                pol2.bb=Math.max(0,Math.min(255,lB.z));
+                pol2.cr=Math.max(0,Math.min(255,lC.x));
+                pol2.cg=Math.max(0,Math.min(255,lC.y));
+                pol2.cb=Math.max(0,Math.min(255,lC.z));
+                pol2.dr=Math.max(0,Math.min(255,lD.x));
+                pol2.dg=Math.max(0,Math.min(255,lD.y));
+                pol2.db=Math.max(0,Math.min(255,lD.z));
             }
             if(perPolygonSleep!=0) try{Thread.sleep(perPolygonSleep);} catch(Exception e) {};
         }
@@ -938,7 +938,7 @@ public class LightMapper implements Runnable {
         if(ro instanceof LightedPolygon4V) {
 
             LightedPolygon4V p = (LightedPolygon4V) ro;
-            origLightR = origLightG = origLightB = (p.la + p.lb + p.lc + p.ld) / 4 + 128;
+            origLightR = origLightG = origLightB = (p.la + p.lb + p.lc + p.ld) / 4;
             tex = p.tex;
             u = ((p.au & 0xff) + (p.bu & 0xff) + (p.cu & 0xff) + (p.du & 0xff)) / 4;
             v = ((p.av & 0xff) + (p.bv & 0xff) + (p.cv & 0xff) + (p.dv & 0xff)) / 4;
@@ -946,7 +946,7 @@ public class LightMapper implements Runnable {
         } else if(ro instanceof LightedPolygon3V) {
 
             LightedPolygon3V p = (LightedPolygon3V) ro;
-            origLightR = origLightG = origLightB = (p.la + p.lb + p.lc) / 3 + 128;
+            origLightR = origLightG = origLightB = (p.la + p.lb + p.lc) / 3;
             tex = p.tex;
             u = ((p.au & 0xff) + (p.bu & 0xff) + (p.cu & 0xff)) / 3;
             v = ((p.av & 0xff) + (p.bv & 0xff) + (p.cv & 0xff)) / 3;
@@ -954,9 +954,9 @@ public class LightMapper implements Runnable {
         } else if(ro instanceof ColorLightedPolygon4V) {
 
             ColorLightedPolygon4V p = (ColorLightedPolygon4V) ro;
-            origLightR = (p.ar + p.br + p.cr + p.dr) / 4 + 128;
-            origLightG = (p.ag + p.bg + p.cg + p.dg) / 4 + 128;
-            origLightB = (p.ab + p.bb + p.cb + p.db) / 4 + 128;
+            origLightR = (p.ar + p.br + p.cr + p.dr) / 4;
+            origLightG = (p.ag + p.bg + p.cg + p.dg) / 4;
+            origLightB = (p.ab + p.bb + p.cb + p.db) / 4;
             tex = p.tex;
             u = ((p.au & 0xff) + (p.bu & 0xff) + (p.cu & 0xff) + (p.du & 0xff)) / 4;
             v = ((p.av & 0xff) + (p.bv & 0xff) + (p.cv & 0xff) + (p.dv & 0xff)) / 4;
@@ -964,9 +964,9 @@ public class LightMapper implements Runnable {
         } else if(ro instanceof ColorLightedPolygon3V) {
 
             ColorLightedPolygon3V p = (ColorLightedPolygon3V) ro;
-            origLightR = (p.ar + p.br + p.cr) / 3 + 128;
-            origLightG = (p.ag + p.bg + p.cg) / 3 + 128;
-            origLightB = (p.ab + p.bb + p.cb) / 3 + 128;
+            origLightR = (p.ar + p.br + p.cr) / 3;
+            origLightG = (p.ag + p.bg + p.cg) / 3;
+            origLightB = (p.ab + p.bb + p.cb) / 3;
             tex = p.tex;
             u = ((p.au & 0xff) + (p.bu & 0xff) + (p.cu & 0xff)) / 3;
             v = ((p.av & 0xff) + (p.bv & 0xff) + (p.cv & 0xff)) / 3;

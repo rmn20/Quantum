@@ -133,7 +133,7 @@ public final class Zombie extends Bot {
             } else state = -1;
         }
 
-        if (state == 1) moveZ(walkSpeed);
+        if (state == 1) character.moveZ(walkSpeed);
         if (state == attackState && getFrameInterDiv() % attackTimer == 0 && notCol) 
             enemy.damage(this, attackDamage);
         

@@ -133,7 +133,7 @@ public final class GameScreen extends MyCanvas {
             e.printStackTrace();
         }
 
-        player = new Player(scene.getG3D().getWidth(), (int) (height * (Main.getDisplaySize() / 100.0F)), scene.getStartPoint(), hudInfo);
+        player = new Player(scene.getG3D().getWidth(), (int) (height * (Main.getDisplaySize() / 100.0F)), scene.getStartPoint(), hudInfo, scene.camPose);
         if(!Main.isLastLevel(levelNumber)) {
             String st = (new IniFile(StringTools.getStringFromResource("/level" + (levelNumber+1) + ".txt"), false)).get("START");
 
@@ -324,12 +324,12 @@ public final class GameScreen extends MyCanvas {
             float mouseSpeed = (!player.zoom ? 0.4f : 0.175f) * Main.mouseSpeed / 50;
             float xRot = (MainCanvas.mouseX - MainCanvas.emulatorScreenWidth / 2) * mouseSpeed;
             float yRot = (MainCanvas.mouseY - MainCanvas.emulatorScreenHeight / 2) * mouseSpeed;
-            player.rotYn(-xRot);
-            player.rotXn(-yRot);
+            if(player.canLookY()) player.rotYn(-xRot);
+            if(player.canLookX()) player.rotXn(-yRot);
             
             if(wg != null) {
-                wg.moveY((int) -yRot, FPS.frameTime);
-                wg.moveX2((int) -xRot, FPS.frameTime);
+                if(player.canLookY()) wg.moveY((int) -yRot, FPS.frameTime);
+                if(player.canLookX()) wg.moveX2((int) -xRot, FPS.frameTime);
             }
         }
 
@@ -432,7 +432,10 @@ public final class GameScreen extends MyCanvas {
             g3d.shootIntensity -= FPS.frameTime;
             if(g3d.shootIntensity < 0) g3d.shootIntensity = 0;
             
-            if(lighting && !player.character.underRoof && wg != null) wg.lightingEffect(g3d, player.rotateX);
+            if(lighting && !player.character.underRoof && wg != null) {
+				Camera cam = player.getCamera();
+				wg.lightingEffect(g3d, cam != null ? cam.currentRotX : player.rotateX);
+			}
 
             if(vignette != null) applyVignette(g3d.getDisplay()); //maybe i should remove all these vignette stuff?
         } catch (Exception ext) {
@@ -808,39 +811,43 @@ public final class GameScreen extends MyCanvas {
                 }
                 
                 if(!player.isDead()) {
+					int forward = 0, right = 0;
+					
                     if(keys.isWalkForward(player.zoom)) {
-                        player.moveForward();
-                        if(wg != null && !playeChar.underRoof) {
+                        forward += 1;
+                        if(player.canWalk() &&  wg != null && !playeChar.underRoof) {
                             wg.move(5, FPS.frameTime, -(g3d.camera.m12 * 90 / Matrix.FP));
                         }
                     }
 
                     if(keys.isWalkBackward(player.zoom)) {
-                        player.moveBackward();
-                        if(wg != null && !playeChar.underRoof) {
+                        forward -= 1;
+                        if(player.canWalk() &&  wg != null && !playeChar.underRoof) {
                             wg.moveB(5, FPS.frameTime, -(g3d.camera.m12 * 90 / Matrix.FP));
                         }
                     }
 
-                    if(keys.isLookLeft(player.zoom)) {
+                    if((player.isSwapStrafeLook() && keys.isWalkLeft(player.zoom)) || (!player.isSwapStrafeLook() && keys.isLookLeft(player.zoom))) {
                         player.rotLeft();
-                        if(wg != null) wg.moveX2((!player.zoom ? 5 : 1) * Main.mouseSpeed / 50, FPS.frameTime);
+                        if(player.canLookY() && wg != null) wg.moveX2((!player.zoom ? 5 : 1) * Main.mouseSpeed / 50, FPS.frameTime);
                     }
 
-                    if(keys.isLookRight(player.zoom)) {
+                    if((player.isSwapStrafeLook() && keys.isWalkRight(player.zoom)) || (!player.isSwapStrafeLook() && keys.isLookRight(player.zoom))) {
                         player.rotRight();
-                        if(wg != null) wg.moveX2(-(!player.zoom ? 5 : 1) * Main.mouseSpeed / 50, FPS.frameTime);
+                        if(player.canLookY() && wg != null) wg.moveX2(-(!player.zoom ? 5 : 1) * Main.mouseSpeed / 50, FPS.frameTime);
                     }
 
-                    if(keys.isWalkLeft(player.zoom)) {
-                        player.moveLeft();
-                        if(wg != null) wg.moveX(5, FPS.frameTime);
+                    if((!player.isSwapStrafeLook() && keys.isWalkLeft(player.zoom)) || (player.isSwapStrafeLook() && keys.isLookLeft(player.zoom))) {
+                        right -= 1;
+                        if(player.canWalk() && wg != null) wg.moveX(5, FPS.frameTime);
                     }
 
-                    if(keys.isWalkRight(player.zoom)) {
-                        player.moveRight();
-                        if(wg != null) wg.moveX(-5, FPS.frameTime);
+                    if((!player.isSwapStrafeLook() && keys.isWalkRight(player.zoom)) || (player.isSwapStrafeLook() && keys.isLookRight(player.zoom))) {
+                        right += 1;
+                        if(player.canWalk() && wg != null) wg.moveX(-5, FPS.frameTime);
                     }
+					
+					if(right != 0 || forward != 0) player.walk(right, forward);
                     
                     Weapon weapon = player.arsenal.currentWeapon();
 
@@ -855,12 +862,12 @@ public final class GameScreen extends MyCanvas {
 
                     if(keys.isLookDown(player.zoom)) {
                         player.rotDown();
-                        if(wg != null) wg.moveY(-(!player.zoom ? 4 : 3) * Main.mouseSpeed / 50, FPS.frameTime);
+                        if(player.canLookX() && wg != null) wg.moveY(-(!player.zoom ? 4 : 3) * Main.mouseSpeed / 50, FPS.frameTime);
                     }
 
                     if(keys.isLookUp(player.zoom)) {
                         player.rotUp();
-                        if(wg != null) wg.moveY((!player.zoom ? 4 : 3) * Main.mouseSpeed / 50, FPS.frameTime);
+                        if(player.canLookX() && wg != null) wg.moveY((!player.zoom ? 4 : 3) * Main.mouseSpeed / 50, FPS.frameTime);
                     }
 
                     if(GameKeyboard.isJumpKey(key)) player.jump();
@@ -1078,7 +1085,7 @@ public final class GameScreen extends MyCanvas {
         scene.reset();
         player.setPart(-1);
         time = 0;
-        player.set(scene.getG3D().getWidth(), scene.getG3D().getHeight(), scene.getStartPoint(), hudInfo);
+        player.set(scene.getG3D().getWidth(), scene.getG3D().getHeight(), scene.getStartPoint(), hudInfo, scene.camPose);
         
         if(Main.getContinueLevel() == levelNumber) {
             Main.loadGame(player, width, height, scene);

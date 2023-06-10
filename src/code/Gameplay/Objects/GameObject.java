@@ -31,10 +31,6 @@ public abstract class GameObject extends RoomObject {
     public final void setCharacterSize(int w, int wz, int h) {
         character.set(w, wz, h);
     }
-    
-    protected final void moveZ(int d) {
-        character.moveZ(d);
-    }
 
     protected final void jump(int jump, float force) {
         character.jump(jump, force);

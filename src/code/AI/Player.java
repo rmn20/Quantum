@@ -48,14 +48,14 @@ public final class Player extends GameObject {
     
     int walkFrame, attackFrame, muzzleFrame;
     Camera cam;
+	
+	TPPose scenePose;
     
-    public Player(int wG3D, int hG3D, Vector3D pos, Object hudInfo) {
-        set(wG3D, hG3D, pos, hudInfo);
+    public Player(int wG3D, int hG3D, Vector3D pos, Object hudInfo, TPPose scenePose) {
+        set(wG3D, hG3D, pos, hudInfo, scenePose);
     }
 
-    public final void set(int wG3D, int hG3D, Vector3D pos, Object hudInfo) {
-        if(!TPPose.inited) TPPose.init();
-        
+    public final void set(int wG3D, int hG3D, Vector3D pos, Object hudInfo, TPPose scenePose) {
         name = "PLAYER";
         character.reset();
         character.getTransform().setPosition(0, 0, 0);
@@ -90,9 +90,11 @@ public final class Player extends GameObject {
         walkFrame = 0;
         attackFrame = Integer.MAX_VALUE;
         muzzleFrame = 0;
+		this.scenePose = scenePose;
         if(currentPose() != null) {
             cam = new Camera();
-            TPPose.applyRenderModes();
+            if(TPPose.meshPoses != null) TPPose.applyRenderModes(TPPose.meshPoses);
+            if(scenePose != null) TPPose.applyRenderModes(new TPPose[]{scenePose});
             if(TPPose.radius != 0) setCharacterSize(TPPose.radius, TPPose.height);
         }
     }
@@ -190,13 +192,16 @@ public final class Player extends GameObject {
                 }
             }
         }
-        
-        if(currentPose() != null) {
-            currentPose().update(cam, player);
-        }
+		
+		if(cam != null) {
+            if(currentPose() != null) currentPose().update(cam, this);
+			cam.calcPart(scene.getHouse());
+			if(cam.getPart() == -1 && getPart() != -1) cam.setPart(getPart());
+		}
     }
     
     public TPPose currentPose() {
+		if(scenePose != null) return scenePose;
         if(TPPose.meshPoses == null) return null;
         Weapon wp = arsenal.currentWeapon();
         
@@ -222,6 +227,12 @@ public final class Player extends GameObject {
         return tppose.canLookX(this);
     }
     
+    public boolean canLookY() {
+        TPPose tppose = currentPose();
+        if(tppose == null) return true;
+        return tppose.canLookY(this);
+    }
+    
     public boolean canAttack() {
         TPPose tppose = currentPose();
         if(tppose == null) return true;
@@ -238,6 +249,18 @@ public final class Player extends GameObject {
         TPPose tppose = currentPose();
         if(tppose == null) return true;
         return tppose.canAttack;
+    }
+    
+    public boolean isSwapStrafeLook() {
+        TPPose tppose = currentPose();
+        if(tppose == null) return false;
+        return tppose.isSwapStrafeLook(this);
+    }
+    
+    public boolean isRotToWalkDir() {
+        TPPose tppose = currentPose();
+        if(tppose == null) return false;
+        return tppose.isRotToWalkDir(this);
     }
     
     public boolean show2D() {
@@ -260,7 +283,6 @@ public final class Player extends GameObject {
             g3d.setCamera(playerMat);
             playerMat.m13 -= playerHeight;
         } else {
-            cam.set(playerMat, rotateX, rotateY);
             g3d.setCamera(cam.getCamera());
         }
     }
@@ -273,7 +295,7 @@ public final class Player extends GameObject {
         if(cam == null) {
             return getPart();
         } else {
-            cam.calcPart(scene.getHouse());
+            //cam.calcPart(scene.getHouse());
             return cam.getPart();
         }
     }
@@ -360,6 +382,7 @@ public final class Player extends GameObject {
     }
 
     public final void rotYn(float i) {
+        if(!canLookY()) return;
         rotateY += i;
         updateMatrix();
     }
@@ -370,49 +393,55 @@ public final class Player extends GameObject {
         updateMatrix();
     }
     
-    public final void rotX(float i) {
-        rotXn(i* FPS.frameTime / 50);
-    }
-    
     public final void rotLeft() {
+        if(!canLookY()) return;
         rotYn((7f * lookSpeed() * Main.mouseSpeed / 50.0F) * FPS.frameTime / 50f);
     }
 
     public final void rotRight() {
+        if(!canLookY()) return;
         rotYn(-(7f * lookSpeed() * Main.mouseSpeed / 50.0F) * FPS.frameTime / 50f);
     }
     
      public final void rotUp() {
+        if(!canLookX()) return;
         rotXn((7f * lookSpeed() * Main.mouseSpeed / 100.0F) * FPS.frameTime / 50f);
     }
 
     public final void rotDown() {
+        if(!canLookX()) return;
         rotXn(-(7f * lookSpeed() * Main.mouseSpeed / 100.0F) * FPS.frameTime / 50f);
     }
+	
+	public void walk(int right, int forward) {
+		if(!canWalk()) return;
+		
+		if(cam != null && isRotToWalkDir()) {
+			
+			float rotY = cam.currentRotY;
+			float modelRot = 0;
 
-    public final void moveForward() {
-        if(!canWalk()) return;
-        moveZ(character.fly?-350:-150);
-        if(arsenal.currentWeapon() != null) arsenal.currentWeapon().enableShake();
-    }
-
-    public final void moveBackward() {
-        if(!canWalk()) return;
-        moveZ(character.fly?350:150);
-        if(arsenal.currentWeapon() != null) arsenal.currentWeapon().enableShake();
-    }
-
-    public final void moveLeft() {
-        if(!canWalk()) return;
-        character.moveX(character.fly?-350:-150);
-        if(arsenal.currentWeapon() != null) arsenal.currentWeapon().enableShake();
-    }
-
-    public final void moveRight() {
-        if(!canWalk()) return;
-        character.moveX(character.fly?350:150);
-        if(arsenal.currentWeapon() != null) arsenal.currentWeapon().enableShake();
-    }
+			modelRot = ((float) Math.floor((rotY + 22.5) / 45.0)) * 45;
+			if(forward < 0) modelRot += 180;
+			modelRot -= right*90/(forward!=0?(forward>0?2:-2):1);
+			
+			int walkSpeed = (character.fly?350:150);
+			
+			Vector3D dir = new Vector3D((int) (-Math.sin(modelRot * Math.PI / 180) * walkSpeed), 0, (int) (-Math.cos(modelRot * Math.PI / 180) * walkSpeed));
+			
+			if(character.fly || character.onFloor) {
+				rotateY = modelRot;
+				updateMatrix();
+				
+				character.moveFree(dir);
+			}
+		} else {
+			character.moveZ((character.fly?-350:-150) * forward);
+			character.moveX((character.fly?350:150) * right);
+		}
+		
+		if((forward != 0 || right != 0) && arsenal.currentWeapon() != null) arsenal.currentWeapon().enableShake();
+	}
 
     public final Object getHUDInfo() {
         Weapon[] weapons = arsenal.getWeapons();

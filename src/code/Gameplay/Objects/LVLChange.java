@@ -73,8 +73,7 @@ if(!contains(Player.usedPoints,name)) {
 if(lastActivate>=0)lastActivate=GameScreen.time;
     
     gs.newPos=new Vector3D(np.x,np.y,np.z);
-    player.rotateY+=pRot;
-    player.updateMatrix();
+    player.rotYn(pRot);
     gs.loadLevel(lvl, pos, !saveMus, fullMove);
 }
 

@@ -270,7 +270,10 @@ public abstract class RoomObject {
             boolean fullMove=false;
             gs.newPos=pos;
             if(vars.length>=4) gs.newPos=new Vector3D(readVar(vars[1],player,house,gs,this),readVar(vars[2],player,house,gs,this),readVar(vars[3],player,house,gs,this));
-            if(vars.length>=5) {player.rotateY+=(readVar(vars[4],player,house,gs,this));player.updateMatrix();}
+            if(vars.length>=5) {
+				player.rotYn(readVar(vars[4],player,house,gs,this));;
+				player.updateMatrix();
+			}
             if(vars.length>=6) saveMus=readBoolean(vars[5],player,house,gs,this);
             if(vars.length>=7) fullMove=readBoolean(vars[6],player,house,gs,this);
             gs.loadLevel(readVar(vars[0],player,house,gs,this), pos, !saveMus, fullMove);

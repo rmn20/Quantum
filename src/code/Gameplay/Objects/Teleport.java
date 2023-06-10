@@ -61,8 +61,7 @@ if(!contains(Player.usedPoints,name)) {
     give(name,player);
     player.getCharacter().getTransform().addPosition(-pos.x, -pos.y, -pos.z);
     player.getCharacter().getTransform().addPosition(npos);
-    player.rotateY+=pRot;
-    player.updateMatrix();
+    player.rotYn(pRot);
     this.activated=true;
 if(lastActivate>=0)lastActivate=GameScreen.time;}
 

@@ -20,6 +20,7 @@ import code.AI.Player;
 import code.AI.BigZombie;
 import code.AI.NPC;
 import code.AI.Bot;
+import code.AI.TPPose;
 import code.AI.Zombie;
 import code.utils.WeatherGenerator;
 import code.utils.Asset;
@@ -74,6 +75,8 @@ public class LevelLoader {
    }
 
     public static final Scene createScene(int width, int height, String file, Main main, GameScreen gs) {
+        if(!TPPose.inited) TPPose.init();
+		
         String file2 = StringTools.getStringFromResource(file);
         String oldF = file2;
         
@@ -239,7 +242,11 @@ public class LevelLoader {
            
             int[] rgb = GameIni.cutOnInts(skyboxColor, ',', ';');
             
-            skybox = new Skybox((rgb[0] << 16) | (rgb[1] << 8) | rgb[2]);
+			int col;
+			if(rgb.length == 1) col = 0x010101 * rgb[0];
+			else col = (rgb[0] << 16) | (rgb[1] << 8) | rgb[2];
+					
+            skybox = new Skybox(col);
        
         } else if (!skybox2D.equals("NULL")) {
 			
@@ -511,6 +518,10 @@ public class LevelLoader {
             }
             
         }
+		
+		scene.camPose = null;
+		str = getString("SCENE_CAMERA_POSE", lvl, setting);
+		if(str != null) scene.camPose = TPPose.loadPoseExternal(str);
         
         return scene;
    }

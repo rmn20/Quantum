@@ -141,7 +141,7 @@ public final class BigZombie extends Bot {
             
         }
 
-        if (state == 1) moveZ(walkSpeed);
+        if (state == 1) character.moveZ(walkSpeed);
         
 
         if (state == attackState && getFrameInterDiv() % attackTimer == 0 && notCol) 

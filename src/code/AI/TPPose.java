@@ -1,5 +1,6 @@
 package code.AI;
 
+import code.Gameplay.Map.Room;
 import code.Math.Matrix;
 import code.Rendering.Camera;
 import code.Rendering.DirectX7;
@@ -22,11 +23,14 @@ import code.utils.StringTools;
  */
 public class TPPose {
     public static TPPose[] meshPoses;
-    static Matrix mat = new Matrix(), tmp = new Matrix();
     static MultyTexture mt;
+	static Mesh[] models;
+	static Mesh clone;
     static byte[] defDrawModes;
-    static boolean inited;
+    public static boolean inited;
     static int radius, height;
+	
+    static Matrix mat = new Matrix(), tmp = new Matrix();
     
     public String poseName;
     Morphing walk, attack, secondWalk, secondAttack;
@@ -39,17 +43,20 @@ public class TPPose {
     int animationSpeedAttack, animationSpeed;
     
     boolean show3D, show2D, show3DSight, show2DSight, showSecond, showSecondSight;
-    boolean canWalk, canWalkSight, canJump, canJumpSight, canLookX, canLookXSight;
+    boolean canWalk, canWalkSight, canJump, canJumpSight, canLookX, canLookXSight, canLookY, canLookYSight;
     boolean canAttack, canAttackSight;
+	boolean swapStrafeLook, swapStrafeLookSight, rotToWalkDir, rotToWalkDirSight;
+	boolean camAbsolutePos, camAbsolutePosSight, camAbsoluteRot, camAbsoluteRotSight;
     
-    int camX, camY, camZ, camRotX, camXSight, camYSight, camZSight, camRotXSight;
+    int camX, camY, camZ, camRotX, camRotY, camXSight, camYSight, camZSight, camRotXSight, camRotYSight;
     int camSmoothSteps, camSmoothStepsSight;
+	
     boolean rotModelX, rotModelXSight;
     int rotModelY, rotModelYSight;
     
     float lookSpeed, lookSpeedSight;
     
-    static void init() {
+    public static void init() {
         inited = true;
         if(!Main.isExist("/thirdperson.txt")) return;
         
@@ -64,21 +71,19 @@ public class TPPose {
         float scale = set.getFloat("SCALE", 1f);
         
         String tmp = set.get("MODEL");
-        Mesh[] models = null;
         MeshClone mc = null; 
-        Mesh clone = null;
         if(tmp != null) {
-            models = Asset.getMeshes(tmp, scale, scale, scale);
+            models = Room.loadMeshes(tmp, scale, scale, scale);
             mt = new MultyTexture(set.get("TEX"), false);
+			
             mc = new MeshClone(models[0]);
             clone = mc.copy();
+            mc.destroy();
             
             int sizex = clone.maxX() - clone.minX();
             int sizez = clone.maxZ() - clone.minZ();
             radius = (int) (Math.sqrt(sizex*sizex + sizez*sizez) / 2);
             height = clone.maxY() - clone.minY();
-                    
-            mc.destroy();
         }
         
         tmp = set.get("DRAW_MODES");
@@ -87,6 +92,19 @@ public class TPPose {
         for(int i=0; i<meshPoses.length; i++) {
             meshPoses[i] = new TPPose(names[i+1], models, clone, groups[i+1], groups[1]);
         }
+    }
+    
+    public static TPPose loadPoseExternal(String path) {
+        if(!Main.isExist(path)) return null;
+        
+        Object[] obj = GameIni.createGroups(path);
+        
+        String[] names = (String[]) obj[0];
+        GameIni[] groups = (GameIni[]) obj[1];
+        
+        TPPose meshPose = new TPPose(names[0], models, clone, groups[0], groups[0]);
+		
+		return meshPose;
     }
     
     static byte[] loadModes(String tmp) {
@@ -101,7 +119,7 @@ public class TPPose {
         return out;
     }
     
-    public static void applyRenderModes() {
+    public static void applyRenderModes(TPPose[] meshPoses) {
         if(defDrawModes != null && mt != null) applyModes(mt.textures, defDrawModes);
         
         for(int i=0; i<meshPoses.length; i++) {
@@ -124,10 +142,10 @@ public class TPPose {
     public TPPose(String poseName, Mesh[] meshes, Mesh clone, GameIni ini, GameIni def) {
         this.poseName = poseName;
         
-        walk = makeMorphing("WALK", meshes, clone, ini, def, true);
-        attack = makeMorphing("ATTACK", meshes, clone, ini, def, false);
-        walkSight = makeMorphing("WALK_SIGHT", meshes, clone, ini, def, false);
-        attackSight = makeMorphing("ATTACK_SIGHT", meshes, clone, ini, def, false);
+		walk = makeMorphing("WALK", meshes, clone, ini, def, true);
+		attack = makeMorphing("ATTACK", meshes, clone, ini, def, false);
+		walkSight = makeMorphing("WALK_SIGHT", meshes, clone, ini, def, false);
+		attackSight = makeMorphing("ATTACK_SIGHT", meshes, clone, ini, def, false);
         
         String tmp = ini.getDef("SECOND_DRAW_MODES", def.get("SECOND_DRAW_MODES"));
         if(tmp != null) drawModesSecond = loadModes(tmp);
@@ -168,8 +186,23 @@ public class TPPose {
         canLookX = ini.getInt("CAN_LOOK_X", def.getInt("CAN_LOOK_X", 1)) == 1;
         canLookXSight = ini.getInt("CAN_LOOK_X_SIGHT", def.getInt("CAN_LOOK_X_SIGHT", 1)) == 1;
         
+        canLookY = ini.getInt("CAN_LOOK_Y", def.getInt("CAN_LOOK_Y", 1)) == 1;
+        canLookYSight = ini.getInt("CAN_LOOK_Y_SIGHT", def.getInt("CAN_LOOK_Y_SIGHT", 1)) == 1;
+        
         canAttack = ini.getInt("CAN_ATTACK", def.getInt("CAN_ATTACK", 1)) == 1;
         canAttackSight = ini.getInt("CAN_ATTACK_SIGHT", def.getInt("CAN_ATTACK_SIGHT", 1)) == 1;
+        
+        swapStrafeLook = ini.getInt("SWAP_STRAFE_LOOK", def.getInt("SWAP_STRAFE_LOOK", 0)) == 1;
+        swapStrafeLookSight = ini.getInt("SWAP_STRAFE_LOOK_SIGHT", def.getInt("SWAP_STRAFE_LOOK_SIGHT", 0)) == 1;
+        
+        camAbsolutePos = ini.getInt("CAM_ABSOLUTE_POS", def.getInt("CAM_ABSOLUTE_POS", 0)) == 1;
+        camAbsolutePosSight = ini.getInt("CAM_ABSOLUTE_POS_SIGHT", def.getInt("CAM_ABSOLUTE_POS_SIGHT", 0)) == 1;
+        
+        camAbsoluteRot = ini.getInt("CAM_ABSOLUTE_ROT", def.getInt("CAM_ABSOLUTE_ROT", 0)) == 1;
+        camAbsoluteRotSight = ini.getInt("CAM_ABSOLUTE_ROT_SIGHT", def.getInt("CAM_ABSOLUTE_ROT_SIGHT", 0)) == 1;
+        
+        rotToWalkDir = ini.getInt("ROTATE_TO_WALK_DIR", def.getInt("ROTATE_TO_WALK_DIR", 0)) == 1;
+        rotToWalkDirSight = ini.getInt("ROTATE_TO_WALK_DIR_SIGHT", def.getInt("ROTATE_TO_WALK_DIR_SIGHT", 0)) == 1;
         
         lookSpeed = ini.getFloat("LOOK_SPEED", def.getFloat("LOOK_SPEED", 1f));
         lookSpeedSight = ini.getFloat("LOOK_SPEED_SIGHT", def.getFloat("LOOK_SPEED_SIGHT", 0.71f));
@@ -181,6 +214,7 @@ public class TPPose {
         }
         
         camRotX = ini.getInt("CAM_ROT_X", def.getInt("CAM_ROT_X", 0));
+        camRotY = ini.getInt("CAM_ROT_Y", def.getInt("CAM_ROT_Y", 0));
         rotModelY = ini.getInt("MODEL_ROT_Y", def.getInt("MODEL_ROT_Y", 0));
         camSmoothSteps = ini.getInt("CAM_SMOOTH_STEPS", def.getInt("CAM_SMOOTH_STEPS", 3));
         
@@ -191,6 +225,7 @@ public class TPPose {
         }
         
         camRotXSight = ini.getInt("CAM_ROT_X_SIGHT", def.getInt("CAM_ROT_X_SIGHT", 0));
+        camRotYSight = ini.getInt("CAM_ROT_Y_SIGHT", def.getInt("CAM_ROT_Y_SIGHT", 0));
         rotModelYSight = ini.getInt("MODEL_ROT_Y_SIGHT", def.getInt("MODEL_ROT_Y_SIGHT",0));
         camSmoothStepsSight = ini.getInt("CAM_SMOOTH_STEPS_SIGHT", def.getInt("CAM_SMOOTH_STEPS_SIGHT", 2));
         
@@ -228,9 +263,21 @@ public class TPPose {
         return (player.zoom ? canLookXSight : canLookX);
     }
     
+    public boolean canLookY(Player player) {
+        return (player.zoom ? canLookYSight : canLookY);
+    }
+    
     public boolean canAttack(Player player) {
         return (player.zoom ? canAttackSight : canAttack);
     }
+	
+	public boolean isSwapStrafeLook(Player player) {
+		return (player.zoom ? swapStrafeLookSight : swapStrafeLook);
+	}
+	
+	public boolean isRotToWalkDir(Player player) {
+		return (player.zoom ? rotToWalkDirSight : rotToWalkDir);
+	}
     
     public void update(Camera cam, Player player) {
         boolean zoom = player.zoom;
@@ -238,15 +285,18 @@ public class TPPose {
         cam.y = zoom ? camYSight : camY;
         cam.z = zoom ? camZSight : camZ;
         cam.rotX = zoom ? camRotXSight : camRotX;
+        cam.rotY = zoom ? camRotYSight : camRotY;
         cam.smoothSteps = zoom ? camSmoothStepsSight : camSmoothSteps;
+        boolean absolutePos = zoom ? camAbsolutePosSight : camAbsolutePos;
+        boolean absoluteRot = zoom ? camAbsoluteRotSight : camAbsoluteRot;
         
+		if(!canLookX(player)) {
+			player.rotateX = 0;
+			player.updateMatrix();
+		}
         Matrix plmat = player.character.getTransform();
-        if(!canLookX(player) && player.rotateX != 0) {
-            player.rotateX = 0;
-            player.updateMatrix();
-        }
         
-        cam.set(plmat, player.rotateX, player.rotateY);
+        cam.set(plmat, player.rotateX, player.rotateY, absolutePos, absoluteRot);
     }
     
     public void draw(Player player, DirectX7 g3d, int x1, int y1, int x2, int y2) {
@@ -324,7 +374,7 @@ public class TPPose {
     }
 
     private static Morphing makeMorphing(String animName, Mesh[] models, Mesh clone, GameIni ini, GameIni def, boolean createIfNo) {
-        if(models == null) return null;
+        if(models == null || clone == null) return null;
         
         int walkStart = 0, walkEnd = 1;
         String tmp = ini.getDef(animName, def.get(animName));
