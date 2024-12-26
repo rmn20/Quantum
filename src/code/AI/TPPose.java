@@ -12,7 +12,7 @@ import code.Rendering.MultyTexture;
 import code.Rendering.Texture;
 import code.Rendering.Vertex;
 import code.utils.Asset;
-import code.utils.FPS;
+import code.utils.QFPS;
 import code.utils.GameIni;
 import code.utils.Main;
 import code.utils.StringTools;
@@ -331,7 +331,7 @@ public class TPPose {
                         second.setFrameNI(player.attackFrame);
                     }
                     
-                    player.attackFrame += animationSpeedAttack * FPS.frameTime / 50;
+                    player.attackFrame += animationSpeedAttack * QFPS.frameTime / 50;
                 }
             }
             
@@ -340,7 +340,7 @@ public class TPPose {
 
             if(player.character.speed.x != 0 || player.character.speed.z != 0) {
                 Morphing w = walk(zoom);
-                player.walkFrame += animationSpeed * FPS.frameTime / 50;
+                player.walkFrame += animationSpeed * QFPS.frameTime / 50;
                 if(w != null && w.getMaxFrame() != 0) player.walkFrame %= w.getMaxFrame();
             }
 
@@ -364,7 +364,7 @@ public class TPPose {
                 muzzleFlash.project(g3d.getInvCamera(), g3d);
                 g3d.addRenderObject(muzzleFlash, x1, y1, x2, y2);
                 muzzleFlash.sz += radius * 4;
-                player.muzzleFrame -= FPS.frameTime;
+                player.muzzleFrame -= QFPS.frameTime;
             }
         }
     }

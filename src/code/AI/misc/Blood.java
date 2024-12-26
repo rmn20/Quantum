@@ -5,7 +5,7 @@ import code.Math.Vector3D;
 import code.Rendering.DirectX7;
 import code.Rendering.Meshes.Sprite;
 import code.Rendering.Texture;
-import code.utils.FPS;
+import code.utils.QFPS;
 import code.utils.Main;
 
 public class Blood {
@@ -43,7 +43,7 @@ public class Blood {
 
     public final void render(DirectX7 g3d, int sz, Vector3D pos) {
         sprite.getPosition().set(pos.x, pos.y, pos.z);
-        frame += FPS.frameTime / 5;
+        frame += QFPS.frameTime / 5;
         sprite.setScale((int) (frame / 2 * Main.bloodscale));
         sprite.setOffset(0, -sprite.getHeight() / 2 - frame * 4);
         sprite.project(g3d.getInvCamera(), g3d);

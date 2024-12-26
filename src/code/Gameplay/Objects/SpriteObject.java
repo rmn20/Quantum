@@ -7,7 +7,7 @@ import code.Gameplay.Map.House;
 import code.Rendering.DirectX7;
 import code.Rendering.Meshes.Sprite;
 import code.utils.Asset;
-import code.utils.FPS;
+import code.utils.QFPS;
 import code.utils.Main;
 
 public final class SpriteObject extends RoomObject {
@@ -38,7 +38,7 @@ public final class SpriteObject extends RoomObject {
         if(!spr.isVisible(x1, y1, x2, y2)) return;
         
         int oldFrame = intframe;
-        intframe += 100 * FPS.frameTime / 50;
+        intframe += 100 * QFPS.frameTime / 50;
 
         if(flicker != null && !flicker[(oldFrame / 125) % (flicker.length)]) return;
 

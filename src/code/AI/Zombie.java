@@ -10,7 +10,7 @@ import code.Rendering.DirectX7;
 import code.Rendering.Meshes.BoundingBox;
 import code.Rendering.Meshes.MeshImage;
 import code.Rendering.MultyTexture;
-import code.utils.FPS;
+import code.utils.QFPS;
 import java.util.Vector;
 
 public final class Zombie extends Bot {
@@ -101,7 +101,7 @@ public final class Zombie extends Bot {
         if (Math.abs(getFrameInterDiv()) % reactTimer == 1) {
             House house = scene.getHouse();
             Vector objects = house.getObjects();
-            if (enemy != null && enemy.isDead() || enemy != null && FPS.frames == 0) {
+            if (enemy != null && enemy.isDead() || enemy != null && QFPS.frames == 0) {
                 enemy = null;
             }
 

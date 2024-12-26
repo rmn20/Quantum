@@ -46,7 +46,7 @@ public final class DeveloperMenu extends Selectable {
       
       items[i] = "Debug: "+debugMode;i++;
       items[i] = "Open all levels";i++;
-      items[i] = "Show fps: "+showFps;i++;
+      items[i] = "Show QFPS: "+showFps;i++;
       items[i] = "Show RAM: "+showRam;i++;
       items[i] = "Show room ID: "+showRoomID;i++;
       items[i] = "Draw portals: "+drawPortals;i++;

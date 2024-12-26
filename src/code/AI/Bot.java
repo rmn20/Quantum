@@ -15,7 +15,7 @@ import code.Rendering.Meshes.Mesh;
 import code.Rendering.Meshes.Polygon4V;
 import code.Rendering.RenderObject;
 import code.Rendering.Vertex;
-import code.utils.FPS;
+import code.utils.QFPS;
 import code.utils.Main;
 import java.util.Vector;
 
@@ -58,7 +58,7 @@ public abstract class Bot extends GameObject {
     protected final void renderBlood(DirectX7 g3d, int sz) {
         if(blood.isBleeding()) {
             blood.render(g3d, 3250, bloodPos);
-            bloodPos.add(-bloodSpeed.x * FPS.frameTime / 50, -bloodSpeed.y * FPS.frameTime / 50, -bloodSpeed.z * FPS.frameTime / 50);
+            bloodPos.add(-bloodSpeed.x * QFPS.frameTime / 50, -bloodSpeed.y * QFPS.frameTime / 50, -bloodSpeed.z * QFPS.frameTime / 50);
         }
 
     }

@@ -1,6 +1,6 @@
 package code.Gameplay;
 
-import code.utils.FPS;
+import code.utils.QFPS;
 import code.utils.StringTools;
 import code.utils.IniFile;
 import code.AI.*;
@@ -328,8 +328,8 @@ public final class GameScreen extends MyCanvas {
             if(player.canLookX()) player.rotXn(-yRot);
             
             if(wg != null) {
-                if(player.canLookY()) wg.moveY((int) -yRot, FPS.frameTime);
-                if(player.canLookX()) wg.moveX2((int) -xRot, FPS.frameTime);
+                if(player.canLookY()) wg.moveY((int) -yRot, QFPS.frameTime);
+                if(player.canLookX()) wg.moveX2((int) -xRot, QFPS.frameTime);
             }
         }
 
@@ -344,7 +344,7 @@ public final class GameScreen extends MyCanvas {
         player.setCamera(g3d);
         renderFrom = player.getRenderPart(scene);
 
-        if(wg != null) wg.update(FPS.frameTime, -(g3d.camera.m12 * 90 / Matrix.FP), player.character.underRoof);
+        if(wg != null) wg.update(QFPS.frameTime, -(g3d.camera.m12 * 90 / Matrix.FP), player.character.underRoof);
         /*if(camFollow != null) {
             if(botFollow != null && botFollow.isDead()) botFollow = null;
             if(botFollow == null) {
@@ -390,7 +390,7 @@ public final class GameScreen extends MyCanvas {
             
             if((player.zoom && player.fov != player.zoomFov) || (player.fov != player.stdFov && !player.zoom)) {
                 int zoomStep = player.zoom? player.zoomFov - player.stdFov : player.stdFov - player.zoomFov;
-                player.fov += (FPS.currentTime - player.lastZoomAction) * zoomStep / 150;
+                player.fov += (QFPS.currentTime - player.lastZoomAction) * zoomStep / 150;
                 
                 int max = Math.max(player.zoomFov, player.stdFov);
                 int min = Math.min(player.zoomFov, player.stdFov);
@@ -400,7 +400,7 @@ public final class GameScreen extends MyCanvas {
 
                 scene.getG3D().updateFov((int) player.fov);
             }
-            player.lastZoomAction = FPS.currentTime;
+            player.lastZoomAction = QFPS.currentTime;
 
             boolean lighting = false;
             if(wg != null && wg.lighting) lighting = (System.currentTimeMillis() - wg.lastLighting) < 135;
@@ -429,7 +429,7 @@ public final class GameScreen extends MyCanvas {
             } else scene.render(g, renderFrom, player);
 
             g3d.render();
-            g3d.shootIntensity -= FPS.frameTime;
+            g3d.shootIntensity -= QFPS.frameTime;
             if(g3d.shootIntensity < 0) g3d.shootIntensity = 0;
             
             if(lighting && !player.character.underRoof && wg != null) {
@@ -517,7 +517,7 @@ public final class GameScreen extends MyCanvas {
                 lowAmmo = true; changed = true; redrawInfo = true;
             }
             
-            if(FPS.frames == 0 && DeveloperMenu.debugMode) {
+            if(QFPS.frames == 0 && DeveloperMenu.debugMode) {
                 usmem = Runtime.getRuntime().totalMemory() / 1024 - Runtime.getRuntime().freeMemory() / 1024;
             }
 
@@ -605,7 +605,7 @@ public final class GameScreen extends MyCanvas {
                 int moneyWidth = 0;
                 if(imgMoney != null) moneyWidth = imgMoney.getWidth();
                 
-                if(DeveloperMenu.showFps) font.drawString(g, ":" + FPS.fps + ":", 44 + moneyWidth, iconY, 6);
+                if(DeveloperMenu.showFps) font.drawString(g, ":" + QFPS.fps + ":", 44 + moneyWidth, iconY, 6);
                 //this.font.drawString(g, ":" + this.player.getCharacter().getTransform().getRotZ() + ":", 74 + this.imgMoney.getWidth(), (GameScreen.height - icohei) / 4, 6);
                 
                 if(DeveloperMenu.showRoomID) {
@@ -630,7 +630,7 @@ public final class GameScreen extends MyCanvas {
                 if(customMessagePause) {
                     try {
                         Thread.sleep(customMessageEndTime);
-                        FPS.miniReset();
+                        QFPS.miniReset();
                     } catch (Exception exc) {
                         exc.printStackTrace();
                     }
@@ -650,7 +650,7 @@ public final class GameScreen extends MyCanvas {
         
         run(begintime);
         finishDraw = true;
-        FPS.frame();
+        QFPS.frame();
         repaint();
         //this.serviceRepaints();
     }
@@ -745,7 +745,7 @@ public final class GameScreen extends MyCanvas {
         keys.keyPressed(key);
 
         if(paused) {
-            FPS.miniReset();
+            QFPS.miniReset();
         } else if(GameKeyboard.isSightKey(key)) {
             player.zoom = !player.zoom;
             player.lastZoomAction = System.currentTimeMillis();
@@ -800,14 +800,14 @@ public final class GameScreen extends MyCanvas {
 
         if(run) {
             scene.activateObject(false, player, height / 2 - scene.getG3D().getHeight() / 2, this);
-            time += FPS.frameTime;
+            time += QFPS.frameTime;
             
             try {
                 code.Gameplay.Map.Character playeChar = player.getCharacter();
                 DirectX7 g3d = scene.getG3D();
                 
                 if(!playeChar.onFloor && wg != null) {
-                    wg.moveY2(playeChar.getSpeed().y, FPS.frameTime);
+                    wg.moveY2(playeChar.getSpeed().y, QFPS.frameTime);
                 }
                 
                 if(!player.isDead()) {
@@ -816,35 +816,35 @@ public final class GameScreen extends MyCanvas {
                     if(keys.isWalkForward(player.zoom)) {
                         forward += 1;
                         if(player.canWalk() &&  wg != null && !playeChar.underRoof) {
-                            wg.move(5, FPS.frameTime, -(g3d.camera.m12 * 90 / Matrix.FP));
+                            wg.move(5, QFPS.frameTime, -(g3d.camera.m12 * 90 / Matrix.FP));
                         }
                     }
 
                     if(keys.isWalkBackward(player.zoom)) {
                         forward -= 1;
                         if(player.canWalk() &&  wg != null && !playeChar.underRoof) {
-                            wg.moveB(5, FPS.frameTime, -(g3d.camera.m12 * 90 / Matrix.FP));
+                            wg.moveB(5, QFPS.frameTime, -(g3d.camera.m12 * 90 / Matrix.FP));
                         }
                     }
 
                     if((player.isSwapStrafeLook() && keys.isWalkLeft(player.zoom)) || (!player.isSwapStrafeLook() && keys.isLookLeft(player.zoom))) {
                         player.rotLeft();
-                        if(player.canLookY() && wg != null) wg.moveX2((!player.zoom ? 5 : 1) * Main.mouseSpeed / 50, FPS.frameTime);
+                        if(player.canLookY() && wg != null) wg.moveX2((!player.zoom ? 5 : 1) * Main.mouseSpeed / 50, QFPS.frameTime);
                     }
 
                     if((player.isSwapStrafeLook() && keys.isWalkRight(player.zoom)) || (!player.isSwapStrafeLook() && keys.isLookRight(player.zoom))) {
                         player.rotRight();
-                        if(player.canLookY() && wg != null) wg.moveX2(-(!player.zoom ? 5 : 1) * Main.mouseSpeed / 50, FPS.frameTime);
+                        if(player.canLookY() && wg != null) wg.moveX2(-(!player.zoom ? 5 : 1) * Main.mouseSpeed / 50, QFPS.frameTime);
                     }
 
                     if((!player.isSwapStrafeLook() && keys.isWalkLeft(player.zoom)) || (player.isSwapStrafeLook() && keys.isLookLeft(player.zoom))) {
                         right -= 1;
-                        if(player.canWalk() && wg != null) wg.moveX(5, FPS.frameTime);
+                        if(player.canWalk() && wg != null) wg.moveX(5, QFPS.frameTime);
                     }
 
                     if((!player.isSwapStrafeLook() && keys.isWalkRight(player.zoom)) || (player.isSwapStrafeLook() && keys.isLookRight(player.zoom))) {
                         right += 1;
-                        if(player.canWalk() && wg != null) wg.moveX(-5, FPS.frameTime);
+                        if(player.canWalk() && wg != null) wg.moveX(-5, QFPS.frameTime);
                     }
 					
 					if(right != 0 || forward != 0) player.walk(right, forward);
@@ -862,12 +862,12 @@ public final class GameScreen extends MyCanvas {
 
                     if(keys.isLookDown(player.zoom)) {
                         player.rotDown();
-                        if(player.canLookX() && wg != null) wg.moveY(-(!player.zoom ? 4 : 3) * Main.mouseSpeed / 50, FPS.frameTime);
+                        if(player.canLookX() && wg != null) wg.moveY(-(!player.zoom ? 4 : 3) * Main.mouseSpeed / 50, QFPS.frameTime);
                     }
 
                     if(keys.isLookUp(player.zoom)) {
                         player.rotUp();
-                        if(player.canLookX() && wg != null) wg.moveY((!player.zoom ? 4 : 3) * Main.mouseSpeed / 50, FPS.frameTime);
+                        if(player.canLookX() && wg != null) wg.moveY((!player.zoom ? 4 : 3) * Main.mouseSpeed / 50, QFPS.frameTime);
                     }
 
                     if(GameKeyboard.isJumpKey(key)) player.jump();
@@ -886,7 +886,7 @@ public final class GameScreen extends MyCanvas {
                         if(dirY != 0) {
                             int rotSpeed = dirY * -(!player.zoom ? 2 : 1) * Main.mouseSpeed / 50 / height;
                             player.rotXn(rotSpeed);
-                            if(wg != null) wg.moveY(rotSpeed, FPS.frameTime);
+                            if(wg != null) wg.moveY(rotSpeed, QFPS.frameTime);
                             
                             if(dirY == 1) dirY = 0;
                             dirY = dirY / 2;
@@ -895,7 +895,7 @@ public final class GameScreen extends MyCanvas {
                         if(dirX != 0) {
                             int rotSpeed = dirX * -(!player.zoom ? 4 : 2) * Main.mouseSpeed / 50 / height;
                             player.rotYn(rotSpeed);
-                            if(wg != null) wg.moveX2(rotSpeed, FPS.frameTime);
+                            if(wg != null) wg.moveX2(rotSpeed, QFPS.frameTime);
                             
                             if(dirX == 1) dirX = 0;
                             dirX = dirX / 2;
@@ -927,12 +927,12 @@ public final class GameScreen extends MyCanvas {
                 }
 
                 if(msToEnd > 0) {
-                    msToEnd += FPS.frameTime;
+                    msToEnd += QFPS.frameTime;
                     if(scene.exitWithoutWait) msToEnd = 3001;
                 }
 
                 if(msToExit > 0) {
-                    msToExit += FPS.frameTime;
+                    msToExit += QFPS.frameTime;
                     if(scene.exitWithoutWait) msToExit = 3001;
                 }
 
@@ -965,7 +965,7 @@ public final class GameScreen extends MyCanvas {
                 long sleepTime = 15 - (System.currentTimeMillis() - frameStart);
                 if(sleepTime < 1L) sleepTime = 1L;
                 
-                if(Main.frameskip || FPS.frameTime < 15) Thread.sleep(sleepTime);
+                if(Main.frameskip || QFPS.frameTime < 15) Thread.sleep(sleepTime);
             } catch (Exception exc) {
                 exc.printStackTrace();
             }
@@ -976,7 +976,7 @@ public final class GameScreen extends MyCanvas {
         changed = true;
         run = true;
 
-        FPS.miniReset();
+        QFPS.reset();
     }
 
     public void startMus(long t) {
@@ -986,7 +986,7 @@ public final class GameScreen extends MyCanvas {
                 Main.musicPlayer.start(t);
             }
 
-            FPS.miniReset();
+            QFPS.miniReset();
         } catch (Exception exc) {
             exc.printStackTrace();
         }
@@ -1010,7 +1010,7 @@ public final class GameScreen extends MyCanvas {
         try {
             if(Main.isMusic && Main.music != 0) {
                 if(!Main.musicPlayer.hasPlayer()) Main.musicPlayer.loadFile(mus);
-                FPS.miniReset();
+                QFPS.miniReset();
             }
         } catch (Exception exc) {
             exc.printStackTrace();
@@ -1025,7 +1025,7 @@ public final class GameScreen extends MyCanvas {
     }
 
     public void showDialog(String str) {
-        FPS.miniReset();
+        QFPS.miniReset();
         keys.reset();
         stop();
         run = false;
@@ -1034,14 +1034,14 @@ public final class GameScreen extends MyCanvas {
     }
 
     public final void openShop() {
-        FPS.miniReset();
+        QFPS.miniReset();
         stop();
         run = false;
         Main.setCurrent(new Shop(main, this, player));
     }
 
     public final void openInventory() {
-        FPS.miniReset();
+        QFPS.miniReset();
         stop();
         run = false;
         Main.setCurrent(new InventoryScreen(main, this, player));
@@ -1122,7 +1122,7 @@ public final class GameScreen extends MyCanvas {
         }
         
         stop();
-        FPS.miniReset();
+        QFPS.miniReset();
         Main.setCurrent(new PauseScreen(main, this, scene.getG3D().getDisplay(), musTime));
     }
     

@@ -546,7 +546,7 @@ public class LightMapper implements Runnable {
     }
     
     private static final int mul(int mul, int bri) {
-        return (bri*mul+1)>>8;
+        return Math.min(255, (bri*mul+1)>>8);
     }
     
     private static void calculateLights(House house, Room room, Mesh[] meshes) {
@@ -623,7 +623,7 @@ public class LightMapper implements Runnable {
     }
     
     private final static int add(int add, int bri) {
-        return add + bri;
+        return Math.min(255, add + bri);
     }
     
     private static void calculateGI(House house, Room room, Mesh[] meshes, Mesh[] oldMeshes, Mesh reflection) {
@@ -1548,15 +1548,15 @@ public class LightMapper implements Runnable {
           for(int x=0;x<objs.length;x++) {
               if(objs[x] instanceof LightedPolygon3V) {
                   LightedPolygon3V pol=(LightedPolygon3V)objs[x];
-                  dos.writeByte(pol.la - 128);
-                  dos.writeByte(pol.lb - 128);
-                  dos.writeByte(pol.lc - 128);
+                  dos.writeByte(((byte)pol.la) - 128);
+                  dos.writeByte(((byte)pol.lb) - 128);
+                  dos.writeByte(((byte)pol.lc) - 128);
               } else if(objs[x] instanceof LightedPolygon4V) {
                   LightedPolygon4V pol=(LightedPolygon4V)objs[x];
-                  dos.writeByte(pol.la - 128);
-                  dos.writeByte(pol.lb - 128);
-                  dos.writeByte(pol.lc - 128);
-                  dos.writeByte(pol.ld - 128);
+                  dos.writeByte(((byte)pol.la) - 128);
+                  dos.writeByte(((byte)pol.lb) - 128);
+                  dos.writeByte(((byte)pol.lc) - 128);
+                  dos.writeByte(((byte)pol.ld) - 128);
               } else if(objs[x] instanceof ColorLightedPolygon3V) {
                   ColorLightedPolygon3V pol=(ColorLightedPolygon3V)objs[x];
                   boolean colored=!(
@@ -1564,17 +1564,17 @@ public class LightMapper implements Runnable {
                           pol.br==pol.bg && pol.bg==pol.bb &&
                           pol.cr==pol.cg && pol.cg==pol.cb);
                   
-                  dos.writeByte(pol.ar - 128);
-                  dos.writeByte(pol.br - 128);
-                  dos.writeByte(pol.cr - 128);
+                  dos.writeByte(((byte)pol.ar) - 128);
+                  dos.writeByte(((byte)pol.br) - 128);
+                  dos.writeByte(((byte)pol.cr) - 128);
                   dos.writeBoolean(colored);
                   if(colored) {
-                      dos.writeByte(pol.ag - 128);
-                      dos.writeByte(pol.ab - 128);
-                      dos.writeByte(pol.bg - 128);
-                      dos.writeByte(pol.bb - 128);
-                      dos.writeByte(pol.cg - 128);
-                      dos.writeByte(pol.cb - 128);
+                      dos.writeByte(((byte)pol.ag) - 128);
+                      dos.writeByte(((byte)pol.ab) - 128);
+                      dos.writeByte(((byte)pol.bg) - 128);
+                      dos.writeByte(((byte)pol.bb) - 128);
+                      dos.writeByte(((byte)pol.cg) - 128);
+                      dos.writeByte(((byte)pol.cb) - 128);
                   }
               } else if(objs[x] instanceof ColorLightedPolygon4V) {
                   ColorLightedPolygon4V pol=(ColorLightedPolygon4V)objs[x];
@@ -1584,20 +1584,20 @@ public class LightMapper implements Runnable {
                           pol.cr==pol.cg && pol.cg==pol.cb &&
                           pol.dr==pol.dg && pol.dg==pol.db);
                   
-                  dos.writeByte(pol.ar - 128);
-                  dos.writeByte(pol.br - 128);
-                  dos.writeByte(pol.cr - 128);
-                  dos.writeByte(pol.dr - 128);
+                  dos.writeByte(((byte)pol.ar) - 128);
+                  dos.writeByte(((byte)pol.br) - 128);
+                  dos.writeByte(((byte)pol.cr) - 128);
+                  dos.writeByte(((byte)pol.dr) - 128);
                   dos.writeBoolean(colored);
                   if(colored) {
-                      dos.writeByte(pol.ag - 128);
-                      dos.writeByte(pol.ab - 128);
-                      dos.writeByte(pol.bg - 128);
-                      dos.writeByte(pol.bb - 128);
-                      dos.writeByte(pol.cg - 128);
-                      dos.writeByte(pol.cb - 128);
-                      dos.writeByte(pol.dg - 128);
-                      dos.writeByte(pol.db - 128);
+                      dos.writeByte(((byte)pol.ag) - 128);
+                      dos.writeByte(((byte)pol.ab) - 128);
+                      dos.writeByte(((byte)pol.bg) - 128);
+                      dos.writeByte(((byte)pol.bb) - 128);
+                      dos.writeByte(((byte)pol.cg) - 128);
+                      dos.writeByte(((byte)pol.cb) - 128);
+                      dos.writeByte(((byte)pol.dg) - 128);
+                      dos.writeByte(((byte)pol.db) - 128);
                   }
               }
           }

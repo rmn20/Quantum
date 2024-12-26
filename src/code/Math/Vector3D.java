@@ -1,6 +1,6 @@
 package code.Math;
 
-import code.utils.FPS;
+import code.utils.QFPS;
 
 public final class Vector3D {
 
@@ -113,9 +113,9 @@ public final class Vector3D {
     }
 
     public void interpolation(Vector3D v, int s) {
-        x += (v.x - x) * 50 / s / (FPS.frameTime==0?1:FPS.frameTime);
-        y += (v.y - y) * 50 / s / (FPS.frameTime==0?1:FPS.frameTime);
-        z += (v.z - z) * 50 / s / (FPS.frameTime==0?1:FPS.frameTime);
+        x += (v.x - x) * 50 / s / (QFPS.frameTime==0?1:QFPS.frameTime);
+        y += (v.y - y) * 50 / s / (QFPS.frameTime==0?1:QFPS.frameTime);
+        z += (v.z - z) * 50 / s / (QFPS.frameTime==0?1:QFPS.frameTime);
     }
 
     public int dot(Vector3D v) {

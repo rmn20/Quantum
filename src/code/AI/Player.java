@@ -15,7 +15,7 @@ import code.Math.Vector3D;
 import code.Rendering.Camera;
 import code.Rendering.DirectX7;
 import code.utils.Asset;
-import code.utils.FPS;
+import code.utils.QFPS;
 import code.utils.Main;
 import code.utils.WeaponCreator;
 import java.util.Vector;
@@ -395,22 +395,22 @@ public final class Player extends GameObject {
     
     public final void rotLeft() {
         if(!canLookY()) return;
-        rotYn((7f * lookSpeed() * Main.mouseSpeed / 50.0F) * FPS.frameTime / 50f);
+        rotYn((7f * lookSpeed() * Main.mouseSpeed / 50.0F) * QFPS.frameTime / 50f);
     }
 
     public final void rotRight() {
         if(!canLookY()) return;
-        rotYn(-(7f * lookSpeed() * Main.mouseSpeed / 50.0F) * FPS.frameTime / 50f);
+        rotYn(-(7f * lookSpeed() * Main.mouseSpeed / 50.0F) * QFPS.frameTime / 50f);
     }
     
      public final void rotUp() {
         if(!canLookX()) return;
-        rotXn((7f * lookSpeed() * Main.mouseSpeed / 100.0F) * FPS.frameTime / 50f);
+        rotXn((7f * lookSpeed() * Main.mouseSpeed / 100.0F) * QFPS.frameTime / 50f);
     }
 
     public final void rotDown() {
         if(!canLookX()) return;
-        rotXn(-(7f * lookSpeed() * Main.mouseSpeed / 100.0F) * FPS.frameTime / 50f);
+        rotXn(-(7f * lookSpeed() * Main.mouseSpeed / 100.0F) * QFPS.frameTime / 50f);
     }
 	
 	public void walk(int right, int forward) {

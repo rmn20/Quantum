@@ -16,7 +16,7 @@ import code.Math.Vector3D;
 import code.Gameplay.Respawn;
 import code.HUD.DeveloperMenu;
 import code.Rendering.Meshes.Sprite;
-import code.utils.FPS;
+import code.utils.QFPS;
 import code.utils.Main;
 import java.util.Random;
 import java.util.Vector;
@@ -443,7 +443,7 @@ house.addObject((RoomObject)bot);
                     // update + gravity
                     Vector3D speed = obj.getCharacter().getSpeed();
                     if (obj.getPart() != -1 && obj.getCharacter().isCollider() && !(obj instanceof Player && DeveloperMenu.debugMode && obj.character.fly)) {
-                        speed.y += gravity * FPS.frameTime / 50;
+                        speed.y += gravity * QFPS.frameTime / 50;
                     }
                     obj.update(this, player);
                 } else if (objects.elementAt(i) instanceof NPCSpawner) {

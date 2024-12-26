@@ -5,7 +5,7 @@ import code.Math.MathUtils2;
 import code.Math.Matrix;
 import code.Rendering.RenderObject;
 import code.Math.Vector3D;
-import code.utils.FPS;
+import code.utils.QFPS;
 
 public final class Character {
    private Matrix matrix =new Matrix();
@@ -160,9 +160,9 @@ public static void collisionTest(Character body1, Character body2) {
     }
     
    private static void move(Matrix matrix, int dx, int dy, int dz) {
-      matrix.m03 += dx * FPS.frameTime / 50;
-      matrix.m13 += dy * FPS.frameTime / 50;
-      matrix.m23 += dz * FPS.frameTime / 50;
+      matrix.m03 += dx * QFPS.frameTime / 50;
+      matrix.m13 += dy * QFPS.frameTime / 50;
+      matrix.m23 += dz * QFPS.frameTime / 50;
    }
    private static void move2(Matrix matrix, int dx, int dy, int dz) {
       matrix.m03 += dx;
@@ -195,12 +195,12 @@ public static void collisionTest(Character body1, Character body2) {
    }
    
     public final void drop(int angle) {
-        matrix.setRotX(angle * FPS.frameTime / 50);
+        matrix.setRotX(angle * QFPS.frameTime / 50);
         this.transform.mul(matrix);
     }
     
     public final void dropSide(int angle) {
-        matrix.setRotZ(angle * FPS.frameTime / 50);
+        matrix.setRotZ(angle * QFPS.frameTime / 50);
         this.transform.mul(matrix);
     }
 
@@ -226,9 +226,9 @@ public static void collisionTest(Character body1, Character body2) {
 
     public final void update() {
         if(colz || fly) {
-            tmpVec.set(speed.x * FPS.frameTime / 50 + speedNoFriction.x, 
-                    speed.y * FPS.frameTime / 50 + speedNoFriction.y, 
-                    speed.z * FPS.frameTime / 50 + speedNoFriction.z);
+            tmpVec.set(speed.x * QFPS.frameTime / 50 + speedNoFriction.x, 
+                    speed.y * QFPS.frameTime / 50 + speedNoFriction.y, 
+                    speed.z * QFPS.frameTime / 50 + speedNoFriction.z);
 
             speedNoFriction.set(0, 0, 0);
 

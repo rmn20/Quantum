@@ -18,7 +18,7 @@ import code.Rendering.Meshes.Polygon3V;
 import code.Rendering.Meshes.Polygon4V;
 import code.Rendering.RenderObject;
 import code.utils.Asset;
-import code.utils.FPS;
+import code.utils.QFPS;
 import code.utils.ImageResize;
 import code.utils.Main;
 import java.util.Vector;
@@ -275,30 +275,30 @@ public final class Weapon {
         
         boolean fire = (frame == 0);
         if (isFire() && canShoot) {
-            frame += 1.0F * FPS.frameTime / 50f;
+            frame += 1.0F * QFPS.frameTime / 50f;
             if (frame > shotTime) frame = (short) (-delay);
         }
 
         if (frame < -1) {
-            frame += 1.0F * FPS.frameTime / 16.6f; //wrong fps fix
+            frame += 1.0F * QFPS.frameTime / 16.6f; //wrong QFPS fix
             if (frame > -1) frame = -1;
             
         }
 
         if (isFire() && canShoot) {
-            dx = (short) (dx + (Math.abs(widthShift) << 1) * FPS.frameTime / anima * attackIntensity);
-            dy = (short) (dy + (Math.abs(heightShift) << 1) * FPS.frameTime / anima * attackIntensity);
+            dx = (short) (dx + (Math.abs(widthShift) << 1) * QFPS.frameTime / anima * attackIntensity);
+            dy = (short) (dy + (Math.abs(heightShift) << 1) * QFPS.frameTime / anima * attackIntensity);
         }
 
         if (shake && frame >= -1) {
             if (anima != 17) {
-                dx += (byte) (widthShift * FPS.frameTime / anima);
-                dy += (byte) (heightShift * FPS.frameTime / anima);
+                dx += (byte) (widthShift * QFPS.frameTime / anima);
+                dy += (byte) (heightShift * QFPS.frameTime / anima);
             }
             shake = false;
         } else {
-            dx = (short) (dx + -dx * FPS.frameTime / anima / 6);
-            dy = (short) (dy + -dy * FPS.frameTime / anima / 6);
+            dx = (short) (dx + -dx * QFPS.frameTime / anima / 6);
+            dy = (short) (dy + -dy * QFPS.frameTime / anima / 6);
         }
 
         if (dy <= 0) {

@@ -8,7 +8,7 @@ import code.Gameplay.Map.RoomObject;
 import code.Gameplay.Map.Scene;
 import code.Math.Vector3D;
 import code.utils.Asset;
-import code.utils.FPS;
+import code.utils.QFPS;
 import code.utils.Main;
 
 public abstract class GameObject extends RoomObject {
@@ -46,7 +46,7 @@ public abstract class GameObject extends RoomObject {
 
                 speed.x = (int) ((float) (speed.x / friction));
                 speed.y = (int) ((float) (speed.y / (friction/**
-                         * 200.0F/(float)fps.getFps()
+                         * 200.0F/(float)QFPS.getFps()
                          */
                         )));
                 speed.z = (int) ((float) (speed.z / friction));
@@ -54,7 +54,7 @@ public abstract class GameObject extends RoomObject {
         }
 
         frame++;
-        frame100 += 100 * FPS.frameTime / 50;
+        frame100 += 100 * QFPS.frameTime / 50;
     }
 
     // true - если персонаж убит
@@ -90,7 +90,7 @@ public abstract class GameObject extends RoomObject {
     }
 
     public boolean isTimeToRenew() {
-        return isDead() && frame > 25 * 50 / (FPS.frameTime==0?1:FPS.frameTime);
+        return isDead() && frame > 25 * 50 / (QFPS.frameTime==0?1:QFPS.frameTime);
     }
 
     public final void setHp(int hp) {

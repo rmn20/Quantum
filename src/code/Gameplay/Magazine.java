@@ -2,7 +2,7 @@ package code.Gameplay;
 
 // Магазин (для патронов)
 
-import code.utils.FPS;
+import code.utils.QFPS;
 
 
 public final class Magazine {
@@ -42,7 +42,7 @@ public final class Magazine {
         if (frame >= 0) frame++;
         
 
-        if (frame > reloadTime * 50 / (FPS.frameTime==0?1:FPS.frameTime)) {
+        if (frame > reloadTime * 50 / (QFPS.frameTime==0?1:QFPS.frameTime)) {
             frame = -1;
             recount();
         }
@@ -61,7 +61,7 @@ public final class Magazine {
 
     // ? Процент перезарядки
     final int percentage() {
-        return 100 * frame * FPS.frameTime / 50 / reloadTime;
+        return 100 * frame * QFPS.frameTime / 50 / reloadTime;
     }
 
     // Пересчет кол-ва патронов в магазине

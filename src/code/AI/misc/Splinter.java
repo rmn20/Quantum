@@ -3,7 +3,7 @@ package code.AI.misc;
 import code.Rendering.DirectX7;
 import code.Rendering.Meshes.Sprite;
 import code.Rendering.Texture;
-import code.utils.FPS;
+import code.utils.QFPS;
 import code.utils.Main;
 
 public class Splinter {
@@ -44,7 +44,7 @@ public class Splinter {
     }
 
     public final void render(DirectX7 g3d, int sz) {
-        frame += FPS.frameTime / 5;
+        frame += QFPS.frameTime / 5;
         project(g3d);
         g3d.addRenderObject( sprite);
         sprite.sz += 1500;

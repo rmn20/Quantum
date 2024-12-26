@@ -5,7 +5,7 @@ import code.HUD.Base.ItemList;
 import code.HUD.Base.GameKeyboard;
 import code.HUD.Base.TextView;
 import code.Rendering.DirectX7;
-import code.utils.FPS;
+import code.utils.QFPS;
 import code.utils.GameIni;
 import code.utils.ImageResize;
 import code.utils.Main;
@@ -423,9 +423,9 @@ public class DialogScreen extends MyCanvas {
                 answersGoIndex = null;
                 dialog = null;
 
-                FPS.miniReset();
+                QFPS.miniReset();
                 Main.setCurrent(gs);
-                FPS.miniReset();
+                QFPS.miniReset();
                 return;
             }
         }
