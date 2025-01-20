@@ -25,6 +25,7 @@ public final class Player extends GameObject {
     public static String sndJump = null;
     public static boolean arcadeJumpPhysics = false;
     public static boolean fallDamage = true;
+	public static int walkSpeed = 150;
     
     public static Vector toAddOnStart = new Vector();
     public static Vector usedPoints = new Vector();
@@ -275,6 +276,12 @@ public final class Player extends GameObject {
         return tppose.lookSpeed(this);
     }
     
+    public int walkSpeed() {
+        TPPose tppose = currentPose();
+        if(tppose == null) return walkSpeed;
+        return tppose.walkSpeed(this);
+    }
+    
     public void setCamera(DirectX7 g3d) {
         Matrix playerMat = character.getTransform();
         int playerHeight = getEyesHeight();
@@ -415,17 +422,14 @@ public final class Player extends GameObject {
 	
 	public void walk(int right, int forward) {
 		if(!canWalk()) return;
+			
+		int walkSpeed = walkSpeed();
+		if(character.fly) walkSpeed = walkSpeed * 7 / 3;
 		
 		if(cam != null && isRotToWalkDir()) {
-			
-			float rotY = cam.currentRotY;
-			float modelRot = 0;
-
-			modelRot = ((float) Math.floor((rotY + 22.5) / 45.0)) * 45;
+			float modelRot = cam.currentRotY;
 			if(forward < 0) modelRot += 180;
 			modelRot -= right*90/(forward!=0?(forward>0?2:-2):1);
-			
-			int walkSpeed = (character.fly?350:150);
 			
 			Vector3D dir = new Vector3D((int) (-Math.sin(modelRot * Math.PI / 180) * walkSpeed), 0, (int) (-Math.cos(modelRot * Math.PI / 180) * walkSpeed));
 			
@@ -436,8 +440,8 @@ public final class Player extends GameObject {
 				character.moveFree(dir);
 			}
 		} else {
-			character.moveZ((character.fly?-350:-150) * forward);
-			character.moveX((character.fly?350:150) * right);
+			character.moveZ(-walkSpeed * forward);
+			character.moveX(walkSpeed * right);
 		}
 		
 		if((forward != 0 || right != 0) && arsenal.currentWeapon() != null) arsenal.currentWeapon().enableShake();

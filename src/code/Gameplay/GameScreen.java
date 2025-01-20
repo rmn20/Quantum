@@ -51,7 +51,7 @@ public final class GameScreen extends MyCanvas {
     public Vector3D newPos;
     public final int levelNumber; // РќРѕРјРµСЂ СѓСЂРѕРІРЅСЏ
     private final Object hudInfo; //
-    public int[] shopItems;
+    public int[] shopItems = null;
     private GameKeyboard keys;
     private int key; // РљРѕРґ РЅР°Р¶Р°С‚РѕР№ РєР»Р°РІРёС€Рё
     private int pointerX, pointerY; // y С‚РѕС‡РєРё РЅР°Р¶Р°С‚РёСЏ РЅР° СЌРєСЂР°РЅ
@@ -86,7 +86,6 @@ public final class GameScreen extends MyCanvas {
         this.main = main;
         this.hudInfo = hudInfo;
         font = Main.getFont();
-        shopItems = Shop.allitems;
 
         width = getWidth();
         height = getHeight();
@@ -775,11 +774,7 @@ public final class GameScreen extends MyCanvas {
             if(Main.playerHasInventory) {
                 openInventory();
             } else if(shopItems != null) {
-                Shop.items = shopItems;
-                System.arraycopy(Shop.bckFiles, 0, Shop.files, 0, Shop.files.length);
-                System.arraycopy(Shop.bckPrices, 0, Shop.prices, 0, Shop.prices.length);
-                Shop.index = shopItems[0];
-                openShop();
+                openShop(shopItems, null, null);
             }
         }
 
@@ -1033,11 +1028,11 @@ public final class GameScreen extends MyCanvas {
         Main.setCurrentRepaint(dialogScreen);
     }
 
-    public final void openShop() {
+    public final void openShop(int[] items, String[] files, int[] prices) {
         QFPS.miniReset();
         stop();
         run = false;
-        Main.setCurrent(new Shop(main, this, player));
+        Main.setCurrent(new Shop(main, this, player, items, files, prices));
     }
 
     public final void openInventory() {

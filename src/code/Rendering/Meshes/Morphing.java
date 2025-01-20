@@ -3,12 +3,13 @@ package code.Rendering.Meshes;
 import code.Rendering.Vertex;
 
 public final class Morphing {
+    public static final int fp = 10, FP = 1 << fp;
 
     private short[][] animation;
     //private byte[][] normals;
     private Mesh mesh;
     private int frame = 0;
-    public static final int fp = 10, FP = 1 << fp;
+	public boolean morphEnabled = true;
 
     public static short[][] create(Mesh[] meshes, int start, int end) {
         short[][] anim = new short[end-start][];
@@ -128,22 +129,28 @@ public final class Morphing {
         
         final int kinv = frame % FP;
         final int k = FP - kinv;
+		
+		boolean morphEnabled = this.morphEnabled;
         
         for(int i = 0; i < versRes.length; i++) {
             final int n = i * 3;
             final int ax = versA[n];
             final int ay = versA[n + 1];
             final int az = versA[n + 2];
+			
+			if(morphEnabled) {
+				final int bx = versB[n];
+				final int by = versB[n + 1];
+				final int bz = versB[n + 2];
 
-            final int bx = versB[n];
-            final int by = versB[n + 1];
-            final int bz = versB[n + 2];
-
-            versRes[i].set(
-                    (ax * k >> fp) + (bx * kinv >> fp),
-                    (ay * k >> fp) + (by * kinv >> fp),
-                    (az * k >> fp) + (bz * kinv >> fp)
-            );
+				versRes[i].set(
+						(ax * k >> fp) + (bx * kinv >> fp),
+						(ay * k >> fp) + (by * kinv >> fp),
+						(az * k >> fp) + (bz * kinv >> fp)
+				);
+			} else {
+				versRes[i].set(ax, ay, az);
+			}
         }
     }
 

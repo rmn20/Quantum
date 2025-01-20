@@ -55,6 +55,8 @@ public class TPPose {
     int rotModelY, rotModelYSight;
     
     float lookSpeed, lookSpeedSight;
+	
+	int walkSpeed, walkSpeedSight;
     
     public static void init() {
         inited = true;
@@ -167,6 +169,18 @@ public class TPPose {
         secondAttack = makeMorphing("SECOND_ATTACK", secondModels, cloneSecond, ini, def, false);
         secondWalkSight = makeMorphing("SECOND_WALK_SIGHT", secondModels, cloneSecond, ini, def, false);
         secondAttackSight = makeMorphing("SECOND_ATTACK_SIGHT", secondModels, cloneSecond, ini, def, false);
+		
+		if(ini.getInt("MORPH_INTEPOLATE", def.getInt("MORPH_INTEPOLATE", 1)) == 0) {
+			if(walk != null) walk.morphEnabled = false;
+			if(attack != null) attack.morphEnabled = false;
+			if(walkSight != null) walkSight.morphEnabled = false;
+			if(attackSight != null) attackSight.morphEnabled = false;
+			
+			if(secondWalk != null) secondWalk.morphEnabled = false;
+			if(secondAttack != null) secondAttack.morphEnabled = false;
+			if(secondWalkSight != null) secondWalkSight.morphEnabled = false;
+			if(secondAttackSight != null) secondAttackSight.morphEnabled = false;
+		}
         
         show3D = ini.getInt("SHOW_3D", def.getInt("SHOW_3D", 1)) == 1;
         show2D = ini.getInt("SHOW_2D", def.getInt("SHOW_2D", 0)) == 1;
@@ -192,20 +206,14 @@ public class TPPose {
         canAttack = ini.getInt("CAN_ATTACK", def.getInt("CAN_ATTACK", 1)) == 1;
         canAttackSight = ini.getInt("CAN_ATTACK_SIGHT", def.getInt("CAN_ATTACK_SIGHT", 1)) == 1;
         
+        lookSpeed = ini.getFloat("LOOK_SPEED", def.getFloat("LOOK_SPEED", 1f));
+        lookSpeedSight = ini.getFloat("LOOK_SPEED_SIGHT", def.getFloat("LOOK_SPEED_SIGHT", 0.71f));
+        
         swapStrafeLook = ini.getInt("SWAP_STRAFE_LOOK", def.getInt("SWAP_STRAFE_LOOK", 0)) == 1;
         swapStrafeLookSight = ini.getInt("SWAP_STRAFE_LOOK_SIGHT", def.getInt("SWAP_STRAFE_LOOK_SIGHT", 0)) == 1;
         
-        camAbsolutePos = ini.getInt("CAM_ABSOLUTE_POS", def.getInt("CAM_ABSOLUTE_POS", 0)) == 1;
-        camAbsolutePosSight = ini.getInt("CAM_ABSOLUTE_POS_SIGHT", def.getInt("CAM_ABSOLUTE_POS_SIGHT", 0)) == 1;
-        
-        camAbsoluteRot = ini.getInt("CAM_ABSOLUTE_ROT", def.getInt("CAM_ABSOLUTE_ROT", 0)) == 1;
-        camAbsoluteRotSight = ini.getInt("CAM_ABSOLUTE_ROT_SIGHT", def.getInt("CAM_ABSOLUTE_ROT_SIGHT", 0)) == 1;
-        
         rotToWalkDir = ini.getInt("ROTATE_TO_WALK_DIR", def.getInt("ROTATE_TO_WALK_DIR", 0)) == 1;
         rotToWalkDirSight = ini.getInt("ROTATE_TO_WALK_DIR_SIGHT", def.getInt("ROTATE_TO_WALK_DIR_SIGHT", 0)) == 1;
-        
-        lookSpeed = ini.getFloat("LOOK_SPEED", def.getFloat("LOOK_SPEED", 1f));
-        lookSpeedSight = ini.getFloat("LOOK_SPEED_SIGHT", def.getFloat("LOOK_SPEED_SIGHT", 0.71f));
         
         tmp = ini.getDef("CAM_POS", def.get("CAM_POS"));
         if(tmp != null) {
@@ -217,6 +225,12 @@ public class TPPose {
         camRotY = ini.getInt("CAM_ROT_Y", def.getInt("CAM_ROT_Y", 0));
         rotModelY = ini.getInt("MODEL_ROT_Y", def.getInt("MODEL_ROT_Y", 0));
         camSmoothSteps = ini.getInt("CAM_SMOOTH_STEPS", def.getInt("CAM_SMOOTH_STEPS", 3));
+        
+        camAbsolutePos = ini.getInt("CAM_ABSOLUTE_POS", def.getInt("CAM_ABSOLUTE_POS", 0)) == 1;
+        camAbsolutePosSight = ini.getInt("CAM_ABSOLUTE_POS_SIGHT", def.getInt("CAM_ABSOLUTE_POS_SIGHT", 0)) == 1;
+        
+        camAbsoluteRot = ini.getInt("CAM_ABSOLUTE_ROT", def.getInt("CAM_ABSOLUTE_ROT", 0)) == 1;
+        camAbsoluteRotSight = ini.getInt("CAM_ABSOLUTE_ROT_SIGHT", def.getInt("CAM_ABSOLUTE_ROT_SIGHT", 0)) == 1;
         
         tmp = ini.getDef("CAM_POS_SIGHT", def.get("CAM_POS_SIGHT"));
         if(tmp != null) {
@@ -245,6 +259,10 @@ public class TPPose {
         
         animationSpeed = ini.getInt("ANIMATION_SPEED", def.getInt("ANIMATION_SPEED", 100));
         animationSpeedAttack = ini.getInt("ANIMATION_SPEED_ATTACK", def.getInt("ANIMATION_SPEED_ATTACK", animationSpeed));
+		
+		walkSpeed = ini.getInt("WALK_SPEED", def.getInt("WALK_SPEED", Integer.MIN_VALUE));
+		walkSpeedSight = ini.getInt("WALK_SPEED_SIGHT", def.getInt("WALK_SPEED_SIGHT", Integer.MIN_VALUE));
+		if(walkSpeedSight == Integer.MIN_VALUE) walkSpeedSight = walkSpeed;
     }
     
     public boolean show2D(Player player) {
@@ -371,6 +389,11 @@ public class TPPose {
     
     float lookSpeed(Player player) {
         return player.zoom ? lookSpeedSight : lookSpeed;
+    }
+    
+    int walkSpeed(Player player) {
+		int speed = player.zoom ? walkSpeedSight : walkSpeed;
+        return speed == Integer.MIN_VALUE ? Player.walkSpeed : speed;
     }
 
     private static Morphing makeMorphing(String animName, Mesh[] models, Mesh clone, GameIni ini, GameIni def, boolean createIfNo) {

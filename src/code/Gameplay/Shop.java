@@ -13,14 +13,11 @@ import javax.microedition.lcdui.Image;
 
 public final class Shop extends GUIScreen {
 
-    public static int weapon_count = 0;
-    public static String[] files;
-    public static int[] prices;
-    public static String[] bckFiles;
-    public static int[] bckPrices;
-    public static int index = 0; // Текущий номер товара
-    public static int[] items;
-    public static int[] allitems;
+    public static int weaponCount = 0;
+    public static String[] defaultFiles;
+    public static int[] defaultPrices;
+    public static int[] defaultItems;
+	
     private static boolean proportionalShop = true;
     public static int[] defaultArsenal = null;
 
@@ -46,71 +43,102 @@ public final class Shop extends GUIScreen {
             Object[] tmp = GameIni.createGroups("/weapons.txt");
             String[] names = (String[])tmp[0];
             GameIni[] groups = (GameIni[])tmp[1];
-            int len = names.length;
             
-            weapon_count = len;
-            allitems = new int[len];
-            for(int i = 0; i < len; i++) {allitems[i] = i;}
+            weaponCount = names.length;
             
-            items = new int[len];
-            for(int i = 0; i < len; i++) {items[i] = i;}
-            
-            files = new String[len];
-            prices = new int[len];
-            bckFiles = new String[len];
-            bckPrices = new int[len];
+            defaultFiles = new String[weaponCount + 1];
+            defaultPrices = new int[weaponCount + 1];
+            defaultItems = new int[weaponCount + 1];
 
-            for(int i=0; i<len; i++) {
+            for(int i=0; i<weaponCount; i++) {
                 GameIni obj = groups[i];
 
-                files[i] = obj.get("SHOP_IMAGE");
-                prices[i] = obj.getInt("PRICE", 0);
-                bckFiles[i] = obj.get("SHOP_IMAGE");
-                bckPrices[i] = obj.getInt("PRICE", 0);
+                defaultFiles[i] = obj.get("SHOP_IMAGE");
+                defaultPrices[i] = obj.getInt("PRICE", 0);
+				defaultItems[i] = i;
             }
         } else {
-            weapon_count = 2;
-            allitems = new int[2];
-            for (int i = 0; i < 2; i++) {allitems[i] = i;}
-            items = new int[2];
-            for (int i = 0; i < 2; i++) {items[i] = i;}
-            files = new String[2];
-            prices = new int[2];
-            bckFiles = new String[2];
-            bckPrices = new int[2];
+            weaponCount = 1;
+			
+            defaultFiles = new String[2];
+            defaultPrices = new int[2];
+			defaultItems = new int[] {0, -1};
         }
 
-        files[files.length - 1] = Main.shop_medkit;
-        prices[files.length - 1] = settings.getInt("PRICE_MEDICINE_CHEST");
-        bckFiles[files.length - 1] = Main.shop_medkit;
-        bckPrices[files.length - 1] = settings.getInt("PRICE_MEDICINE_CHEST");
+        defaultFiles[weaponCount] = Main.shop_medkit;
+        defaultPrices[weaponCount] = settings.getInt("PRICE_MEDICINE_CHEST");
+        defaultItems[weaponCount] = -1;
 
         if (settings.getInt("SHOP_PROPORTIONAL",1) == 0) {
             proportionalShop = false;
         }
     }
     
+    private static boolean side = false; // 0 - from left; 1 - from right
+    private static long sideAnimTime = 130L;
+    private static boolean paint = false;//Происходит ди отрисовка
+	
     private GameScreen gameScreen;
     private Player player;
     private Image iconItem;
     private Image iconPatron;
-    private static boolean side = false; // 0 - from left; 1 - from right
-    private static long sideAnimBegin = 0L;
-    private static int sideAnimOld = 0;
-    private static long sideAnimTime = 130L;
-    private static boolean paint = false;//Происходит ди отрисовка
+	
+	private int[] items;
+	private String[] files;
+	private int[] prices;
+	private int index;
+	
+    private long sideAnimBegin = 0L;
+    private int sideAnimOld = 0;
 
-    public Shop(Main main, GameScreen gameScreen, Player player) {
+    public Shop(Main main, GameScreen gameScreen, Player player, int[] items, String[] files, int[] prices) {
         this.gameScreen = gameScreen;
         this.player = player;
+		
+		this.items = items;
+		this.files = files;
+		this.prices = prices;
+		
+		setMissingData();
+		
         IniFile lang = Main.getGameText();
         set(Main.getFont(), lang.get("BUY"), lang.get("BACK"));
-        iconPatron = ImageResize.createImageProportional(Main.shop_patron,getWidth()/240F,getHeight()/320F);
-        reset();
-        sideAnimBegin=0L;
+        iconPatron = ImageResize.createImageProportional(Main.shop_patron, getWidth()/240F, getHeight()/320F);
+        setImage();
+		
         inverseHScroll=true;
         inverseVScroll=true;
     }
+	
+	private void setMissingData() {
+		if(items == null) {
+			items = Shop.defaultItems;
+			if(files == null) files = Shop.defaultFiles;
+			if(prices == null) prices = Shop.defaultPrices;
+			
+			return;
+		}
+		
+		if(files == null) {
+			files = new String[items.length];
+			
+			for(int i =0; i < files.length; i++) {
+				int idx = items[i];
+				if(idx == -1) idx = defaultFiles.length - 1;
+				files[i] = defaultFiles[idx];
+			}
+		}
+		
+		if(prices == null) {
+			prices = new int[items.length];
+			
+			for(int i =0; i < prices.length; i++) {
+				int idx = items[i];
+				if(idx == -1) idx = defaultPrices.length - 1;
+				prices[i] = defaultPrices[idx];
+			}
+		}
+	}
 
     public final void destroy() {
         super.destroy();
@@ -118,110 +146,116 @@ public final class Shop extends GUIScreen {
         player = null;
     }
 
-    private void reset() {
-        String path = Shop.files[Shop.index];
+    private void setImage() {
+        String path = files[index];
         if (Main.getGameText().get(path) != null) path = Main.getGameText().get(path);
         
-
         if (proportionalShop) {
-            iconItem = ImageResize.createImageProportional(path,getWidth()/240F,getHeight()/320F);
-            return;
-        }
-        iconItem = ImageResize.createImage(path,(int)getWidth(),(int)getHeight());
-
+            iconItem = ImageResize.createImageProportional(path, getWidth() / 240F, getHeight() / 320F);
+        } else {
+			iconItem = ImageResize.createImage(path, (int)getWidth(),(int)getHeight());
+		}
     }
+	
+	private boolean isMedkit() {
+		return items[index] == -1;
+	}
+	
+	private boolean isAllowedToBuy() {
+		if(isMedkit()) {
+			return player.getHp() < 100;
+		} else {
+			Weapon[] weapons = player.arsenal.getWeapons();
+			Weapon weapon = weapons[items[index]];
 
-
-    // цена текущего товара
+			return weapon == null || weapon.patronbuy;
+		}
+	}
+	
     private int price() {
-        return index == files.length - 1 ? prices[index] : (isNotPurchased() ? prices[index] : ((isPurchased() && isPatron()) ? prices[index] / 3 : 32767));
-    }
+		int price = prices[index];
+		
+		if(!isMedkit()) {
+			Weapon[] weapons = player.arsenal.getWeapons();
+			Weapon weapon = weapons[items[index]];
 
-    // true, если аптечкку можно купить (есть деньги и hp<100)
-    private boolean isAvailableAidKit() {
-        return index == files.length - 1 && player.getHp() == 100 ? false : player.money >= price();
-    }
-    
-    // false, если аптечкку можно купить (есть деньги)
-    private boolean isAvailableAidKitPrice() {
-        return index != files.length - 1 ? false : player.money < price();
-    }
+			if(weapon != null) {
+				if(weapon.patronbuy) price /= 3;
+				else price = Integer.MAX_VALUE;
+			}
+		}
 
-    // true, если оружие еще не куплено
-    private boolean isNotPurchased() {
-        Weapon[] weapons = player.arsenal.getWeapons();
-        return index >= 0 && index < files.length - 1 && weapons[index] == null;
-    }
-
-    // true, если можно купить патроны
-    private boolean isPatron() {
-        Weapon[] weapons = player.arsenal.getWeapons();
-        if(index >= 0 && index < files.length - 1 && weapons[index] != null) {
-            return weapons[index].patronbuy;
-        }
-        return false;
-    }
-
-    private boolean isPurchased() {
-        Weapon[] weapons = player.arsenal.getWeapons();
-        return index >= 0 && index < files.length - 1 && weapons[index] != null;
+		return price;
     }
 
     protected final void paint(Graphics g) {
-        paint=true;
-        int w = getWidth();
-        int h = getHeight();
-        int coof=(Main.verticalShopScroll?h:w);
-        if(System.currentTimeMillis()-sideAnimBegin<sideAnimTime) 
-            if(sideAnimTime!=0) 
-                coof=(int)((System.currentTimeMillis()-sideAnimBegin)*coof/sideAnimTime);
-        
-        
-        
-        if(coof<w && !Main.verticalShopScroll) {
-            if(!side) g.setClip(sideAnimOld,0,coof-sideAnimOld,h);
-            if(side) g.setClip(w-coof,0,coof-sideAnimOld,h);
-        } else if(coof<h && Main.verticalShopScroll) {
-            if(!side) g.setClip(0,sideAnimOld,w,coof-sideAnimOld);
-            if(side) g.setClip(0,h-coof,w,coof-sideAnimOld);
-        } else g.setClip(0,0,w,h);
-        g.setColor(0);
-        g.fillRect(0, 0, w, h);
-        IniFile lang = Main.getGameText();
-        if (isAvailableAidKit()) {
-            setLeftSoft(lang.get("BUY"));
-        } else {
-            if(isPatron() || isNotPurchased() || isAvailableAidKitPrice()) setLeftSoft(lang.get("NOTENOUGHMONEY"));
-            else setLeftSoft("");
-        }
-        
-        int arWidth = w / 34;
-        int arHeight = h / 34;
-        if (Main.verticalShopScroll == false) {
-            drawArrow(g, 4, h / 4, arWidth + 4, h / 4 - arHeight / 2, arWidth + 4, h / 4 + arHeight / 2);
-            drawArrow(g, w - 4, h / 4, w - 4 - arWidth, h / 4 - arHeight / 2, w - 4 - arWidth, h / 4 + arHeight / 2);
-        }
+		paint = true;
+		int w = getWidth();
+		int h = getHeight();
+		
+		int coof = (Main.verticalShopScroll ? h : w);
+		
+		if(System.currentTimeMillis() - sideAnimBegin < sideAnimTime) {
+			if(sideAnimTime != 0) {
+				coof = (int) ((System.currentTimeMillis() - sideAnimBegin) * coof / sideAnimTime);
+			}
+		}
+		
+		if(coof < w && !Main.verticalShopScroll) {
+			if(!side) g.setClip(sideAnimOld, 0, coof - sideAnimOld, h);
+			if(side) g.setClip(w - coof, 0, coof - sideAnimOld, h);
+		} else if(coof < h && Main.verticalShopScroll) {
+			if(!side) g.setClip(0, sideAnimOld, w, coof - sideAnimOld);
+			if(side) g.setClip(0, h - coof, w, coof - sideAnimOld);
+		} else g.setClip(0, 0, w, h);
+		
+		g.setColor(0);
+		g.fillRect(0, 0, w, h);
+		IniFile lang = Main.getGameText();
+		
+		if(!isAllowedToBuy()) {
+			setLeftSoft("");
+		} else {
+			setLeftSoft(lang.get(player.money >= price() ? "BUY" : "NOTENOUGHMONEY"));
+		}
 
-        Font font = getFont();
-        font.drawString(g, lang.get("MONEY") + ":" + player.money, w - 2, 2, 24);
-        
-        g.drawImage(this.iconItem, w / 2, h / 2, 3);
-        if (isPurchased() && isPatron()) 
-            g.drawImage(iconPatron, w / 2 - iconItem.getWidth() / 2, h / 2 + iconItem.getHeight() / 2, 36);
-        
+		int arWidth = w / 34;
+		int arHeight = h / 34;
+		if(!Main.verticalShopScroll) {
+			drawArrow(g, 4, h / 4, arWidth + 4, h / 4 - arHeight / 2, arWidth + 4, h / 4 + arHeight / 2);
+			drawArrow(g, w - 4, h / 4, w - 4 - arWidth, h / 4 - arHeight / 2, w - 4 - arWidth, h / 4 + arHeight / 2);
+		}
 
-        if (lang.get("CENA") != null && (isPatron() || isNotPurchased() || (index == files.length - 1))) 
-            font.drawString(g, lang.get("CENA") + ":" + price(), w / 2, h / 2 + iconItem.getHeight() / 2 + 2, 17);
-        
-        drawSoftKeys(g);
-        sideAnimOld=coof;
-        if( (coof<w && !Main.verticalShopScroll) || (coof<h && Main.verticalShopScroll) ) {
-            try{Thread.sleep(5L);}catch(Exception exc){}
-            repaint();
-        } else {
-            paint=false;
-            dragIgnore=false;
-        }
+		Font font = getFont();
+		font.drawString(g, lang.get("MONEY") + ":" + player.money, w - 2, 2, 24);
+
+		g.drawImage(this.iconItem, w / 2, h / 2, 3);
+		
+		boolean printPrice = true;
+		if(!isMedkit() && player.arsenal.getWeapons()[items[index]] != null) {
+			if(!player.arsenal.getWeapons()[items[index]].patronbuy) {
+				printPrice = false;
+			} else {
+				g.drawImage(iconPatron, w / 2 - iconItem.getWidth() / 2, h / 2 + iconItem.getHeight() / 2, 36);
+			}
+		}
+
+		if(lang.get("CENA") != null && printPrice) {
+			font.drawString(g, lang.get("CENA") + ":" + price(), w / 2, h / 2 + iconItem.getHeight() / 2 + 2, 17);
+		}
+
+		drawSoftKeys(g);
+		sideAnimOld = coof;
+		if((coof < w && !Main.verticalShopScroll) || (coof < h && Main.verticalShopScroll)) {
+			try {
+				Thread.sleep(5L);
+			} catch(Exception exc) {
+			}
+			repaint();
+		} else {
+			paint = false;
+			dragIgnore = false;
+		}
     }
 
     private void drawArrow(Graphics g, int x1, int y1, int x2, int y2, int x3, int y3) {
@@ -232,15 +266,16 @@ public final class Shop extends GUIScreen {
         int clipY = g.getClipY();
         int clipWidth = g.getClipWidth();
         int clipHeight = g.getClipHeight();
+		
+		int price = price();
 
         for (int i = 0; i < sizey; ++i) {
-            int bright;
-            if (this.isAvailableAidKit()) {
-                bright = Math.min(255, i * 255 / sizey);
-                g.setColor(bright, bright, bright);
+            if (player.money >= price) {
+                int brightness = Math.min(255, i * 255 / sizey);
+                g.setColor(brightness, brightness, brightness);
             } else {
-                bright = Math.min(255, i * 255 / sizey);
-                g.setColor(bright, 0, 0);
+                int brightness = Math.min(255, i * 255 / sizey);
+                g.setColor(brightness, 0, 0);
             }
             g.setClip(clipX, Math.max(clipY,miny + (maxy - miny) * i / sizey), clipWidth, Math.min(clipHeight,maxy));
             g.fillTriangle(x1, y1, x2, y2, x3, y3);
@@ -259,78 +294,73 @@ public final class Shop extends GUIScreen {
         gameScreen = null;
     }
 
-    protected final void onLeftSoftKey() {
-        if (!isAvailableAidKit()) return;
-        
-            Weapon[] weapons;
-            if (isNotPurchased()) {
-                weapons = player.arsenal.getWeapons();
-                player.pay(price());
-                weapons[index] = WeaponCreator.createWeapon(index);
-                weapons[index].setAmmo(100);
-                if (player.arsenal.current != -1) {
-                    if (player.arsenal.currentWeapon().getDamageValue() < player.arsenal.weapons[index].getDamageValue()) {
-                        player.arsenal.current = index;
-                    }
-                }
-                if(!paint) repaint();
-            } else if (isPurchased() && isPatron()) {
-                weapons = player.arsenal.getWeapons();
-                player.pay(price());
-                weapons[index].addAmmo(100);
-                if(!paint) repaint();
-            } else {
-                if (index == files.length - 1) {
-                    player.pay(price());
-                    player.setHp(100);
-                    if(!paint) repaint();
-                }
-
-            }
-    }
+	protected final void onLeftSoftKey() {
+		if(isMedkit()) {
+			if(player.getHp() < 100) {
+				player.pay(price());
+				player.setHp(100);
+				if(!paint) repaint();
+			}
+		} else {
+			int weaponIdx = items[index];
+			
+			Weapon[] weapons = player.arsenal.getWeapons();
+			Weapon weapon = weapons[weaponIdx];
+			
+			if(weapon == null) {
+				player.pay(price());
+				
+				weapon = WeaponCreator.createWeapon(weaponIdx);
+				weapon.setAmmo(100);
+				weapons[weaponIdx] = weapon;
+				
+				int playerWeapon = player.arsenal.current;
+				
+				if(playerWeapon == -1 || weapons[playerWeapon].getDamageValue() < weapon.getDamageValue()) {
+					player.arsenal.current = weaponIdx;
+				}
+				
+				if(!paint) repaint();
+			} else {
+				player.pay(price());
+				weapon.addAmmo(100);
+				if(!paint) repaint();
+			}
+		}
+	}
 
     protected final void onKey6() {
-        if (Main.verticalShopScroll || paint) return;
+        if(Main.verticalShopScroll || paint) return;
         dragIgnore=true;
         
-        Shop.index++;
-        Shop.index %= Shop.files.length;
-        if (!isContains()) {
-            onKey6(); return;
-        }
+        index++;
+        index %= files.length;
         
-        reset();
+        setImage();
         side=true; sideAnimBegin=System.currentTimeMillis(); sideAnimOld=0;
         if(!paint) repaint();
     }
 
     protected final void onKey4() {
-        if (Main.verticalShopScroll || paint) return;
+        if(Main.verticalShopScroll || paint) return;
         dragIgnore=true;
         
-        Shop.index--;
-        if (Shop.index < 0) Shop.index += Shop.files.length;
+        index--;
+        if(index < 0) index += files.length;
         
-        if (!isContains()) {
-            onKey4();return;
-        }
-        
-        reset();
+        setImage();
         side=false; sideAnimBegin=System.currentTimeMillis(); sideAnimOld=0;
         if(!paint) repaint();
     }
 
     protected final void onKey8() {
-        if (!Main.verticalShopScroll || paint) return;
+        if(!Main.verticalShopScroll || paint) return;
         dragIgnore=true;
         
-        Shop.index++;
-        Shop.index %= Shop.files.length;
-        if (!isContains()) {
-            onKey8();return;
-        }
+        index++;
+        index %= files.length;
         
-        reset();
+        setImage();
         side=true; sideAnimBegin=System.currentTimeMillis(); sideAnimOld=0;
         if(!paint) repaint();
     }
@@ -339,22 +369,11 @@ public final class Shop extends GUIScreen {
         if (!Main.verticalShopScroll || paint) return;
         dragIgnore=true;
         
-        Shop.index--;
-        if (Shop.index < 0) Shop.index += Shop.files.length;
-        if (!isContains()) {
-            onKey2();return;
-        }
+        index--;
+        if(index < 0) index += files.length;
         
-        reset();
+        setImage();
         side=false; sideAnimBegin=System.currentTimeMillis(); sideAnimOld=0;
         if(!paint) repaint();
-    }
-
-    private boolean isContains() {
-        for (int i = 0; i < items.length; i++) {
-            if (items[i] == Shop.index) return true;
-            
-        }
-        return false;
     }
 }

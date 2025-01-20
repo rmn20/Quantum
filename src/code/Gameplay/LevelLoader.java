@@ -328,7 +328,7 @@ public class LevelLoader {
         if(rays!=null) LightMapper.setRays(StringTools.parseInt(rays));
 
         Player.arcadeJumpPhysics = getBoolean("ARCADE_JUMP_PHYSICS", lvl, setting, false);
-
+        Player.walkSpeed = getInt("PLAYER_SPEED", lvl, setting, 150);
 
         loadLights(oldF, lvl);
         House house = HouseCreator.create(meshes, false, lvl.get("LIGHTMAP"), getBoolean("OPTIMIZE_LEVEL_MODEL", lvl, setting, true));
@@ -402,12 +402,6 @@ public class LevelLoader {
             String sh = getNoLang("PLAYER_SHOP", lvl, setting);
             if (sh.equals("OFF")) gs.shopItems = null;
             else gs.shopItems = StringTools.cutOnInts(sh, ',');
-        }
-
-        if(gs.shopItems != null) {
-            for(int i=0; i<gs.shopItems.length; i++) {
-                if(gs.shopItems[i] == -1) gs.shopItems[i] = Shop.weapon_count - 1;
-            }
         }
 
         String weatherType = getString("WEATHER", lvl, setting);
@@ -1053,23 +1047,19 @@ public class LevelLoader {
                 String[] poses = StringTools.cutOnStrings(obj.get("POS"), ';');
                 for (int count = 0; count < poses.length; count++) {
                     int[] ps = StringTools.cutOnInts(poses[count], ',');
-                    int[] prices = null;
+					
+                    int[] items = null;
                     String[] files = null;
-                    int[] items = Shop.items;
+                    int[] prices = null;
                     
                     String tmp = getString("SHOP", obj, Main.settings, key, "NULL");
-                    if (!tmp.equals("NULL")) {
-                        items = StringTools.cutOnInts(tmp, ',');
-
-                        for(int i = 0; i < items.length; i++) {
-                            if(items[i] == -1) items[i] = Shop.weapon_count - 1;
-                        }
-                    }
+                    if (!tmp.equals("NULL")) items = StringTools.cutOnInts(tmp, ',');
+					
                     tmp = getString("PRICES", obj, Main.settings, key, "NULL");
                     if (!tmp.equals("NULL")) prices = StringTools.cutOnInts(tmp, ',');
                     
                     tmp = getString("FILES", obj, Main.settings, key, "NULL");
-                    if (!tmp.equals("NULL")) files = StringTools.cutOnStrings(getString("FILES", obj, Main.settings, key), ',');
+                    if (!tmp.equals("NULL")) files = StringTools.cutOnStrings(tmp, ',');
                     
                     ShopObject mobj = new ShopObject(items, prices, files, ps[0], ps[1], ps[2]);
 

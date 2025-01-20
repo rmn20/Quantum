@@ -728,7 +728,7 @@ public final class Main extends MIDlet {
                 int current = dis.readInt();
                 player.arsenal.destroy();
                 player.arsenal.current = current;
-                Weapon[] weapons = new Weapon[Shop.weapon_count];
+                Weapon[] weapons = new Weapon[Shop.weaponCount];
 
                 for(int i = 0; i < weapc; i++) {
                     int tw = dis.readInt();

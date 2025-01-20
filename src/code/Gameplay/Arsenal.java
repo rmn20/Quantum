@@ -10,10 +10,10 @@ public class Arsenal {
     public boolean hasHand = false;
 
     public final void destroy() {
-        for (int var1 = 0; var1 < weapons.length; ++var1) {
-            if (weapons[var1] != null) {
-                weapons[var1].reset();
-                weapons[var1] = null;
+        for (int i = 0; i < weapons.length; ++i) {
+            if (weapons[i] != null) {
+                weapons[i].reset();
+                weapons[i] = null;
             }
         }
 
@@ -95,7 +95,7 @@ public class Arsenal {
     
     public Arsenal(int width_g3d, int height_g3d) {
         current = -1;
-        weapons = new Weapon[Shop.weapon_count];
+        weapons = new Weapon[Shop.weaponCount];
         
         if (Shop.defaultArsenal != null) {
             for (int i = 0; i < Shop.defaultArsenal.length; i++) {
@@ -122,7 +122,6 @@ public class Arsenal {
         }
 
         if (currentWeapon() != null) currentWeapon().createSprite(width_g3d, height_g3d);
-        
     }
 
     public Arsenal() {

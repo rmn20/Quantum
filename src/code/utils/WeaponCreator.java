@@ -12,7 +12,7 @@ public class WeaponCreator {
         
         for(int i=0; i<names.length; i++) {
             
-            if(names[i].endsWith(Integer.toString(index))) {
+            if(names[i].equals(Integer.toString(index))) {
                 GameIni obj = groups[i];
 
                 float kw = 1.0F;
