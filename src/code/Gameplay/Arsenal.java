@@ -100,25 +100,25 @@ public class Arsenal {
         if (Shop.defaultArsenal != null) {
             for (int i = 0; i < Shop.defaultArsenal.length; i++) {
                 if (Shop.defaultArsenal[i] != -1) {
-                    weapons[Shop.defaultArsenal[i]] = WeaponCreator.createWeapon(Shop.defaultArsenal[i]);
                     if (current == -1) current = Shop.defaultArsenal[i];
+					
+					Weapon weapon = WeaponCreator.createWeapon(Shop.defaultArsenal[i]);;
+                    weapons[Shop.defaultArsenal[i]] = weapon;
+					
+					weapon.reset();
+					
+					if(Shop.defaultArsenalAmmo != null) {
+						weapon.setAmmo(Shop.defaultArsenalAmmo[i]);
+					} else {
+						weapon.setAmmo(weapon.isTwoHands() ? 400 : 200);
+					}
                 }
+				
                 if (Shop.defaultArsenal[i] == -1) hasHand = true;
             }
         } else {
             hasHand = true;
             current = -1;
-        }
-        
-        for (int i = 0; i < weapons.length; ++i) {
-            if (weapons[i] != null) {
-                weapons[i].reset();
-                if (!weapons[i].isTwoHands()) {
-                    weapons[i].setAmmo(200);
-                } else {
-                    weapons[i].setAmmo(400);
-                }
-            }
         }
 
         if (currentWeapon() != null) currentWeapon().createSprite(width_g3d, height_g3d);

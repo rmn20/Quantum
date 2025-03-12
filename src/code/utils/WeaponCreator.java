@@ -89,6 +89,14 @@ public class WeaponCreator {
                         }
                     }
                 }
+				
+                str = obj.get("AMMO_PRICE_PERCENTAGE");
+				if(str != null) wp.ammoPriceFactor = StringTools.parseFloat(str) / 100f;
+				
+				wp.ammoBundled = obj.getInt("AMMO_BUNDLED", wp.ammoBundled);
+				wp.ammoInShop = obj.getInt("AMMO_IN_SHOP", wp.ammoInShop);
+				
+				wp.lowPatronAmount = obj.getInt("LOW_PATRON_AMOUNT", wp.lowPatronAmount);
                 
                 return wp;
             }

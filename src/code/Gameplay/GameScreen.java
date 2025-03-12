@@ -511,7 +511,7 @@ public final class GameScreen extends MyCanvas {
                 lowHP = true; changed = true; redrawInfo = true;
             }
             
-            if(weapon != null && weapon.patronbuy && weapon.getAmmo() <= 20
+            if(weapon != null && weapon.patronbuy && weapon.getAmmo() <= weapon.lowPatronAmount
                     && (customMessage == null || imgPatronLow != null)) {
                 lowAmmo = true; changed = true; redrawInfo = true;
             }

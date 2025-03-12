@@ -20,6 +20,7 @@ public final class Shop extends GUIScreen {
 	
     private static boolean proportionalShop = true;
     public static int[] defaultArsenal = null;
+    public static int[] defaultArsenalAmmo = null;
 
     public static void initShop() {
         int pos;
@@ -38,6 +39,10 @@ public final class Shop extends GUIScreen {
                 defaultArsenal[0] = -1;
             }
         }
+		
+        if (settings.get("DEFAULT_ARSENAL_AMMO") != null) {
+			defaultArsenalAmmo = GameIni.cutOnInts(settings.get("DEFAULT_ARSENAL_AMMO"), ',', ';');
+		}
 
         if(exists) {
             Object[] tmp = GameIni.createGroups("/weapons.txt");
@@ -180,7 +185,7 @@ public final class Shop extends GUIScreen {
 			Weapon weapon = weapons[items[index]];
 
 			if(weapon != null) {
-				if(weapon.patronbuy) price /= 3;
+				if(weapon.patronbuy) price = (int) (price * weapon.ammoPriceFactor);
 				else price = Integer.MAX_VALUE;
 			}
 		}
@@ -311,7 +316,7 @@ public final class Shop extends GUIScreen {
 				player.pay(price());
 				
 				weapon = WeaponCreator.createWeapon(weaponIdx);
-				weapon.setAmmo(100);
+				weapon.setAmmo(weapon.ammoBundled);
 				weapons[weaponIdx] = weapon;
 				
 				int playerWeapon = player.arsenal.current;
@@ -323,7 +328,7 @@ public final class Shop extends GUIScreen {
 				if(!paint) repaint();
 			} else {
 				player.pay(price());
-				weapon.addAmmo(100);
+				weapon.addAmmo(weapon.ammoInShop);
 				if(!paint) repaint();
 			}
 		}

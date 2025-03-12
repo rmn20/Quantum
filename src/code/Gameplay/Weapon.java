@@ -44,6 +44,7 @@ public final class Weapon {
     private Image imgWeapon, imgFire;
     private Image sight, sightWeapon;
     public Image imgPatron, imgPatronLow;
+	public int lowPatronAmount = 20;
     private long distance = 999999999L;
     public boolean meleeAnim = false;
     private short dx_fire = 1; // смещение вспышки по горизонтали относительно правого нижнего угла спрайта оружия
@@ -76,6 +77,9 @@ public final class Weapon {
     public boolean shootLight=true;
     
     public int playerPose = 0;
+	
+	public float ammoPriceFactor = 1 / 3f;
+	public int ammoBundled = 100, ammoInShop = 100;
 
     public Weapon(String fileWeapon, String fileFire, float kW, float kH, int damageValue, int delay, int shotTime, boolean twoHands, int capacity, int reloadTime, long distance, boolean pb, int weaponId) {
         this.distance = distance;
