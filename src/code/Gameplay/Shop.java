@@ -300,6 +300,8 @@ public final class Shop extends GUIScreen {
     }
 
 	protected final void onLeftSoftKey() {
+		if(player.money < price()) return;
+		
 		if(isMedkit()) {
 			if(player.getHp() < 100) {
 				player.pay(price());
