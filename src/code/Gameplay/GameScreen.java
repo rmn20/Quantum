@@ -495,17 +495,21 @@ public final class GameScreen extends MyCanvas {
             boolean lowAmmo, lowHP;
             lowAmmo = lowHP = false;
             
+			String infoText = null;
+			
             if(playerDied) {
-                drawMessageSimple(g, Main.getGameText().get("GAME_OVER"));
+				infoText = Main.getGameText().get("GAME_OVER");
             } else if(msToEnd > 0) {
 
-                if(!Main.isLastLevel(levelNumber)) {
-                    if(!scene.exitWithoutWait) drawMessageSimple(g, Main.getGameText().get("LEVEL_COMPLETE"));
-                } else drawMessageSimple(g, Main.getGameText().get("GAME_COMPLETE"));
+				if(!scene.exitWithoutWait) {
+					infoText = Main.getGameText().get(Main.isLastLevel(levelNumber) ? "GAME_COMPLETE" : "LEVEL_COMPLETE");
+				}
 
             } else if(msToExit > 0 && msToExit < 3000) {
-                drawMessageSimple(g, Main.getGameText().get("FIND_EXIT"));
+                infoText = Main.getGameText().get("FIND_EXIT");
             }
+            
+			if(infoText != null) drawMessageSimple(g, infoText);
             
             if(player.getHp() <= 15 && (customMessage == null || imgLifeLow != null)) {
                 lowHP = true; changed = true; redrawInfo = true;
@@ -582,11 +586,16 @@ public final class GameScreen extends MyCanvas {
                             width - imgPatron2.getWidth(), iconYDown, 10);
                 }
                 
-                if(imgLifeLow == null && lowHP && scene.getFrame() / 8 % 2 == 0) 
-                    drawMessage(g, Main.getGameText().get("BUY_MEDICINE_CHEST"));
+				
+                if(imgLifeLow == null && lowHP && scene.getFrame() / 8 % 2 == 0) {
+					String text = Main.getGameText().get("BUY_MEDICINE_CHEST");
+                    drawMessage(g, text);
+				}
                 
-                if(imgPatronLow2 == null && lowAmmo && scene.getFrame() / 8 % 2 == 0) 
-                    drawMessage(g, Main.getGameText().get("BUY_PATRONS"));
+                if(imgPatronLow2 == null && lowAmmo && scene.getFrame() / 8 % 2 == 0) {
+					String text = Main.getGameText().get("BUY_PATRONS");
+                    drawMessage(g, text);
+				}
             }
             
             if(imgHand != null && lookAtObj != null && MainCanvas.pstros) {
@@ -923,12 +932,12 @@ public final class GameScreen extends MyCanvas {
 
                 if(msToEnd > 0) {
                     msToEnd += QFPS.frameTime;
-                    if(scene.exitWithoutWait) msToEnd = 3001;
+                    if(scene.exitWithoutWait) msToEnd = Integer.MAX_VALUE;
                 }
 
                 if(msToExit > 0) {
                     msToExit += QFPS.frameTime;
-                    if(scene.exitWithoutWait) msToExit = 3001;
+                    if(scene.exitWithoutWait) msToExit = Integer.MAX_VALUE;
                 }
 
                 if(msToEnd > 3000) {
