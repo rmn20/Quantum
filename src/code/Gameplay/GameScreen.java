@@ -589,12 +589,12 @@ public final class GameScreen extends MyCanvas {
 				
                 if(imgLifeLow == null && lowHP && scene.getFrame() / 8 % 2 == 0) {
 					String text = Main.getGameText().get("BUY_MEDICINE_CHEST");
-                    drawMessage(g, text);
+                    if(text != null) drawMessage(g, text);
 				}
                 
                 if(imgPatronLow2 == null && lowAmmo && scene.getFrame() / 8 % 2 == 0) {
 					String text = Main.getGameText().get("BUY_PATRONS");
-                    drawMessage(g, text);
+                    if(text != null) drawMessage(g, text);
 				}
             }
             
