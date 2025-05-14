@@ -46,7 +46,7 @@ public final void setPos(int x,int y,int z) {
     pos.set(x,y,z);
 }
 public void activate(House house,Player player,GameScreen gs) {
-if(lastActivate>0 && (lastActivate+timeToReset>GameScreen.time)) return;
+if(lastActivate>=0 && (lastActivate+timeToReset>GameScreen.time)) return;
 if(!isAllCollected(Player.usedPoints,player,house,gs)) {
 if(errMessage!=null) errMsg(gs);
 return;
@@ -67,7 +67,7 @@ if(!contains(Player.usedPoints,name)) {
     gs.overlayTimeOut=timer;
     gs.overlayStart=System.currentTimeMillis();
     this.activated=true;
-if(lastActivate>=0)lastActivate=GameScreen.time;}
+if(timeToReset > 0) lastActivate=GameScreen.time;}
 
 
 if(destroyOnUse) house.removeObject(this);

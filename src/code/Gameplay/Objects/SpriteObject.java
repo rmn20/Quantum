@@ -31,7 +31,7 @@ public final class SpriteObject extends RoomObject {
     public final void render(DirectX7 g3d, int x1, int y1, int x2, int y2) {
         if(!visible) return;
 
-        if(lastActivate > 0 && (lastActivate + timeToReset > GameScreen.time) && hideWhenUnusable) return;
+        if(lastActivate >= 0 && (lastActivate + timeToReset > GameScreen.time) && hideWhenUnusable) return;
 
         spr.updateFrame();
         spr.project(g3d.getInvCamera(), g3d);
@@ -65,7 +65,7 @@ public final class SpriteObject extends RoomObject {
     }
 
     public void activate(House house, Player player, GameScreen gs) {
-        if(lastActivate > 0 && (lastActivate + timeToReset > GameScreen.time)) return;
+        if(lastActivate >= 0 && (lastActivate + timeToReset > GameScreen.time)) return;
         if(!isAllCollected(Player.usedPoints, player, house, gs)) {
             if(errMessage != null) errMsg(gs);
             return;
@@ -83,7 +83,7 @@ public final class SpriteObject extends RoomObject {
         if(!contains(Player.usedPoints, name)) {
             give(name, player);
             this.activated = true;
-            if(lastActivate >= 0) lastActivate = GameScreen.time;
+            if(timeToReset > 0) lastActivate = GameScreen.time;
         }
 
         if(destroyOnUse) house.removeObject(this);

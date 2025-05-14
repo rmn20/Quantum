@@ -268,15 +268,20 @@ public abstract class RoomObject {
             Vector3D pos=new Vector3D(player.getPosX(),player.getPosY(),player.getPosZ());
             boolean saveMus=false;
             boolean fullMove=false;
+			boolean showLoad = true;
             gs.newPos=pos;
             if(vars.length>=4) gs.newPos=new Vector3D(readVar(vars[1],player,house,gs,this),readVar(vars[2],player,house,gs,this),readVar(vars[3],player,house,gs,this));
             if(vars.length>=5) {
-				player.rotYn(readVar(vars[4],player,house,gs,this));;
-				player.updateMatrix();
+				int rotY = readVar(vars[4],player,house,gs,this);
+				if(rotY != 0) {
+					player.rotYn(rotY);
+					player.updateMatrix();
+				}
 			}
             if(vars.length>=6) saveMus=readBoolean(vars[5],player,house,gs,this);
             if(vars.length>=7) fullMove=readBoolean(vars[6],player,house,gs,this);
-            gs.loadLevel(readVar(vars[0],player,house,gs,this), pos, !saveMus, fullMove);
+            if(vars.length>=8) showLoad=readBoolean(vars[6],player,house,gs,this);
+            gs.loadLevel(readVar(vars[0],player,house,gs,this), pos, !saveMus, fullMove, showLoad);
             return;
         } else if(hcName.indexOf("EXEC ")==0) {
             gs.runScriptFromFile(newName.substring(5), this);

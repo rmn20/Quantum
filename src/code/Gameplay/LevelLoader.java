@@ -1074,14 +1074,15 @@ public class LevelLoader {
                     int[] ps = StringTools.cutOnInts(poses[count], ',');
 
                     int[] ps2 = GameIni.createPos(getString("START_POS", obj, Main.settings, key), ',');
+					
+					int levelNumber = getInt("LEVEL", obj, Main.settings, key);
 
-                    LVLChange mobj = new LVLChange(ps[0], ps[1], ps[2], new Vector3D(ps2[0], ps2[1], ps2[2]), getInt("LEVEL", obj, Main.settings, key));
+                    LVLChange mobj = new LVLChange(ps[0], ps[1], ps[2], new Vector3D(ps2[0], ps2[1], ps2[2]), levelNumber);
 
                     mobj.pRot = getInt("ROT", obj, Main.settings, key, mobj.pRot);
-                    
                     mobj.saveMus = getInt("SAVEMUSIC", obj, Main.settings, key, 0) == 1;
-                    
                     mobj.fullMove = getInt("FULLMOVE", obj, Main.settings, key, lvl, 0) == 1;
+                    mobj.showLoadScreen = getInt("SHOW_LOAD_SCREEN", obj, Main.settings, key, lvl, 1) == 1;
 
                     mobj.activable = true;
                     loadRM(obj, (RoomObject) mobj, lvl, key);
@@ -1348,7 +1349,6 @@ public class LevelLoader {
 
         tmp = getString(bN + "REUSETIMER", txt, Main.settings, key);
         if(tmp != null) {
-            obj.lastActivate = 0L;
             obj.timeToReset = StringTools.parseLong(tmp);
             obj.hideWhenUnusable = true;
         }

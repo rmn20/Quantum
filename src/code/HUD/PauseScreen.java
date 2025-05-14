@@ -169,7 +169,7 @@ public final class PauseScreen extends Selectable {
             gameScreen.destroy();
             gameScreen = null;
             
-            LoadingScreen ls = new LoadingScreen(main, lvl, hasSave, true);
+            LoadingScreen ls = new LoadingScreen(main, lvl, hasSave, true, true);
             Main.setCurrent(ls);
 
         } else if(index == 2 && Main.pauseScreenSave) {

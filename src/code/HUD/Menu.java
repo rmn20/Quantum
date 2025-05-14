@@ -152,12 +152,12 @@ public final class Menu extends Selectable {
 
     private void continueGame() {
         int levelNumber = Main.getContinueLevel();
-        Main.loadLevel(true, true, levelNumber, null, main, this, 1);
+        Main.loadLevel(true, true, levelNumber, null, main, this, 1, true);
     }
 
     private void newGame() {
         Main.removeSave();
-        Main.loadLevel(false, false, 1, null, main, this, 1);
+        Main.loadLevel(false, false, 1, null, main, this, 1, true);
     }
 
 }

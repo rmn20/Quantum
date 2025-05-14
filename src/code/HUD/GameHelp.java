@@ -18,7 +18,8 @@ public final class GameHelp extends GUIScreen {
     int x, y;
     private int levelNumber;
     private Object hudInfo;
-    private int stateCode = 1;
+    private int stateCode;
+    private boolean showLoad;
     private boolean preview = false;
     private boolean levelEnd;
     private Image background;
@@ -27,15 +28,11 @@ public final class GameHelp extends GUIScreen {
     public static boolean loadpos = true;
     private static short toMove = 0;
 
-    public GameHelp(Main main, Menu menu, int levelNumberz, boolean levelEnd, Object hudInfo) {
-        init(main, menu, levelNumberz, levelEnd, hudInfo, 1);
+    public GameHelp(Main main, Menu menu, int levelNumberz, boolean levelEnd, Object hudInfo, int helpState, boolean showLoad) {
+        init(main, menu, levelNumberz, levelEnd, hudInfo, helpState, showLoad);
     }
 
-    public GameHelp(Main main, Menu menu, int levelNumberz, boolean levelEnd, Object hudInfo, int helpState) {
-        init(main, menu, levelNumberz, levelEnd, hudInfo, helpState);
-    }
-
-    public void init(Main main, Menu menu, int levelNumberz, boolean levelEnd, Object hudInfo, int code) {
+    public void init(Main main, Menu menu, int levelNumberz, boolean levelEnd, Object hudInfo, int code, boolean showLoad) {
         this.main = main;
         this.menu = menu;
         loadSave = false;
@@ -43,6 +40,7 @@ public final class GameHelp extends GUIScreen {
         this.levelNumber = levelNumberz;
         this.hudInfo = hudInfo;
         this.stateCode = code;
+		this.showLoad = showLoad;
         this.levelEnd = levelEnd;
         this.setFont(Main.getFont());
         this.setLeftSoft(Main.getGameText().get("NEXT"));
@@ -134,9 +132,8 @@ public final class GameHelp extends GUIScreen {
 
     protected final void onKey5() {
         if(levelEnd) {
-            
             if(needToShow(levelNumber, stateCode+1, true)) {
-                init(main, menu, levelNumber, true, hudInfo, stateCode+1);
+                init(main, menu, levelNumber, true, hudInfo, stateCode+1, showLoad);
             } else {
                 this.background = null;
                 this.destroy();
@@ -149,14 +146,14 @@ public final class GameHelp extends GUIScreen {
 
                     Main.setCurrent(scr);
                 } else {
-                    Main.loadLevel(loadSave, loadpos, levelNumber + 1, hudInfo, main, menu, 1);
+                    Main.loadLevel(loadSave, loadpos, levelNumber + 1, hudInfo, main, menu, 1, showLoad);
                 }
             }
             
         } else {
             this.background = null;
             this.destroy();
-            Main.loadLevel(loadSave, loadpos, levelNumber, hudInfo, main, menu, stateCode + 1);
+            Main.loadLevel(loadSave, loadpos, levelNumber, hudInfo, main, menu, stateCode + 1, showLoad);
         }
     }
 

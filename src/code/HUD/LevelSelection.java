@@ -54,6 +54,6 @@ if(var6.get("LEVEL_"+(var5+1))!=null) var4[var5]=tmp+var6.get("LEVEL_"+(var5+1))
    protected final void onKey5() {
 int levelNumber=this.itemIndex() + 1;
 this.destroy();
-Main.loadLevel(Main.levelSelectorLoadData,false,levelNumber,null,main,menu);
+Main.loadLevel(Main.levelSelectorLoadData,false,levelNumber,null,main,menu, 1, true);
    }
 }

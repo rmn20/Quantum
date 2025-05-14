@@ -52,7 +52,7 @@ public final int getPosY() {
    }
 
 public void activate(House house,Player player,GameScreen gs) {
-if(lastActivate>0 && (lastActivate+timeToReset>GameScreen.time)) return;
+if(lastActivate>=0 && (lastActivate+timeToReset>GameScreen.time)) return;
 if(!isAllCollected(Player.usedPoints,player,house,gs)) {
 if(errMessage!=null) errMsg(gs);
 return;
@@ -71,7 +71,7 @@ if(!singleUse || !activated) if(message!=null) prMsg(gs);
 if(singleUse==false || this.activated==false) give(additional,player,house,gs);
 if(!contains(Player.usedPoints,name)) {
     this.activated=true;
-if(lastActivate>=0)lastActivate=GameScreen.time;
+if(timeToReset > 0)lastActivate=GameScreen.time;
     gs.openShop(items, files, prices);
 }
 

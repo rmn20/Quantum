@@ -17,6 +17,7 @@ public Vector3D np;
 public int pRot=0;
 public boolean saveMus=false;
 public boolean fullMove=false;
+public boolean showLoadScreen = true;
 
 public LVLChange(int x,int y,int z,Vector3D pos2,int l) {
 this.pos=new Vector3D(x,y,z);
@@ -50,7 +51,7 @@ public final void setPos(int x,int y,int z) {
 
 
 public void activate(House house,Player player,GameScreen gs) {
-if(lastActivate>0 && (lastActivate+timeToReset>GameScreen.time)) return;
+if(lastActivate>=0 && (lastActivate+timeToReset>GameScreen.time)) return;
 if(!isAllCollected(Player.usedPoints,player,house,gs)) {
 if(errMessage!=null) errMsg(gs);
 return;
@@ -70,11 +71,11 @@ if(singleUse==false || this.activated==false) give(additional,player,house,gs);
 if(!contains(Player.usedPoints,name)) {
     give(name,player);
     this.activated=true;
-if(lastActivate>=0)lastActivate=GameScreen.time;
+if(timeToReset > 0) lastActivate=GameScreen.time;
     
     gs.newPos=new Vector3D(np.x,np.y,np.z);
     player.rotYn(pRot);
-    gs.loadLevel(lvl, pos, !saveMus, fullMove);
+    gs.loadLevel(lvl, pos, !saveMus, fullMove, showLoadScreen);
 }
 
 

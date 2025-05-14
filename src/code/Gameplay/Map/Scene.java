@@ -534,7 +534,7 @@ if(distance(obj,(RoomObject)player)<=obj.radius*obj.radius && (obj.clickable==tr
 obj.near=true;
 boolean ret=true;
 if(obj.need!=null) if(!obj.isAllCollected(Player.usedPoints,player,house,gs) && obj.errMessage==null) ret=false;
-if(ret && !(obj.lastActivate>0 && (obj.lastActivate+obj.timeToReset>GameScreen.time))) return obj;
+if(ret && !(obj.lastActivate>=0 && (obj.lastActivate+obj.timeToReset>GameScreen.time))) return obj;
 }
 if(distance(obj,(RoomObject)player)>obj.radius*obj.radius)
 {
@@ -547,38 +547,37 @@ obj.near=false;
 return null;
 }
 
-public RoomObject activateObject(boolean isclickable2,Player player,int yy,GameScreen gs) {
-Vector objs;
-if(Main.updateOnlyNear) objs= house.getNearObjects(player.getPart());
-      else objs= house.getObjects();
-RoomObject used=null;
-for(int i=0;i<objs.size();i++) {
+	public RoomObject activateObject(boolean isclickable2, Player player, int yy, GameScreen gs) {
+		Vector objs;
+		if(Main.updateOnlyNear) objs = house.getNearObjects(player.getPart());
+		else objs = house.getObjects();
+		RoomObject used = null;
+		for(int i = 0; i < objs.size(); i++) {
 
-RoomObject obj=(RoomObject)objs.elementAt(i);
+			RoomObject obj = (RoomObject) objs.elementAt(i);
 
-if(obj.activable==true && obj.clickable==isclickable2)
-{
-if(distance(obj,(RoomObject)player)<=obj.radius*obj.radius && (obj.clickable==true || (obj.near==false||obj.alwaysActivate)) && (obj.activated==false || obj.singleUse==false) && obj.check(g3d,yy))
-{
-obj.near=true;
-boolean ret=true;
-if(obj.need!=null) if(!obj.isAllCollected(Player.usedPoints,player,house,gs) && obj.errMessage==null) ret=false;
-if(ret && !(obj.lastActivate>0 && (obj.lastActivate+obj.timeToReset>GameScreen.time))) { 
-obj.activate(this.house,player,gs);
-used=obj;
-if(obj.activateOnlyOne) return used;
-}
-}
-if(distance(obj,(RoomObject)player)>obj.radius*obj.radius)
-{
-obj.near=false;
-}
+			if(obj.activable == true && obj.clickable == isclickable2) {
+				if(distance(obj, (RoomObject) player) <= obj.radius * obj.radius && (obj.clickable == true || (obj.near == false || obj.alwaysActivate)) && (obj.activated == false || obj.singleUse == false) && obj.check(g3d, yy)) {
+					obj.near = true;
+					boolean ret = true;
+					if(obj.need != null)
+						if(!obj.isAllCollected(Player.usedPoints, player, house, gs) && obj.errMessage == null)
+							ret = false;
+					if(ret && !(obj.lastActivate >= 0 && (obj.lastActivate + obj.timeToReset > GameScreen.time))) {
+						obj.activate(this.house, player, gs);
+						used = obj;
+						if(obj.activateOnlyOne) return used;
+					}
+				}
+				if(distance(obj, (RoomObject) player) > obj.radius * obj.radius) {
+					obj.near = false;
+				}
 
-}
-}
+			}
+		}
 
-return used;
-}
+		return used;
+	}
 
     public void deleteUsedObjects(Player player) {
         Vector objs = house.getObjects();

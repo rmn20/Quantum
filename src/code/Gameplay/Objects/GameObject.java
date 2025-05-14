@@ -136,7 +136,7 @@ public abstract class GameObject extends RoomObject {
     }
 
     public void activate(House house, Player player, GameScreen gs) {
-        if(lastActivate > 0 && (lastActivate + timeToReset > GameScreen.time)) return;
+        if(lastActivate >= 0 && (lastActivate + timeToReset > GameScreen.time)) return;
         if(!isAllCollected(Player.usedPoints, player, house, gs)) {
             if(errMessage != null) errMsg(gs);
             return;
@@ -148,7 +148,7 @@ public abstract class GameObject extends RoomObject {
         if(!contains(Player.usedPoints, name)) {
             give(name, player);
             this.activated = true;
-            if(lastActivate >= 0) lastActivate = GameScreen.time;
+            if(timeToReset > 0) lastActivate = GameScreen.time;
         }
 
         if(destroyOnUse) house.removeObject(this);

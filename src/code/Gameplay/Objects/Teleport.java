@@ -42,7 +42,7 @@ public final int getPosY() {
    }
 
 public void activate(House house,Player player,GameScreen gs) {
-if(lastActivate>0 && (lastActivate+timeToReset>GameScreen.time)) return;
+if(lastActivate>=0 && (lastActivate+timeToReset>GameScreen.time)) return;
 if(!isAllCollected(Player.usedPoints,player,house,gs)) {
 if(errMessage!=null) errMsg(gs);
 return;
@@ -63,7 +63,7 @@ if(!contains(Player.usedPoints,name)) {
     player.getCharacter().getTransform().addPosition(npos);
     player.rotYn(pRot);
     this.activated=true;
-if(lastActivate>=0)lastActivate=GameScreen.time;}
+if(timeToReset > 0)lastActivate=GameScreen.time;}
 
 
 if(destroyOnUse) house.removeObject(this);

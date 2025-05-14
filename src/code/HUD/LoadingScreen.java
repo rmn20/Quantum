@@ -13,13 +13,16 @@ public final class LoadingScreen extends GUIScreen {
    private int lvl;
    private boolean loadSave;
    private boolean loadPos;
+   private boolean showLoad;
 
-   public LoadingScreen(Main main, int lvl, boolean loadSave, boolean loadPos) {
+   public LoadingScreen(Main main, int lvl, boolean loadSave, boolean loadPos, boolean showLoad) {
       this.main = main;
       
       this.lvl = lvl;
       this.loadSave = loadSave;
       this.loadPos = loadPos;
+	  
+	  this.showLoad = showLoad;
       
       setFont(Main.getFont());
    } 
@@ -29,7 +32,7 @@ public final class LoadingScreen extends GUIScreen {
    }
 
    protected final void paint(Graphics g) {
-      if(frames == 0) {
+      if(frames == 0 && showLoad) {
           Font font = getFont();
           int y = getHeight() / 2 - font.height() / 2;
           Main.drawBck(g, y - font.height() / 2, y + font.height() / 2);

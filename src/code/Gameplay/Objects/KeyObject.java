@@ -40,34 +40,29 @@ public final int getPosY() {
 public final void setPos(int x,int y,int z) {
     pos.set(x,y,z);
 }
-public void activate(House house,Player player,GameScreen gs) {
-if(lastActivate>0 && (lastActivate+timeToReset>GameScreen.time)) return;
-if(!isAllCollected(Player.usedPoints,player,house,gs)) {
-if(errMessage!=null) errMsg(gs);
-return;
-}
-if(sound!=null && Main.isSounds && Main.sounds!=0) Asset.getSound(sound).start(Main.sounds);
-/*if(
-singleUse==true &&
-contains(Player.usedPoints,name)) {
-if(destroyOnUse) house.removeObject(this);
-return;
-}*/
+	public void activate(House house, Player player, GameScreen gs) {
+		if(lastActivate >= 0 && (lastActivate + timeToReset > GameScreen.time)) return;
+		if(!isAllCollected(Player.usedPoints, player, house, gs)) {
+			if(errMessage != null) errMsg(gs);
+			return;
+		}
+		if(sound != null && Main.isSounds && Main.sounds != 0) Asset.getSound(sound).start(Main.sounds);
 
-if(!singleUse || !activated) if(message!=null) prMsg(gs);
-if(singleUse==false || this.activated==false) give(additional,player,house,gs);
-if(!contains(Player.usedPoints,name)) {
-    give(name,player);
-    this.activated=true;
-if(lastActivate>=0)lastActivate=GameScreen.time;}
+		if(!singleUse || !activated) if(message != null) prMsg(gs);
+		if(singleUse == false || this.activated == false) give(additional, player, house, gs);
+		if(!contains(Player.usedPoints, name)) {
+			give(name, player);
+			this.activated = true;
+			if(timeToReset > 0) lastActivate = GameScreen.time;
+		}
 
 
-if(destroyOnUse) house.removeObject(this);
+		if(destroyOnUse) house.removeObject(this);
 
 
 
 
-}
+	}
 
 
 

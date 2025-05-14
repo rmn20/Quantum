@@ -1,4 +1,4 @@
-package code.Gameplay;
+	package code.Gameplay;
 
 import code.utils.QFPS;
 import code.utils.StringTools;
@@ -945,7 +945,7 @@ public final class GameScreen extends MyCanvas {
                     
                     if(!Main.isLastLevel(levelNumber)) {
                         if(scene.getFinishPoint() != null) {
-                            loadLevel(levelNumber + 1, scene.getFinishPoint(), true, fullMoveLvl);
+                            loadLevel(levelNumber + 1, scene.getFinishPoint(), true, fullMoveLvl, true);
                         }
                     } else gameEnd();
                     
@@ -1051,11 +1051,7 @@ public final class GameScreen extends MyCanvas {
         Main.setCurrent(new InventoryScreen(main, this, player));
     }
 
-    public void loadLevel(int lvl, Vector3D stp) {
-        loadLevel(lvl, stp, true, false);
-    }
-
-    public void loadLevel(int lvl, Vector3D stp, boolean stopMus, boolean changePos) {
+    public void loadLevel(int lvl, Vector3D stp, boolean stopMus, boolean changePos, boolean showLoad) {
         if(player == null) return;
         main.addAvailableLevel(lvl - 1);
         
@@ -1077,9 +1073,9 @@ public final class GameScreen extends MyCanvas {
         destroy(stopMus);
         
         if(GameHelp.needToShow(levelNumber, 1, true)) {
-            Main.setCurrent(new GameHelp(main, null, levelNumber, true, hudInfo));
+            Main.setCurrent(new GameHelp(main, null, levelNumber, true, hudInfo, 1, showLoad));
         } else {
-            Main.loadLevel(true, true, lvl, hudInfo, main, null, 1);
+            Main.loadLevel(true, true, lvl, hudInfo, main, null, 1, showLoad);
         }
     }
 
@@ -1136,7 +1132,7 @@ public final class GameScreen extends MyCanvas {
         
         
         if(GameHelp.needToShow(levelNumber, 1, true)) {
-            scr = new GameHelp(main, null, levelNumber, true, hudInfo);
+            scr = new GameHelp(main, null, levelNumber, true, hudInfo, 1, true);
         } else {
             if(TitleScreen.hasTitleScreen()) scr = new TitleScreen(main, null);
             else scr = new Menu(main);

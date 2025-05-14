@@ -854,12 +854,7 @@ public final class Main extends MIDlet {
 
     }
 
-    public static final void loadLevel(boolean loadSave, boolean loadPos, int levelNumber, Object hudInfo, Main main, Menu menu) {
-        loadLevel(loadSave, loadPos, levelNumber, hudInfo, main, menu, 1);
-
-    }
-
-    public static final void loadLevel(boolean loadSave, boolean loadPos, int levelNumber, Object hudInfo, Main main, Menu menu, int helpState) {
+    public static final void loadLevel(boolean loadSave, boolean loadPos, int levelNumber, Object hudInfo, Main main, Menu menu, int helpState, boolean showLoad) {
         try {
             System.gc();
             Thread.sleep(5L);
@@ -867,11 +862,11 @@ public final class Main extends MIDlet {
             if(!GameHelp.needToShow(levelNumber, helpState, false)) {
                 if(menu != null) menu.destroy();
             
-                LoadingScreen ls = new LoadingScreen(main, levelNumber, loadSave, loadPos);
+                LoadingScreen ls = new LoadingScreen(main, levelNumber, loadSave, loadPos, showLoad);
                 setCurrent(ls);
 
             } else {
-                GameHelp gh = new GameHelp(main, menu, levelNumber, false, hudInfo, helpState);
+                GameHelp gh = new GameHelp(main, menu, levelNumber, false, hudInfo, helpState, showLoad);
                 GameHelp.loadSave = loadSave;
                 GameHelp.loadpos = loadPos;
                 setCurrent(gh);

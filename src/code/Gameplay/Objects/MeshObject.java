@@ -308,7 +308,7 @@ private int distPerSec=1000; //Скорость лифта в секунду? В
     public final void render(DirectX7 g3d, int x1, int y1, int x2, int y2) {
         if (!visible) return;
             
-        if (lastActivate > 0 && (lastActivate + timeToReset > GameScreen.time) && hideWhenUnusable) return;
+        if (lastActivate >= 0 && (lastActivate + timeToReset > GameScreen.time) && hideWhenUnusable) return;
 
         Matrix mat = getCharacter().getTransform();
         mat = g3d.computeFinalMatrix(mat);
@@ -341,7 +341,7 @@ private int distPerSec=1000; //Скорость лифта в секунду? В
     }
 
 public void activate(House house,Player player,GameScreen gs) {
-if(lastActivate>0 && (lastActivate+timeToReset>GameScreen.time)) return;
+if(lastActivate>=0 && (lastActivate+timeToReset>GameScreen.time)) return;
 
     if( !(singleUse && (contains(Player.usedPoints,name) || activated)) ) {
     if(isAllCollected(Player.usedPoints,player,house,gs)) {
