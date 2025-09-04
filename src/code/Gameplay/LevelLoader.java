@@ -941,7 +941,9 @@ public class LevelLoader {
                     scale = getFloat("SCALE", obj, Main.settings, key, scale);
 
                     Mesh[] meshes = Asset.getMeshes(getString("MODEL", obj, Main.settings, key), scale, scale, scale);
-                    MultyTexture mt = new MultyTexture(getString("TEX", obj, Main.settings, key),false);
+					
+					boolean persCorrect = getBoolean("PERS_CORRECT", obj, Main.settings, key, lvl, false);
+                    MultyTexture mt = new MultyTexture(getString("TEX", obj, Main.settings, key), persCorrect);
 
                     MeshObject mobj = new MeshObject(meshes, mt, ps[0], ps[1], ps[2], 
                             getBoolean("REALTIME_LIGHTING", obj, Main.settings, key, lvl, false));
@@ -1155,7 +1157,8 @@ public class LevelLoader {
 
         MultyTexture mt = null;
         String str = getString("TEX", obj, Main.settings, key, "NULL");
-        if (!str.equals("NULL")) mt = new MultyTexture(getString("TEX", obj, Main.settings, key),false);
+		boolean persCorrect = getBoolean("PERS_CORRECT", obj, Main.settings, key, false);
+        if (!str.equals("NULL")) mt = new MultyTexture(getString("TEX", obj, Main.settings, key), persCorrect);
 
         String modes = getString("DRAW_MODES", obj, Main.settings, key);
         MeshImage meim = null;

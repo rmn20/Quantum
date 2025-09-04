@@ -12,7 +12,7 @@ public class MultyTexture {
 
     MultyTexture() {}
 
-    public MultyTexture(String files, boolean iz) {
+    public MultyTexture(String files, boolean perspectiveCorrect) {
         String[] texList;
         texList = GameIni.cutOnStrings(files, ',', ';');
 
@@ -24,7 +24,7 @@ public class MultyTexture {
             
             if(anims.length==1) {
                 textures[i] = Asset.getTexture(anims[0]);
-                textures[i].setPerspectiveCorrection(iz);
+                textures[i].setPerspectiveCorrection(perspectiveCorrect);
             } else {
                 textures[i] = Asset.getTexture(anims[1]);
                 textures[i].animation_speed=Float.parseFloat(anims[0].trim());
@@ -34,7 +34,7 @@ public class MultyTexture {
                 }
             
             
-                textures[i].setPerspectiveCorrection(iz);
+                textures[i].setPerspectiveCorrection(perspectiveCorrect);
             
             }
         }
