@@ -761,7 +761,7 @@ gs.customMessagePause=true;
 gs.customMessageEndTime=errMessageTimeOut;
 }
 GameScreen.lines.removeAllElements();
-TextView.createLines(message, GameScreen.lines, gs.font, GameScreen.width);
+TextView.createLines(errMessage, GameScreen.lines, gs.font, GameScreen.width);
     }
 if(errMessageType==0) {
 gs.showDialog(errMessage);
