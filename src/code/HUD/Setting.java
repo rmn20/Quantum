@@ -23,8 +23,8 @@ public final class Setting extends Selectable {
         this.background = background;
 
         IniFile var4 = Main.getGameText();
-        String[] var3 = new String[21];
-        boolean[] ms = new boolean[21];
+        String[] var3 = new String[23];
+        boolean[] ms = new boolean[23];
         set(Main.getFont(), var3, null, var4.get("BACK"), ms);
         setItems();
         list.left = true;
@@ -88,6 +88,15 @@ public final class Setting extends Selectable {
         if(Main.fogQ == 0) var2[i] = lang.get("FOGQ") + ":" + lang.get("OFF");
         if(Main.fogQ == 1) var2[i] = lang.get("FOGQ") + ":" + lang.get("LLQ");
         i++;
+        
+        var2[i] = lang.get("USE_GLOBAL_DIST") + ":" + (this.main.useGlobalDrDist ? lang.get("ON") : lang.get("OFF"));
+        ms[i] = false;
+        i++;
+
+        var2[i] = lang.get("GLOBAL_DIST") + ":" + this.main.globalDrDist;
+        ms[i] = false;
+        i++;
+        
         var2[i] = lang.get("CORPSES") + ":" + (Main.isCorpses() ? lang.get("ON") : lang.get("OFF"));
         ms[i] = false;
         i++;
@@ -229,6 +238,10 @@ public final class Setting extends Selectable {
         id++;
         if(var1 == id) Main.fogQ = (Math.max(0, Main.fogQ - 1));
         id++;
+        if(var1 == id) Main.useGlobalDrDist = false;
+        id++;
+        if(var1 == id) Main.globalDrDist = Math.max(0, Main.globalDrDist - 1000);
+        id++;
         if(var1 == id) Main.corpses = false;
         id++;
         if(var1 == id) Main.blood = false;
@@ -292,7 +305,7 @@ public final class Setting extends Selectable {
         }
         id++;
 
-        id++;//Conrols
+        id++;//Controls
         if(var1 == id) Main.mouseSpeed += 2;
         id++;
         id++;//KEYS
@@ -304,6 +317,10 @@ public final class Setting extends Selectable {
         if(var1 == id) Main.pixelsQ = (Math.min(2, Main.pixelsQ + 1));
         id++;
         if(var1 == id) Main.fogQ = (Math.min(2, Main.fogQ + 1));
+        id++;
+        if(var1 == id) Main.useGlobalDrDist = true;
+        id++;
+        if(var1 == id) Main.globalDrDist = Math.max(0, Main.globalDrDist + 1000);
         id++;
         if(var1 == id) Main.corpses = true;
         id++;

@@ -83,6 +83,8 @@ public final class Main extends MIDlet {
     public static int pixelsQ = 2; //0-4xmax 1 - 2xmax 2 - 1xmax
     public static int persQ = 2;
     public static int availableLevel = 1; // номер доступного уровня
+    public static boolean useGlobalDrDist = false; // использовать глобальную настройку дальности прорисовки?
+    public static int globalDrDist = 15000; // глобальная настройка дальности прорисовки
     public static boolean forceLQFog = false;
     public static boolean originalSight = false;
     public static boolean originalUseIcon = false;
@@ -145,6 +147,10 @@ public final class Main extends MIDlet {
         canSelectLevel = settings.getInt("CANSELECTLEVEL", 1) == 1;
         levelSelectorLoadData = settings.getInt("LEVELSELECTOR_LOAD_DATA", 1) == 1;
         pauseScreenSave = settings.getInt("PAUSE_SCREEN_SAVE", 0) == 1;
+        
+        globalDrDist = settings.getInt("GLOBAL_DIST", Integer.MAX_VALUE);
+        useGlobalDrDist = globalDrDist < Integer.MAX_VALUE;
+        globalDrDist = useGlobalDrDist ? globalDrDist : 15000;
 
         String tmp = settings.getNoLang("SHOPSCROLL");
         if(tmp != null) verticalShopScroll = tmp.equals("VERTICAL");
@@ -273,6 +279,8 @@ public final class Main extends MIDlet {
         q = 24;
         pixelsQ = 2;
         fogQ = 2; //0-off 1 - lq 2 - hq
+        globalDrDist = 15000;
+        useGlobalDrDist = false;
 
         corpses = false;
         blood = false;
