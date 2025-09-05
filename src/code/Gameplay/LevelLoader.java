@@ -178,7 +178,7 @@ public class LevelLoader {
         DirectX7.lightdirz = (short) getInt("LIGHT_Z", lvl, setting, 4096);
 
         DirectX7.setFogDist(getInt("FOGD", lvl, setting, 1));
-        DirectX7.setDrDist(getInt("DIST", lvl, setting, Integer.MAX_VALUE));
+        DirectX7.setDrDist(Main.useGlobalDrDist ? Main.globalDrDist : getInt("DIST", lvl, setting, Main.globalDrDist));
         DirectX7.standartDrawmode = (byte) getInt("DMODE", lvl, setting, 0);
 
         String c = getStringdef("FOGCR", lvl, setting, "NULL");
