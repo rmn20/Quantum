@@ -1718,6 +1718,13 @@ static final void paintAffine_9(DirectX7 g3d, Texture texture,
         }
         if(a.sy == c.sy) return;
 
+		if (LightMapper.cameraVectorLight && texture.drawmode == 6) {
+			ar = ar * MathUtils.calcLight(nx, ny, nz, a.x - g3d.getCamera().m03, a.y - g3d.getCamera().m13, a.z - g3d.getCamera().m23) / 255;
+			br = br * MathUtils.calcLight(nx, ny, nz, b.x - g3d.getCamera().m03, b.y - g3d.getCamera().m13, b.z - g3d.getCamera().m23) / 255;
+			cr = cr * MathUtils.calcLight(nx, ny, nz, c.x - g3d.getCamera().m03, c.y - g3d.getCamera().m13, c.z - g3d.getCamera().m23) / 255;
+		}
+
+
         final int[] tex = texture.rImg.img;
         final int lengthBIT = tex.length-1;
         final int widthBIT = texture.rImg.widthBIT;
@@ -1770,13 +1777,6 @@ static final void paintAffine_9(DirectX7 g3d, Texture texture,
 
         int y_start = a.sy; //������� �� Y �� �������
         int y_end = c.sy < g3d.height ? c.sy : g3d.height; // ����� �� Y �� �������
-
-    if (LightMapper.cameraVectorLight && texture.drawmode == 6) {
-        ar = ar * MathUtils.calcLight(nx, ny, nz, a.x - g3d.getCamera().m03, a.y - g3d.getCamera().m13, a.z - g3d.getCamera().m23) / 255;
-        br = br * MathUtils.calcLight(nx, ny, nz, b.x - g3d.getCamera().m03, b.y - g3d.getCamera().m13, b.z - g3d.getCamera().m23) / 255;
-        cr = cr * MathUtils.calcLight(nx, ny, nz, c.x - g3d.getCamera().m03, c.y - g3d.getCamera().m13, c.z - g3d.getCamera().m23) / 255;
-    }
-
     
     paint9Mini(
          x_start, x_end,

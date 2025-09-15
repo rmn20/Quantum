@@ -178,6 +178,7 @@ public class LevelLoader {
         DirectX7.lightdirz = (short) getInt("LIGHT_Z", lvl, setting, 4096);
 
         DirectX7.setFogDist(getInt("FOGD", lvl, setting, 1));
+		DirectX7.waterDistance = getInt("DMODE_11_DIST", lvl, setting, 10000);
         DirectX7.setDrDist(getInt("DIST", lvl, setting, Integer.MAX_VALUE));
         DirectX7.standartDrawmode = (byte) getInt("DMODE", lvl, setting, 0);
 
