@@ -52,6 +52,10 @@ public abstract class GUIScreen extends MyCanvas {
         this.leftSoft = name;
     }
 
+    protected final void setRightSoft(String name) {
+        this.rightSoft = name;
+    }
+
     protected final void drawSoftKeys(Graphics g) {
         int var2 = this.getWidth();
         int var3 = this.getHeight();

@@ -39,6 +39,14 @@ public final class Setting extends Selectable {
 	private boolean hasLangSelect() {
 		return !(menu instanceof PauseScreen) && Main.langs.length > 1;
 	}
+	
+	private void applyLanguage() {
+		String path = "/languages/" + Main.langs[Main.lang].toLowerCase() + ".txt";
+		main.setLanguage(path);
+		
+		if(menu instanceof Menu) ((Menu) menu).reloadText();
+		setRightSoft(Main.getGameText().get("BACK"));
+	}
 
     private void setItems() {
         IniFile lang = Main.getGameText();
@@ -249,10 +257,7 @@ public final class Setting extends Selectable {
 			if(var1 == id) {
 				Main.lang -= 1;
 				if(Main.lang < 0) Main.lang = Main.langs.length - 1;
-
-				String path = "/languages/" + Main.langs[Main.lang].toLowerCase() + ".txt";
-				main.setLanguage(path);
-				if(menu instanceof Menu) ((Menu) menu).reloadText();
+				applyLanguage();
 			}
 			id++;
 		}
@@ -327,13 +332,10 @@ public final class Setting extends Selectable {
 			if(var1 == id) {
 				Main.lang += 1;
 				if(Main.lang >= Main.langs.length) Main.lang = 0;
-
-				String path = "/languages/" + Main.langs[Main.lang].toLowerCase() + ".txt";
-				main.setLanguage(path);
-				if(menu instanceof Menu) ((Menu) menu).reloadText();
+				applyLanguage();
 			}
+			id++;
 		}
-        id++;
         if(var1 == id) Main.resizeWeapons = true;
         id++;
         if(var1 == id) Main.hideHud = true;
