@@ -22,18 +22,23 @@ public final class Setting extends Selectable {
         this.menu = menu;
         this.background = background;
 
-        IniFile var4 = Main.getGameText();
-        String[] var3 = new String[21];
-        boolean[] ms = new boolean[21];
-        set(Main.getFont(), var3, null, var4.get("BACK"), ms);
+        IniFile lang = Main.getGameText();
+		
+        String[] options = new String[20 + (hasLangSelect() ? 1 : 0)];
+        boolean[] center = new boolean[options.length];
+        set(Main.getFont(), options, null, lang.get("BACK"), center);
         setItems();
+		
         list.left = true;
         list.scrollDown();
 
         hei = this.getHeight() / 2 - getHeight() * Main.getDisplaySize() / 200;
         h = this.getHeight() * Main.getDisplaySize() / 100;
-
     }
+	
+	private boolean hasLangSelect() {
+		return !(menu instanceof PauseScreen) && Main.langs.length > 1;
+	}
 
     private void setItems() {
         IniFile lang = Main.getGameText();
@@ -104,15 +109,17 @@ public final class Setting extends Selectable {
         var2[i] = lang.get("HUD") + ":";
         ms[i] = true;
         i++;
-        String lng = Main.langs[Main.lang];
-        if(Main.settings.getNoLang(lng) != null) {
-            lng = Main.settings.getNoLang(lng);
-        } else if(lang.get(lng) != null) {
-            lng = lang.get(lng);
-        }
-        var2[i] = lang.get("LANG") + ":" + lng;
-        ms[i] = false;
-        i++;
+		if(hasLangSelect()) {
+			String lng = Main.langs[Main.lang];
+			if(Main.settings.getNoLang(lng) != null) {
+				lng = Main.settings.getNoLang(lng);
+			} else if(lang.get(lng) != null) {
+				lng = lang.get(lng);
+			}
+			var2[i] = lang.get("LANG") + ":" + lng;
+			ms[i] = false;
+			i++;
+		}
         var2[i] = lang.get("RESIZE_WEAPONS") + ":" + (Main.resizeWeapons ? lang.get("YES") : lang.get("NO"));
         ms[i] = false;
         i++;
@@ -175,7 +182,7 @@ public final class Setting extends Selectable {
         id++;
         id++;
         id++;//Hud
-        id++;
+        if(hasLangSelect()) id++;
         id++;
         id++;
         id++;
@@ -238,15 +245,17 @@ public final class Setting extends Selectable {
         if(var1 == id) Main.frameskip = false;
         id++;
         id++;//Hud
-        if(var1 == id) {
-            Main.lang -= 1;
-            if(Main.lang < 0) Main.lang = Main.langs.length - 1;
+		if(hasLangSelect()) {
+			if(var1 == id) {
+				Main.lang -= 1;
+				if(Main.lang < 0) Main.lang = Main.langs.length - 1;
 
-            String path = "/languages/" + Main.langs[Main.lang].toLowerCase() + ".txt";
-            main.setLanguage(path);
-            if(menu instanceof Menu) ((Menu) menu).reloadText();
-        }
-        id++;
+				String path = "/languages/" + Main.langs[Main.lang].toLowerCase() + ".txt";
+				main.setLanguage(path);
+				if(menu instanceof Menu) ((Menu) menu).reloadText();
+			}
+			id++;
+		}
         if(var1 == id) Main.resizeWeapons = false;
         id++;
         if(var1 == id) Main.hideHud = false;
@@ -314,14 +323,16 @@ public final class Setting extends Selectable {
         if(var1 == id) Main.frameskip = true;
         id++;
         id++;//Hud
-        if(var1 == id) {
-            Main.lang += 1;
-            if(Main.lang >= Main.langs.length) Main.lang = 0;
+		if(hasLangSelect()) {
+			if(var1 == id) {
+				Main.lang += 1;
+				if(Main.lang >= Main.langs.length) Main.lang = 0;
 
-            String path = "/languages/" + Main.langs[Main.lang].toLowerCase() + ".txt";
-            main.setLanguage(path);
-            if(menu instanceof Menu) ((Menu) menu).reloadText();
-        }
+				String path = "/languages/" + Main.langs[Main.lang].toLowerCase() + ".txt";
+				main.setLanguage(path);
+				if(menu instanceof Menu) ((Menu) menu).reloadText();
+			}
+		}
         id++;
         if(var1 == id) Main.resizeWeapons = true;
         id++;

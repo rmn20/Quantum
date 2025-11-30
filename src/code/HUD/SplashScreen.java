@@ -14,18 +14,16 @@ public final class SplashScreen extends GUIScreen {
 	private Image[] splash;
 	private Image background;
 	private ItemList list;
-	private final String[] langlist;
 	private long splashBeginTime = -1L;
 
 	public SplashScreen(Main var1) {
-		langlist = StringTools.cutOnStrings(StringTools.getStringFromResource("/languages/languages.txt"), ',');
 		main = var1;
+		
 		setFont(Main.getFont());
 		onAction(1);
-		if(Main.bcks != null)
-			Main.bcks = ImageResize.createImage(Main.bcks, getWidth(), Main.bcks.getHeight());
-		if(Main.bcks2 != null)
-			Main.bcks2 = ImageResize.createImage(Main.bcks2, getWidth(), Main.bcks2.getHeight());
+		
+		if(Main.bcks != null) Main.bcks = ImageResize.createImage(Main.bcks, getWidth(), Main.bcks.getHeight());
+		if(Main.bcks2 != null) Main.bcks2 = ImageResize.createImage(Main.bcks2, getWidth(), Main.bcks2.getHeight());
 	}
 	/*
 	 Action 1 - Сплэш
@@ -48,43 +46,43 @@ public final class SplashScreen extends GUIScreen {
 			for(int i = 0; i < Main.splash.length; i++) {
 				splash[i] = ImageResize.createImage(Main.splash[i], (float) getHeight() / 320.0F, (float) getHeight() / 320.0F);
 			}
+
 			splashBeginTime = System.currentTimeMillis();
-		} else {
-			String[] langs;
-			if(action == 2) {
-				splash = null;
+		} else if(action == 2) {
+			if(Main.langs.length == 1) {
+				onAction(3);
+				return;
+			}
+			
+			splash = null;
+			background = ImageResize.createImage(Main.background_logo, getWidth(), getHeight());
 
-				background = ImageResize.createImage(Main.background_logo, getWidth(), getHeight());
+			String[] langs = new String[Main.langs.length];
 
-				langs = new String[langlist.length];
-
-				if(langs != null) {
-					for(int i = 0; i < langs.length; i++) {
-						langs[i] = langlist[i];
-						if(langs[i] != null) {
-							if(Main.settings.get(langs[i]) != null)
-								langs[i] = Main.settings.getNoLang(langs[i]);
-							if(Main.getGameText().get(langs[i]) != null)
-								langs[i] = Main.settings.get(langs[i]);
-						}
+			if(langs != null) {
+				for(int i = 0; i < langs.length; i++) {
+					langs[i] = Main.langs[i];
+					
+					if(langs[i] != null) {
+						if(Main.settings.get(langs[i]) != null) langs[i] = Main.settings.getNoLang(langs[i]);
+						if(Main.getGameText().get(langs[i]) != null) langs[i] = Main.settings.get(langs[i]);
 					}
 				}
-
-				list = new ItemList(langs, Main.getFont());
-				setSoftKeysNames(Main.getGameText().get("SELECT"), (String) null);
-			} else if(action == 3) {
-				splash = null;
-				if(background == null)
-					background = ImageResize.createImage(Main.background_logo, this.getWidth(), this.getHeight());
-				langs = new String[]{Main.getGameText().get("AUDIO") + ":" + Main.getGameText().get("ON"),
-					Main.getGameText().get("AUDIO") + ":" + Main.getGameText().get("OFF")};
-				list = new ItemList(langs, Main.getFont());
-				setSoftKeysNames(Main.getGameText().get("SELECT"), (String) null);
 			}
+
+			list = new ItemList(langs, Main.getFont());
+			setSoftKeysNames(Main.getGameText().get("SELECT"), (String) null);
+		} else if(action == 3) {
+			splash = null;
+			if(background == null) background = ImageResize.createImage(Main.background_logo, this.getWidth(), this.getHeight());
+
+			String[] strList = new String[]{Main.getGameText().get("AUDIO") + ":" + Main.getGameText().get("ON"),
+			Main.getGameText().get("AUDIO") + ":" + Main.getGameText().get("OFF")};
+			list = new ItemList(strList, Main.getFont());
+			setSoftKeysNames(Main.getGameText().get("SELECT"), (String) null);
 		}
 
 		repaint();
-
 	}
 
 	protected final void paint(Graphics g) {
@@ -136,7 +134,7 @@ public final class SplashScreen extends GUIScreen {
 		if(action == 1) {
 			splashBeginTime = System.currentTimeMillis() - 3500 * splash.length;
 		} else if(action == 2) {
-			String var1 = "/languages/" + langlist[this.list.getIndex()].toLowerCase() + ".txt";
+			String var1 = "/languages/" + Main.langs[this.list.getIndex()].toLowerCase() + ".txt";
 			main.setLanguage(var1);
 			Main.lang = this.list.getIndex();
 			main.saveSettingToStore();

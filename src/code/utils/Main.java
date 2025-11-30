@@ -152,8 +152,6 @@ public final class Main extends MIDlet {
         hidesight = settings.getInt("HIDESIGHT", 0) == 1;
         menuMusic = settings.getNoLang("MENU_MUSIC");
 
-        setLanguage("/languages/english.txt");
-
         Splinter.texture = Texture.createTexture(settings.getNoLang("SPLINTER_SPRITE", "/splinter.png"));
         Splinter.cache();
 
@@ -244,20 +242,24 @@ public final class Main extends MIDlet {
             defaultSettings();
         }
 
-        Shop.initShop();
-
         tmp = settings.getNoLang("OPEN_LEVELS");
         if(tmp != null) {
             if(tmp.equals("ALL")) availableLevel = lastLevel;
             else availableLevel = Math.max(availableLevel, StringTools.parseInt(tmp));
         }
 
-        langs = StringTools.cutOnStrings(StringTools.getStringFromResource("/languages/languages.txt"), ',');
+		String langsList = StringTools.getStringFromResource("/languages/languages.txt");
+		
+		if(langsList == null) {
+			langs = new String[] {"ENGLISH"};
+		} else {
+			langs = StringTools.cutOnStrings(langsList, ',');
+		}
 
-        if(lang != -1) {
-            String path = "/languages/" + langs[lang].toLowerCase() + ".txt";
-            setLanguage(path);
-        }
+        String path = "/languages/" + langs[lang == -1 ? 0 : lang].toLowerCase() + ".txt";
+        setLanguage(path);
+
+        Shop.initShop();
 
         mainCanvas = new MainCanvas(this);
         setCurrent(new SplashScreen(this));
