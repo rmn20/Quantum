@@ -32,7 +32,7 @@ public final class DeveloperMenu extends Selectable {
       this.menu = menu;
       this.background=background;
       IniFile var4 = Main.getGameText();
-      String[] var3 = new String[13];
+      String[] var3 = new String[14];
       set(Main.getFont(), var3, (String)null, var4.get("BACK"));
       setItems();
 
@@ -46,6 +46,7 @@ public final class DeveloperMenu extends Selectable {
       
       items[i] = "Debug: "+debugMode;i++;
       items[i] = "Open all levels";i++;
+      items[i] = "Can select level: " + Main.canSelectLevel;i++;
       items[i] = "Show QFPS: "+showFps;i++;
       items[i] = "Show RAM: "+showRam;i++;
       items[i] = "Show room ID: "+showRoomID;i++;
@@ -96,7 +97,11 @@ public final class DeveloperMenu extends Selectable {
           if(menu instanceof PauseScreen) ((PauseScreen)menu).reloadText();
       }
       id++; 
-      id++; if(var1 == id-1) showFps=false;
+      id++; if(var1 == id-1) {
+		  Main.canSelectLevel = false;
+          if(menu instanceof Menu) ((Menu)menu).reloadText();
+	  }
+	  id++; if(var1 == id-1) showFps=false;
       id++; if(var1 == id-1) showRam=false;
       id++; if(var1 == id-1) showRoomID=false;
       id++; if(var1 == id-1) drawPortals=false;
@@ -122,6 +127,10 @@ public final class DeveloperMenu extends Selectable {
           if(menu instanceof PauseScreen) ((PauseScreen)menu).reloadText();
       }
       id++; 
+	  id++; if(var1 == id-1) {
+		  Main.canSelectLevel = true;
+          if(menu instanceof Menu) ((Menu)menu).reloadText();
+	  }
       id++; if(var1 == id-1) showFps=true;
       id++; if(var1 == id-1) showRam=true;
       id++; if(var1 == id-1) showRoomID=true;
@@ -151,6 +160,10 @@ public final class DeveloperMenu extends Selectable {
       id++; if(var1 == id-1) {
 		  main.setAvailableLevelCount(Main.lastLevel);
 		  if(menu instanceof Menu) ((Menu) menu).reloadText();
+	  }
+	  id++; if(var1 == id-1) {
+		  Main.canSelectLevel ^= true;
+          if(menu instanceof Menu) ((Menu)menu).reloadText();
 	  }
       id++; if(var1 == id-1) showFps^=true;
       id++; if(var1 == id-1) showRam^=true;
