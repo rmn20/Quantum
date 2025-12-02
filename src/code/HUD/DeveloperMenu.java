@@ -143,8 +143,15 @@ public final class DeveloperMenu extends Selectable {
       int var1 = this.itemIndex();
       int id = 0;
       boolean repaint = true;
-      id++; if(var1 == id-1) debugMode^=true;
-      id++; if(var1 == id-1) main.setAvailableLevelCount(Main.lastLevel);
+      id++; if(var1 == id-1) {
+		  debugMode^=true;
+		  if(menu instanceof Menu) ((Menu) menu).reloadText();
+		  if(menu instanceof PauseScreen) ((PauseScreen) menu).reloadText();
+	  }
+      id++; if(var1 == id-1) {
+		  main.setAvailableLevelCount(Main.lastLevel);
+		  if(menu instanceof Menu) ((Menu) menu).reloadText();
+	  }
       id++; if(var1 == id-1) showFps^=true;
       id++; if(var1 == id-1) showRam^=true;
       id++; if(var1 == id-1) showRoomID^=true;
