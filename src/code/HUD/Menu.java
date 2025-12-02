@@ -54,12 +54,12 @@ public final class Menu extends Selectable {
         int levels = main.getAvailableLevelCount();
         
         if(!hasSave) {
-            if(levels==1) {
-                newList.addElement(lang.get("NEW_GAME"));
-                newGameIndex = 0;
-            } else if(Main.canSelectLevel) {
+            if(levels > 1 && Main.canSelectLevel) {
                 newList.addElement(lang.get("SELECT_LEVEL"));
                 levelSelectIndex = 0;
+            } else {
+                newList.addElement(lang.get("NEW_GAME"));
+                newGameIndex = 0;
             }
         } else {
             newList.addElement(lang.get("CONTINUE")); 
