@@ -265,7 +265,11 @@ public final class Setting extends Selectable {
         id++;
         if(var1 == id) Main.hideHud = false;
         id++;
-        if(var1 == id) DeveloperMenu.debugMode = false;
+        if(var1 == id) {
+			DeveloperMenu.debugMode = false;
+            if(menu instanceof Menu) ((Menu) menu).reloadText();
+            if(menu instanceof PauseScreen) ((PauseScreen) menu).reloadText();
+		}
         id++;
         this.setItems();
         this.repaint();
