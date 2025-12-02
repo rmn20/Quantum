@@ -41,12 +41,13 @@ public final class Menu extends Selectable {
             } catch (Exception e) {}
         }
 
-        newGameIndex = continueIndex = levelSelectIndex = -1;
         reloadText();
     }
 
     public final void reloadText() {
-
+		newGameIndex = continueIndex = levelSelectIndex = 
+				helpIndex = optionsIndex = exitIndex = -1;
+		
         IniFile lang = Main.getGameText();
         Vector newList = new Vector();
         
@@ -56,7 +57,7 @@ public final class Menu extends Selectable {
             if(levels==1) {
                 newList.addElement(lang.get("NEW_GAME"));
                 newGameIndex = 0;
-            } else {
+            } else if(Main.canSelectLevel) {
                 newList.addElement(lang.get("SELECT_LEVEL"));
                 levelSelectIndex = 0;
             }
