@@ -516,7 +516,7 @@ public final class GameScreen extends MyCanvas {
             }
             
             if(weapon != null && weapon.patronbuy && weapon.getAmmo() <= weapon.lowPatronAmount
-                    && (customMessage == null || imgPatronLow != null)) {
+                    && (customMessage == null || imgPatronLow != null || weapon.imgPatronLow != null)) {
                 lowAmmo = true; changed = true; redrawInfo = true;
             }
             
