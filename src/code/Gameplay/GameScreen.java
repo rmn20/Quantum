@@ -682,10 +682,12 @@ public final class GameScreen extends MyCanvas {
 
     protected final void mouseScrollUp() {
         player.nextWeapon();
+		changed = true;
     }
 
     protected final void mouseScrollDown() {
         player.previousWeapon();
+		changed = true;
     }
     
     private void fastbloomScr(DirectX7 g3d) {
@@ -879,11 +881,13 @@ public final class GameScreen extends MyCanvas {
                     if(GameKeyboard.isNextWeaponKey(key)) {
                         key = 0;
                         player.nextWeapon();
+						changed = true;
                     }
 
                     if(GameKeyboard.isPreviousWeaponKey(key)) {
                         key = 0;
                         player.previousWeapon();
+						changed = true;
                     }
 
                     if(dirX != 0 || dirY != 0) {
