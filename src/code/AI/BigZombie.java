@@ -109,7 +109,7 @@ public final class BigZombie extends Bot {
 
             if (enemy != null) {
                 Vector3D walkTo = dir;
-                if (notCollided(house, enemy) && scene.getHouse().isNear(getPart(), enemy.getPart())) {
+                if (isTargetVisibleRaycast(house, enemy) && scene.getHouse().isNear(getPart(), enemy.getPart())) {
                     Matrix mat = enemy.getCharacter().getTransform();
                     walkTo.set(mat.m03, mat.m13, mat.m23);
                     notCol = true;

@@ -21,7 +21,7 @@ import java.util.Vector;
 
 public abstract class Bot extends GameObject {
 
-    public static boolean cleverPathfinfing = false;
+    public static boolean raycastTargetVisibility = false;
     private static final Ray ray = new Ray();
     private static final Vector3D tmpVec = new Vector3D(); 
     private static final Vector3D side = new Vector3D();
@@ -129,17 +129,15 @@ public abstract class Bot extends GameObject {
         }
     }
 
-    protected final boolean notCollided(House house, GameObject obj) {
-        if(!cleverPathfinfing) {
-            return getPart() == obj.getPart();
-        }
+    protected final boolean isTargetVisibleRaycast(House house, GameObject obj) {
+        if(!raycastTargetVisibility) return true;
         
         Matrix objMat = obj.getCharacter().getTransform();
         Matrix mat = character.getTransform();
         
         ray.reset();
         ray.getStart().set(mat.m03, mat.m13 + character.getHeight(), mat.m23);
-        ray.getDir().set(objMat.m03 - mat.m03, objMat.m13 - mat.m13, objMat.m23 - mat.m23);
+        ray.getDir().set(objMat.m03 - mat.m03, objMat.m13 + obj.getCharacter().getHeight() - mat.m13, objMat.m23 - mat.m23);
         
         house.rayCast(getPart(), ray, false);
         return !ray.isCollision();
@@ -158,7 +156,7 @@ public abstract class Bot extends GameObject {
                     long dis2 = getCharacter().distance(obj.getCharacter());
                     if(dis2 >= dis) continue;
 
-                    if(visiblityCheck && !canSeeCheck(this, obj)) continue;
+                    if(visiblityCheck && !isTargetInFOV(this, obj)) continue;
 
                     if(obj instanceof Bot) {
                         if(contains(fractions, ((Bot) obj).fraction)) {
@@ -179,7 +177,7 @@ public abstract class Bot extends GameObject {
         return bot;
     }
     
-    public static boolean canSeeCheck(GameObject observer, GameObject observable) {
+    public static boolean isTargetInFOV(GameObject observer, GameObject observable) {
         Vector3D lookDir = new Vector3D(
                 observer.getCharacter().transform.m02, 
                 0, 

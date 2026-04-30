@@ -109,7 +109,7 @@ public final class Zombie extends Bot {
 
             if (enemy != null) {
                 Vector3D walkTo = this.dir;
-                if (notCollided(house, enemy) && scene.getHouse().isNear(getPart(), enemy.getPart())) {
+                if (isTargetVisibleRaycast(house, enemy) && scene.getHouse().isNear(getPart(), enemy.getPart())) {
                     Matrix var8 = enemy.getCharacter().getTransform();
                     walkTo.set(var8.m03, var8.m13, var8.m23);
                     notCol = true;

@@ -146,7 +146,7 @@ public class LevelLoader {
         BigZombie.attackTo = GameIni.cutOnInts(getStringdef("BIGZOMBIE_ATTACK",lvl,setting,"0,3"), ',',';');
         
         defaultOneBot = getBoolean("SPAWN_ONE_ENEMY", lvl, setting, false);
-        Bot.cleverPathfinfing = getBoolean("BOTS_CLEVER_PATHFINDING", lvl, setting, true);
+        Bot.raycastTargetVisibility = getBoolean("BOTS_RAYCAST_TARGET_VISIBILITY", lvl, setting, true);
         
         /*if(getInt("OBSERVER", lvl, setting, 0)==1) {
             gs.camFollow = new Camera();

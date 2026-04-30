@@ -243,7 +243,7 @@ public final class NPC extends Bot {
             House house = scene.getHouse();
             Vector objs = house.getObjects();
             
-            //Remove killed
+            //Remove dead from unicalEnemies list
             if(unicalEnemies != null && !unicalEnemies.isEmpty()) {
                 for(int i = 0; i < unicalEnemies.size(); ++i) {
                     GameObject tmp = (GameObject) unicalEnemies.elementAt(i);
@@ -258,9 +258,11 @@ public final class NPC extends Bot {
             //Forget if enemy is dead
             if(enemy != null && enemy.isDead()) enemy = null;
             
-            GameObject oldenemy = enemy;
+			//Find new enemy
+            GameObject oldEnemy = enemy;
             enemy = findBot(objs, this, toAttack);
             
+			//Or select a closer enemy from unicalEnemies list
             unicalEnemy_search:
             if(unicalEnemies != null) {
                 GameObject enemy2 = findBot(unicalEnemies, this, null);
@@ -273,14 +275,12 @@ public final class NPC extends Bot {
                 }
             }
             
-            //Select nearest
-            if(oldenemy != null) {
-
-                if(enemy == null) enemy = oldenemy;
-                else if(character.distance(oldenemy.getCharacter()) < character.distance(enemy.getCharacter())) {
-                    enemy = oldenemy;
+            //Select old enemy if it's closer
+            if(oldEnemy != null) {
+                if(enemy == null) enemy = oldEnemy;
+                else if(character.distance(oldEnemy.getCharacter()) < character.distance(enemy.getCharacter())) {
+                    enemy = oldEnemy;
                 }
-
             }
             
             //Forget enemy if it's too far
@@ -291,37 +291,39 @@ public final class NPC extends Bot {
             
             follower = findBot(objs, this, toFollow);
 
-            GameObject bot = enemy != null ? enemy : follower;
+            GameObject target = enemy != null ? enemy : follower;
             
-            if(bot != null) {
-                //If follower more than in ~10 meters
-                if(follower != null && character.distance(follower.getCharacter()) >= 90000000L) bot = follower;
-                
-                //If follower is less than in 3.38 meters
-                if(follower != null && bot == follower && character.distance(follower.getCharacter()) < 9000000) {
-                    bot = enemy;
-                }
+            if(target != null) {
+				if(follower != null) {
+					long followerDist = character.distance(follower.getCharacter());
+					
+					//If follower more than in ~10 meters
+					if(followerDist >= 90000000L) target = follower;
+
+					//If follower is less than in 3.38 meters
+					if(target == follower && followerDist < 9000000) {
+						target = enemy;
+					}
+				}
                 
                 state = -1;
                 
                 //forget bot if bot is a new enemy and enemy isnt visible
-                if(bot != null && 
-                   bot == enemy && 
-                   enemy != oldenemy && 
-                   !notCollided(house, bot)
+                if(target == enemy && 
+                   enemy != oldEnemy && 
+                   !isTargetVisibleRaycast(house, target)
                   ) {
-                    bot = null;
+                    target = null;
                     enemy = null;
                 }
                 
-                if(bot != null) {
-                    
-                    if(scene.getHouse().isNear(getPart(), bot.getPart())) {
-                        Matrix mat = bot.getCharacter().getTransform();
+                if(target != null) {
+                    if(scene.getHouse().isNear(getPart(), target.getPart())) {
+                        Matrix mat = target.getCharacter().getTransform();
                         dir.set(mat.m03, mat.m13, mat.m23);
                         walkingToEnemy = true;
                     } else {
-                        int nextPart = scene.getNext(getPart(), bot.getPart());
+                        int nextPart = scene.getNext(getPart(), target.getPart());
                         Portal portal = commonPortal(house, getPart(), nextPart);
                         if(portal != null) computeCentre(portal, dir);
                         walkingToEnemy = false;
@@ -329,15 +331,14 @@ public final class NPC extends Bot {
 
                     lookAt(dir.x, dir.z);
 
-                    long dist = character.distance(bot.getCharacter());
+                    long dist = character.distance(target.getCharacter());
                     if (walkingToEnemy && 
-                            dist <= sqr(character.getRadius() + bot.getCharacter().getRadius()) * attackradius) {
-                        if(bot == enemy) state = whenEnemyIsNear;
+                            dist <= sqr(character.getRadius() + target.getCharacter().getRadius()) * attackradius) {
+                        if(target == enemy) state = whenEnemyIsNear;
                         
                     } else {
                         if (character.isCollision()) character.jump(jumpheight, jumpspeed);
                         state = whenEnemyIsFar;
-                        
                     }
                 }
                 
