@@ -204,36 +204,23 @@ public class HouseCreator {
         return rooms;
     }
 
-    private static boolean isExistsCommonCoords(Mesh mesh, Vertex[] poly) {
-        int i = 0;
-
-        while(i < poly.length) {
-            Vertex v = poly[i];
-            Vertex[] verts = mesh.getVertices();
-            int var5 = 0;
-
-            while(true) {
-                boolean var10000;
-                if(var5 < verts.length) {
-                    Vertex var6;
-                    if((var6 = verts[var5]).x / 50 != v.x / 50 || var6.y / 50 != v.y / 50 || var6.z / 50 != v.z / 50) {
-                        ++var5;
-                        continue;
-                    }
-
-                    var10000 = true;
-                } else {
-                    var10000 = false;
-                }
-
-                if(var10000) {
-                    return true;
-                }
-
-                ++i;
-                break;
-            }
-        }
+    private static boolean isExistsCommonCoords(Mesh mesh, Vertex[] portal) {
+		Vertex[] meshVerts = mesh.getVertices();
+		
+		for(int i = 0; i < portal.length; i++) {
+			Vertex v = portal[i];
+			int x = v.x, y = v.y, z = v.z;
+			
+			for(int t = 0; t < meshVerts.length; t++) {
+				Vertex v2 = meshVerts[t];
+				
+				if(Math.abs(v2.x - x) > 25) continue;
+				if(Math.abs(v2.y - y) > 25) continue;
+				if(Math.abs(v2.z - z) > 25) continue;
+				
+				return true;
+			}
+		}
 
         return false;
     }
