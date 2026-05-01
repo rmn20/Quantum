@@ -26,6 +26,7 @@ public final class Player extends GameObject {
     public static boolean arcadeJumpPhysics = false;
     public static boolean fallDamage = true;
 	public static int walkSpeed = 150;
+	public static int radiusOverwrite = -1, heightOverwrite;
     
     public static Vector toAddOnStart = new Vector();
     public static Vector usedPoints = new Vector();
@@ -98,6 +99,9 @@ public final class Player extends GameObject {
             if(scenePose != null) TPPose.applyRenderModes(new TPPose[]{scenePose});
             if(TPPose.radius != 0) setCharacterSize(TPPose.radius, TPPose.height);
         }
+		
+		if(radiusOverwrite != -1) character.set(radiusOverwrite, character.getHeight());
+		if(heightOverwrite != -1) character.set(character.getRadius(), heightOverwrite);
     }
 
     public final void destroy() {

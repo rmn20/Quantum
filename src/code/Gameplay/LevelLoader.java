@@ -330,6 +330,8 @@ public class LevelLoader {
 
         Player.arcadeJumpPhysics = getBoolean("ARCADE_JUMP_PHYSICS", lvl, setting, false);
         Player.walkSpeed = getInt("PLAYER_SPEED", lvl, setting, 150);
+		Player.radiusOverwrite = getInt("PLAYER_RADIUS", lvl, setting, -1);
+		Player.heightOverwrite = getInt("PLAYER_HEIGHT", lvl, setting, -1);
 
         loadLights(oldF, lvl);
         House house = HouseCreator.create(meshes, false, lvl.get("LIGHTMAP"), getBoolean("OPTIMIZE_LEVEL_MODEL", lvl, setting, true));
