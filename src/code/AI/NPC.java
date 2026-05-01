@@ -309,24 +309,26 @@ public final class NPC extends Bot {
                 state = -1;
                 
                 //forget bot if bot is a new enemy and enemy isnt visible
-                if(target == enemy && 
-                   enemy != oldEnemy && 
-                   !isTargetVisibleRaycast(house, target)
-                  ) {
+                if(
+					target != null &&
+					target == enemy && 
+					enemy != oldEnemy && 
+					!isTargetVisibleRaycast(house, target)
+				) {
                     target = null;
                     enemy = null;
                 }
                 
                 if(target != null) {
-                    if(scene.getHouse().isNear(getPart(), target.getPart())) {
+					walkingToEnemy = getPart() == target.getPart();
+                    
+					if(walkingToEnemy) {
                         Matrix mat = target.getCharacter().getTransform();
                         dir.set(mat.m03, mat.m13, mat.m23);
-                        walkingToEnemy = true;
                     } else {
                         int nextPart = scene.getNext(getPart(), target.getPart());
                         Portal portal = commonPortal(house, getPart(), nextPart);
                         if(portal != null) computeCentre(portal, dir);
-                        walkingToEnemy = false;
                     }
 
                     lookAt(dir.x, dir.z);
@@ -341,7 +343,6 @@ public final class NPC extends Bot {
                         state = whenEnemyIsFar;
                     }
                 }
-                
             }
         }
         
