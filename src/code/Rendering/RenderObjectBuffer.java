@@ -53,10 +53,10 @@ public class RenderObjectBuffer {
                 el.obj = obj;
                 el.tex = tex.textures[0];
 
+//a polygon is either a quad or a triangle, never both
 if(obj instanceof Polygon4V) {
     el.tex=tex.textures[((Polygon4V)(obj)).tex];
-}
-if(obj instanceof Polygon3V) {
+} else if(obj instanceof Polygon3V) {
 el.tex=tex.textures[((Polygon3V)(obj)).tex];
 }
                 size++;
@@ -102,10 +102,10 @@ el.tex=tex.textures[((Polygon3V)(obj)).tex];
             TMPElement el = buffer[size];
             el.obj = obj;
             el.tex = tex.textures[0];
+//a polygon is either a quad or a triangle, never both
 if(obj instanceof Polygon4V) {
 el.tex=tex.textures[((Polygon4V)(obj)).tex];
-}
-if(obj instanceof Polygon3V) {
+} else if(obj instanceof Polygon3V) {
 el.tex=tex.textures[((Polygon3V)(obj)).tex];
 }
 
@@ -126,7 +126,11 @@ el.tex=tex.textures[((Polygon3V)(obj)).tex];
     }
     
     private void increaseBuffer() {
-        final int increase = 50;
+        //Growing by a fixed 50 made filling a buffer with N objects cost
+        //O(N^2/50) array copies and N/50 reallocations (a 20000 polygon frame
+        //reallocates 400 times). Growing by 50% keeps that amortised to O(N)
+        //while wasting at most half a buffer worth of extra slots.
+        final int increase = buffer.length > 100 ? buffer.length >> 1 : 50;
         TMPElement[] newBuffer = new TMPElement[buffer.length+increase];
         System.arraycopy(buffer, 0, newBuffer, 0, buffer.length);
         for (int i = buffer.length; i < newBuffer.length; i++) {
@@ -134,28 +138,65 @@ el.tex=tex.textures[((Polygon3V)(obj)).tex];
         }
         buffer = newBuffer;
     }
-    
+
+    //Two ints (start/end) per pending range. Recursing into the smaller half
+    //first keeps the depth at log2(size), so this is room for ~2^30 objects.
+    private int[] sortStack = new int[128];
+
     public void sort(int start, int end) {
-        if(start >= end) return;
+        final TMPElement[] list = buffer;
+        int[] stack = sortStack;
+        int sp = 0;
         TMPElement tmp;
-        int opora = buffer[(start+end)>>1].obj.sz;
-        
-        int first = start, second = end;
-        
-        while(first <= second) {
-            while(buffer[first].obj.sz>opora) {first++;} //Отрисовка идёт с конца списка
-            while(buffer[second].obj.sz<opora) {second--;}
-            
-            if(first <= second) {
-                tmp = buffer[first];
-                buffer[first] = buffer[second];
-                buffer[second] = tmp;
-                first++; second--;
+
+        for(;;) {
+            //Отрисовка идёт с конца списка
+            while(start < end) {
+                int opora = list[(start+end)>>1].obj.sz;
+
+                int first = start, second = end;
+
+                while(first <= second) {
+                    while(list[first].obj.sz>opora) {first++;}
+                    while(list[second].obj.sz<opora) {second--;}
+
+                    if(first <= second) {
+                        tmp = list[first];
+                        list[first] = list[second];
+                        list[second] = tmp;
+                        first++; second--;
+                    }
+                }
+
+                //Visit the smaller half right away and remember the bigger one:
+                //both halves are sorted exactly like the recursive version did,
+                //they are just no longer stacked on the java call stack
+                //(deep or already sorted buffers used to blow it up).
+                int pushStart, pushEnd;
+                if(second - start < end - first) {
+                    pushStart = first;
+                    pushEnd = end;
+                    end = second;
+                } else {
+                    pushStart = start;
+                    pushEnd = second;
+                    start = first;
+                }
+
+                if(sp == stack.length) {
+                    int[] bigger = new int[stack.length << 1];
+                    System.arraycopy(stack, 0, bigger, 0, sp);
+                    sortStack = stack = bigger;
+                }
+                stack[sp++] = pushStart;
+                stack[sp++] = pushEnd;
             }
+
+            if(sp == 0) return;
+            sp -= 2;
+            start = stack[sp];
+            end = stack[sp+1];
         }
-        
-        if(start < second) sort(start,second);
-        if(end > first) sort(first,end);
     }
     
     public void reset() {

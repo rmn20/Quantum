@@ -288,15 +288,14 @@ public final class House {
             renderRoom(g3d, rooms[part[x]], 0, 0, g3d.getWidth(), g3d.getHeight(), cx, cz, false);
         }
 
-        if(roomsToRender.size() > 0) {
-            for(int x=0; x<roomsToRender.size(); x++) {
-                Room room = (Room) roomsToRender.elementAt(x);
-                room.render(g3d, cx, cz);
-                room.renderObjects(g3d);
-            }
+        int roomsCount = roomsToRender.size();
+        for(int x=0; x<roomsCount; x++) {
+            Room room = (Room) roomsToRender.elementAt(x);
+            room.render(g3d, cx, cz);
+            room.renderObjects(g3d);
         }
 
-        return roomsToRender.size();
+        return roomsCount;
 
     }
 

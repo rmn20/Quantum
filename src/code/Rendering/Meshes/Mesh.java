@@ -235,11 +235,13 @@ public class Mesh {
     
     public void applySz() {
        final RenderObject[] elements = this.polygons;
+       final int count = elements.length;
+       final Texture[] materials = texture.textures;
        
-       for(int i=0;i<elements.length;i++) {
+       for(int i=0;i<count;i++) {
            RenderObject obj=elements[i];
-           if(obj instanceof Polygon4V) obj.sz+=texture.textures[((Polygon4V)obj).tex].addsz;
-           else if(obj instanceof Polygon3V) obj.sz+=texture.textures[((Polygon3V)obj).tex].addsz;
+           if(obj instanceof Polygon4V) obj.sz+=materials[((Polygon4V)obj).tex].addsz;
+           else if(obj instanceof Polygon3V) obj.sz+=materials[((Polygon3V)obj).tex].addsz;
        }
     }
 

@@ -29,6 +29,7 @@ public final class RayCast {
         final Vector3D dir = ray.dir;
         
         int dirLen = dir.length();
+        Texture[] materials = null; //resolved once, on the first polygon that has one
         for(int i=0; i<elements.length; i++) {
             RenderObject poly = elements[i];
             long dis = Long.MAX_VALUE;
@@ -58,7 +59,8 @@ public final class RayCast {
             }
             
             if(mat!=-1) {
-                Texture tex = mesh.getTexture().textures[mat];
+                if(materials == null) materials = mesh.getTexture().textures;
+                Texture tex = materials[mat];
                 boolean castShadow = tex.castShadow;
                 boolean collidable = tex.collision;
                 if(ray.ignoreNonShadowed && !castShadow) continue;
@@ -98,6 +100,7 @@ public final class RayCast {
         long tmp;
         
         int dirLen = dir.length();
+        Texture[] materials = null; //resolved once, on the first polygon that has one
         for(int i=0; i<elements.length; i++) {
             RenderObject poly = elements[i];
             
@@ -170,7 +173,8 @@ public final class RayCast {
             }
             
             if(mat!=-1) {
-                Texture tex = mesh.getTexture().textures[mat];
+                if(materials == null) materials = mesh.getTexture().textures;
+                Texture tex = materials[mat];
                 boolean castShadow = tex.castShadow;
                 boolean collidable = tex.collision;
                 if(ray.ignoreNonShadowed && !castShadow) continue;

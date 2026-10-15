@@ -20,9 +20,8 @@ public class Polygon3V extends RenderObject {
     public int cu, cv;
 
 public byte tex=(byte)0;
-private static int q,sz2;
-private static int sizex,sizey,sizeu,sizev;
-private static int addmip,fog;
+//written by szCalcfogAdd() (public API) and read back by render()
+private static int sz2;
 
 
 
@@ -113,30 +112,40 @@ sz2 = (cr << 16) | (cg << 8) | cb;
 
     
 public void render(DirectX7 g3d, Texture texture) {
-if(Main.persQ==0 && Main.mipMapping==false) {renderFast(g3d,texture); return;}
+//settings are read once instead of once per use below
+final boolean mipMapping = Main.mipMapping;
+final int persQ = Main.persQ;
 
-fog=texture.drawmode;
-boolean pers=Main.persQ>0;
+if(persQ==0 && mipMapping==false) {renderFast(g3d,texture); return;}
 
-if((Main.mipMapping==true && texture.mip!=null) || pers) {
+final int fog=texture.drawmode;
+boolean pers=persQ>0;
+
+//these used to be class statics, which cost a memory access per read
+//and made the method unusable from two places at once
+int sizex=0,sizey=0;
+if((mipMapping==true && texture.mip!=null) || pers) {
 sizex=size(a.sx, b.sx, c.sx);
 sizey=size(a.sy, b.sy, c.sy);
 }
 
-if(fog==5) sz2=0xff-(int)MathUtils.calcLight(nx, ny, nz,(int)DirectX7.lightdirx,(int)DirectX7.lightdiry,(int)DirectX7.lightdirz);
-else if(fog==1) szCalcfogAdd();
+//sz2 keeps its old value when neither branch runs, so seed the local
+//with whatever the static holds and keep the static in sync
+int fogAmount=sz2;
+if(fog==5) fogAmount=sz2=0xff-(int)MathUtils.calcLight(nx, ny, nz,(int)DirectX7.lightdirx,(int)DirectX7.lightdiry,(int)DirectX7.lightdirz);
+else if(fog==1) {szCalcfogAdd(); fogAmount=sz2;}
 
 
-q=(ny>4000 || ny<-4000) ? 9999999 : Main.q;
+final int q=(ny>4000 || ny<-4000) ? 9999999 : Main.q;
 
 
 
-if(Main.mipMapping==true && texture.mip!=null) {
+if(mipMapping==true && texture.mip!=null) {
 texture.rImg=texture.mip[0];
 if(texture.drawmode<10 || texture.drawmode>12) {
-addmip=(byte)( q>999 ? 2 : 3);
-sizeu=(size(au, bu, cu)*texture.rImg.w>>8);
-sizev=(size(av, bv, cv)*texture.rImg.h>>8);
+final int addmip=( q>999 ? 2 : 3);
+int sizeu=(size(au, bu, cu)*texture.rImg.w>>8);
+int sizev=(size(av, bv, cv)*texture.rImg.h>>8);
 if(((sizex+sizey)>>1)*addmip<sizeu+sizev) {
 texture.rImg=texture.mip[1];
 if(texture.mip!=null) {
@@ -157,7 +166,7 @@ if(sizex<texture.rImg.w || sizey<texture.rImg.w)  {
 
 }
 
-if(pers) pers=((sizex>(Main.persQ<3?30:15) || sizey>(Main.persQ<3?30:15) )&& texture.perspectiveCorrection) || Main.persQ==4;
+if(pers) pers=((sizex>(persQ<3?30:15) || sizey>(persQ<3?30:15) )&& texture.perspectiveCorrection) || persQ==4;
 
 
         if(pers) {
@@ -165,28 +174,30 @@ if(pers) pers=((sizex>(Main.persQ<3?30:15) || sizey>(Main.persQ<3?30:15) )&& tex
                     texture,
                 a, ((au)), ((av)),
                 b, ((bu)), ((bv)),
-                c, ((cu)), ((cv)),DirectX7.fogc,fog,sz2,q,255,255,255,255,255,255,255,255,255,nx,ny,nz);
+                c, ((cu)), ((cv)),DirectX7.fogc,fog,fogAmount,q,255,255,255,255,255,255,255,255,255,nx,ny,nz);
         } else {
 
             TexturingAffine.paint(g3d,
                     texture,
                 a, ((au)), ((av)),
                 b, ((bu)), ((bv)),
-                c, ((cu)), ((cv)),DirectX7.fogc,fog,sz2,255,255,255,255,255,255,255,255,255,nx,ny,nz);
+                c, ((cu)), ((cv)),DirectX7.fogc,fog,fogAmount,255,255,255,255,255,255,255,255,255,nx,ny,nz);
     }
     
 }
     
 public void renderFast(DirectX7 g3d, Texture texture) {
+final int drawmode=texture.drawmode;
+int fogAmount=sz2;
 
-if(texture.drawmode==5) sz2=0xff-(int)MathUtils.calcLight(nx, ny, nz,(int)DirectX7.lightdirx,(int)DirectX7.lightdiry,(int)DirectX7.lightdirz);
-else if(texture.drawmode==1) szCalcfogAdd();
+if(drawmode==5) fogAmount=sz2=0xff-(int)MathUtils.calcLight(nx, ny, nz,(int)DirectX7.lightdirx,(int)DirectX7.lightdiry,(int)DirectX7.lightdirz);
+else if(drawmode==1) {szCalcfogAdd(); fogAmount=sz2;}
 
             TexturingAffine.paint(g3d,
                     texture,
                 a, (au), (av),
                 b, (bu), (bv),
-                c, (cu), (cv),DirectX7.fogc,texture.drawmode,sz2,255,255,255,255,255,255,255,255,255,nx,ny,nz);
+                c, (cu), (cv),DirectX7.fogc,drawmode,fogAmount,255,255,255,255,255,255,255,255,255,nx,ny,nz);
     
     
 }

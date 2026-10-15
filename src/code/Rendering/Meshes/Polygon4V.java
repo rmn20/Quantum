@@ -8,7 +8,6 @@ import code.Rendering.TexturingAffine;
 import code.Rendering.TexturingPers;
 import code.Rendering.Vertex;
 import code.utils.Main;
-import java.util.Random;
 
 /**
  *
@@ -23,10 +22,8 @@ public class Polygon4V extends RenderObject {
     public int du, dv;
     public int tex = 0;
     
-    private static int q, sz2;
-    private static int sizex, sizey, sizeu, sizev;
-    private static int addmip, fog;
-    private static Random r;
+    //written by szCalcfogAdd() (public API) and read back by render()
+    private static int sz2;
 
     public Polygon4V(Polygon4V p) {
         nx = p.nx;
@@ -140,35 +137,44 @@ public class Polygon4V extends RenderObject {
 
     public void render(DirectX7 g3d, Texture texture) {
 
-        if(Main.persQ == 0 && Main.mipMapping == false) {
+        //settings are read once instead of once per use below
+        final boolean mipMapping = Main.mipMapping;
+        final int persQ = Main.persQ;
+
+        if(persQ == 0 && mipMapping == false) {
             renderFast(g3d, texture);
             return;
         }
 
-        fog = texture.drawmode;
-        boolean pers = Main.persQ > 0;
+        final int fog = texture.drawmode;
+        boolean pers = persQ > 0;
 
-        if((Main.mipMapping == true && texture.mip != null) || pers) {
+        //these used to be class statics, which cost a memory access per read
+        //and made the method unusable from two places at once
+        int sizex = 0, sizey = 0;
+        if((mipMapping == true && texture.mip != null) || pers) {
             sizex = size(a.sx, b.sx, c.sx, d.sx);
             sizey = size(a.sy, b.sy, c.sy, d.sy);
         }
 
-
-
+        //sz2 keeps its old value when neither branch runs, so seed the local
+        //with whatever the static holds and keep the static in sync
+        int fogAmount = sz2;
         if(fog == 5) {
-            sz2 = 0xff - MathUtils.calcLight(nx, ny, nz, DirectX7.lightdirx, DirectX7.lightdiry, DirectX7.lightdirz);
+            fogAmount = sz2 = 0xff - MathUtils.calcLight(nx, ny, nz, DirectX7.lightdirx, DirectX7.lightdiry, DirectX7.lightdirz);
         } else if(fog == 1) {
             szCalcfogAdd();
+            fogAmount = sz2;
         }
 
-        q = (ny > 4000 || ny < -4000) ? 9999999 : Main.q;
+        final int q = (ny > 4000 || ny < -4000) ? 9999999 : Main.q;
 
-        if(Main.mipMapping == true && texture.mip != null) {
+        if(mipMapping == true && texture.mip != null) {
             texture.rImg = texture.mip[0];
             if(texture.drawmode < 10 || texture.drawmode > 12) {
-                addmip = q > 999 ? 2 : 3;
-                sizeu = size(au, bu, cu, du) * texture.rImg.w >> 8;
-                sizev = size(av, bv, cv, dv) * texture.rImg.h >> 8;
+                final int addmip = q > 999 ? 2 : 3;
+                int sizeu = size(au, bu, cu, du) * texture.rImg.w >> 8;
+                int sizev = size(av, bv, cv, dv) * texture.rImg.h >> 8;
                 if(((sizex + sizey) >> 1) * addmip < sizeu + sizev) {
                     texture.rImg = texture.mip[1];
                     if(texture.mip != null) {
@@ -191,7 +197,7 @@ public class Polygon4V extends RenderObject {
         }
 
         if(pers) {
-            pers = (((sizex > (Main.persQ < 3 ? 70 : 50) || sizey > (Main.persQ < 3 ? 100 : 70)) && texture.perspectiveCorrection) || Main.persQ == 4);
+            pers = (((sizex > (persQ < 3 ? 70 : 50) || sizey > (persQ < 3 ? 100 : 70)) && texture.perspectiveCorrection) || persQ == 4);
         }
 
         boolean base = (fog != 3 && fog != 6) || Main.fogQ == 0;
@@ -206,42 +212,42 @@ public class Polygon4V extends RenderObject {
                 TexturingPers.paint(g3d, texture,
                         a, ( (au )), ( (av )),
                         b, ( (bu )), ( (bv )),
-                        d, ( (du )), ( (dv )), DirectX7.fogc, fog, sz2, q, 255, 255, 255, 255, 255, 255, 255, 255, 255, nx, ny, nz);
+                        d, ( (du )), ( (dv )), DirectX7.fogc, fog, fogAmount, q, 255, 255, 255, 255, 255, 255, 255, 255, 255, nx, ny, nz);
                 TexturingPers.paint(g3d, texture,
                         b, ( (bu )), ( (bv )),
                         c, ( (cu )), ( (cv )),
-                        d, ( (du )), ( (dv )), DirectX7.fogc, fog, sz2, q, 255, 255, 255, 255, 255, 255, 255, 255, 255, nx, ny, nz);
+                        d, ( (du )), ( (dv )), DirectX7.fogc, fog, fogAmount, q, 255, 255, 255, 255, 255, 255, 255, 255, 255, nx, ny, nz);
             } else {
 
                 TexturingAffine.paint(g3d, texture,
                         a, ( (au )), ( (av )),
                         b, ( (bu )), ( (bv )),
-                        d, ( (du )), ( (dv )), DirectX7.fogc, fog, sz2, 255, 255, 255, 255, 255, 255, 255, 255, 255, nx, ny, nz);
+                        d, ( (du )), ( (dv )), DirectX7.fogc, fog, fogAmount, 255, 255, 255, 255, 255, 255, 255, 255, 255, nx, ny, nz);
                 TexturingAffine.paint(g3d, texture,
                         b, ( (bu )), ( (bv )),
                         c, ( (cu )), ( (cv )),
-                        d, ( (du )), ( (dv )), DirectX7.fogc, fog, sz2, 255, 255, 255, 255, 255, 255, 255, 255, 255, nx, ny, nz);
+                        d, ( (du )), ( (dv )), DirectX7.fogc, fog, fogAmount, 255, 255, 255, 255, 255, 255, 255, 255, 255, nx, ny, nz);
             }
         } else {
             if(pers) {
                 TexturingPers.paint(g3d, texture,
                         a, ( (au )), ( (av )),
                         b, ( (bu )), ( (bv )),
-                        c, ( (cu )), ( (cv )), DirectX7.fogc, fog, sz2, q, 255, 255, 255, 255, 255, 255, 255, 255, 255, nx, ny, nz);
+                        c, ( (cu )), ( (cv )), DirectX7.fogc, fog, fogAmount, q, 255, 255, 255, 255, 255, 255, 255, 255, 255, nx, ny, nz);
                 TexturingPers.paint(g3d, texture,
                         a, ( (au )), ( (av )),
                         c, ( (cu )), ( (cv )),
-                        d, ( (du )), ( (dv )), DirectX7.fogc, fog, sz2, q, 255, 255, 255, 255, 255, 255, 255, 255, 255, nx, ny, nz);
+                        d, ( (du )), ( (dv )), DirectX7.fogc, fog, fogAmount, q, 255, 255, 255, 255, 255, 255, 255, 255, 255, nx, ny, nz);
             } else {
 
                 TexturingAffine.paint(g3d, texture,
                         a, ( (au )), ( (av )),
                         b, ( (bu )), ( (bv )),
-                        c, ( (cu )), ( (cv )), DirectX7.fogc, fog, sz2, 255, 255, 255, 255, 255, 255, 255, 255, 255, nx, ny, nz);
+                        c, ( (cu )), ( (cv )), DirectX7.fogc, fog, fogAmount, 255, 255, 255, 255, 255, 255, 255, 255, 255, nx, ny, nz);
                 TexturingAffine.paint(g3d, texture,
                         a, ( (au )), ( (av )),
                         c, ( (cu )), ( (cv )),
-                        d, ( (du )), ( (dv )), DirectX7.fogc, fog, sz2, 255, 255, 255, 255, 255, 255, 255, 255, 255, nx, ny, nz);
+                        d, ( (du )), ( (dv )), DirectX7.fogc, fog, fogAmount, 255, 255, 255, 255, 255, 255, 255, 255, 255, nx, ny, nz);
             }
 
 
@@ -255,22 +261,26 @@ public class Polygon4V extends RenderObject {
     }
 
     public void renderFast(DirectX7 g3d, Texture texture) {
-        if(texture.drawmode == 5) {
-            sz2 = 0xff - MathUtils.calcLight(nx, ny, nz, DirectX7.lightdirx, DirectX7.lightdiry, DirectX7.lightdirz);
+        final int drawmode = texture.drawmode;
+        int fogAmount = sz2;
+
+        if(drawmode == 5) {
+            fogAmount = sz2 = 0xff - MathUtils.calcLight(nx, ny, nz, DirectX7.lightdirx, DirectX7.lightdiry, DirectX7.lightdirz);
         }
 
-        if(texture.drawmode == 1) {
+        if(drawmode == 1) {
             szCalcfogAdd();
+            fogAmount = sz2;
         }
 
         TexturingAffine.paint(g3d, texture,
                 a, (au & 0xff), (av & 0xff),
                 b, (bu & 0xff), (bv & 0xff),
-                d, (du & 0xff), (dv & 0xff), DirectX7.fogc, texture.drawmode, sz2, 255, 255, 255, 255, 255, 255, 255, 255, 255, nx, ny, nz);
+                d, (du & 0xff), (dv & 0xff), DirectX7.fogc, drawmode, fogAmount, 255, 255, 255, 255, 255, 255, 255, 255, 255, nx, ny, nz);
         TexturingAffine.paint(g3d, texture,
                 b, (bu & 0xff), (bv & 0xff),
                 c, (cu & 0xff), (cv & 0xff),
-                d, (du & 0xff), (dv & 0xff), DirectX7.fogc, texture.drawmode, sz2, 255, 255, 255, 255, 255, 255, 255, 255, 255, nx, ny, nz);
+                d, (du & 0xff), (dv & 0xff), DirectX7.fogc, drawmode, fogAmount, 255, 255, 255, 255, 255, 255, 255, 255, 255, nx, ny, nz);
 
     }
 

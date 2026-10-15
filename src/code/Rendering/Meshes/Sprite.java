@@ -199,6 +199,10 @@ if(this.anim_index>=this.textures.length) this.anim_index=this.textures.length-1
       int texw = texture.rImg.w;
       int texh = texture.rImg.h;
       int texLength = tex.length;
+      //Textures are nearly always 2^n, and then the wrap around is a plain
+      //mask. The division is kept only for the odd sized texture.
+      final int texMask = texLength - 1;
+      final boolean texPow2 = (texLength & texMask) == 0;
       int[] rgb = g3d.display;
       int rgbWidth = g3d.width;
       int u1=0;
@@ -259,17 +263,17 @@ else if(this.fog) {renderF(g3d,texture,x_start,y_start,x_end,y_end,u_start,v_sta
             texh = x_end + rgbWidth * y_start;
 u2 = (v_start & -4096) * texw + u_start;
             for(; texh-x1>=4; x1+=4) {
-               if((col = tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]) != 0) rgb[x1] = col;
+               if((col = tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]) != 0) rgb[x1] = col;
                u2 += du;
-               if((col = tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]) != 0) rgb[x1+1] = col;
+               if((col = tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]) != 0) rgb[x1+1] = col;
                u2 += du;
-               if((col = tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]) != 0) rgb[x1+2] = col;
+               if((col = tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]) != 0) rgb[x1+2] = col;
                u2 += du;
-               if((col = tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]) != 0) rgb[x1+3] = col;
+               if((col = tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]) != 0) rgb[x1+3] = col;
                u2 += du;
             }
             for(; x1 < texh; x1+=1) {
-               if((col = tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]) != 0) rgb[x1] = col;
+               if((col = tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]) != 0) rgb[x1] = col;
                u2 += du;
             }
 
@@ -288,6 +292,10 @@ u2 = (v_start & -4096) * texw + u_start;
       int texw = texture.rImg.w;
       int texh = texture.rImg.h;
       int texLength = tex.length;
+      //Textures are nearly always 2^n, and then the wrap around is a plain
+      //mask. The division is kept only for the odd sized texture.
+      final int texMask = texLength - 1;
+      final boolean texPow2 = (texLength & texMask) == 0;
       int u2,col;
                 while(y_start < y_end) {
             int x1 = x_start + rgbWidth * y_start;
@@ -295,27 +303,27 @@ u2 = (v_start & -4096) * texw + u_start;
 u2 = (v_start & -4096) * texw + u_start;
 if(Main.s60Optimization==1) {
             for(; texh-x1>=4; x1+=4) {
-               if((col = tex[(u2 >>> 12 & Integer.MAX_VALUE) % texLength]) != 0) rgb[x1] = col;
+               if((col = tex[texPow2 ? (u2 >>> 12 & texMask) : ((u2 >>> 12 & Integer.MAX_VALUE) % texLength)]) != 0) rgb[x1] = col;
                u2 += du;
-               if((col = tex[(u2 >>> 12 & Integer.MAX_VALUE) % texLength]) != 0) rgb[x1+1] = col;
+               if((col = tex[texPow2 ? (u2 >>> 12 & texMask) : ((u2 >>> 12 & Integer.MAX_VALUE) % texLength)]) != 0) rgb[x1+1] = col;
                u2 += du;
-               if((col = tex[(u2 >>> 12 & Integer.MAX_VALUE) % texLength]) != 0) rgb[x1+2] = col;
+               if((col = tex[texPow2 ? (u2 >>> 12 & texMask) : ((u2 >>> 12 & Integer.MAX_VALUE) % texLength)]) != 0) rgb[x1+2] = col;
                u2 += du;
-               if((col = tex[(u2 >>> 12 & Integer.MAX_VALUE) % texLength]) != 0) rgb[x1+3] = col;
+               if((col = tex[texPow2 ? (u2 >>> 12 & texMask) : ((u2 >>> 12 & Integer.MAX_VALUE) % texLength)]) != 0) rgb[x1+3] = col;
                u2 += du;
             }
 }
 if(Main.s60Optimization>=0) {
             for(; texh-x1>=2; x1+=2) {
                
-               if( (col = tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength])!= 0) rgb[x1] = col;
+               if( (col = tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)])!= 0) rgb[x1] = col;
                u2 += du;
-               if((col = tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]) != 0) rgb[x1+1] = col;
+               if((col = tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]) != 0) rgb[x1+1] = col;
                u2 += du;
             }
 }
             for(; x1 < texh; x1+=1) {
-               if((col = tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]) != 0) rgb[x1] = col;
+               if((col = tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]) != 0) rgb[x1] = col;
                u2 += du;
             }
 
@@ -332,6 +340,10 @@ if(Main.s60Optimization>=0) {
       int texw = texture.rImg.w;
       int texh = texture.rImg.h;
       int texLength = tex.length;
+      //Textures are nearly always 2^n, and then the wrap around is a plain
+      //mask. The division is kept only for the odd sized texture.
+      final int texMask = texLength - 1;
+      final boolean texPow2 = (texLength & texMask) == 0;
       int u2,col,power;
       power=0;
 if(DirectX7.fDist!=0) {
@@ -349,19 +361,19 @@ if(DirectX7.standartDrawmode==6) f2=f22=0;
 u2 = (v_start & -4096) * texw + u_start;
 if(Main.s60Optimization==1) {
     for(;texh-x1>=4; x1+=4) {
-if((col = tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]) != 0)  rgb[x1]=  (   (  ( (col&0xFF00FF)*invpower + f2)  &0xFF00FF00  )  | (   ( (col&0x00FF00)*invpower  + f22)  &0x00FF0000  )   ) >>>8;
+if((col = tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]) != 0)  rgb[x1]=  (   (  ( (col&0xFF00FF)*invpower + f2)  &0xFF00FF00  )  | (   ( (col&0x00FF00)*invpower  + f22)  &0x00FF0000  )   ) >>>8;
 u2 += du;  
-if((col = tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]) != 0)  rgb[x1+1]=  (   (  ( (col&0xFF00FF)*invpower + f2)  &0xFF00FF00  )  | (   ( (col&0x00FF00)*invpower  + f22)  &0x00FF0000  )   ) >>>8;
+if((col = tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]) != 0)  rgb[x1+1]=  (   (  ( (col&0xFF00FF)*invpower + f2)  &0xFF00FF00  )  | (   ( (col&0x00FF00)*invpower  + f22)  &0x00FF0000  )   ) >>>8;
 u2 += du;  
-if((col = tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]) != 0)  rgb[x1+2]=  (   (  ( (col&0xFF00FF)*invpower + f2)  &0xFF00FF00  )  | (   ( (col&0x00FF00)*invpower  + f22)  &0x00FF0000  )   ) >>>8;
+if((col = tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]) != 0)  rgb[x1+2]=  (   (  ( (col&0xFF00FF)*invpower + f2)  &0xFF00FF00  )  | (   ( (col&0x00FF00)*invpower  + f22)  &0x00FF0000  )   ) >>>8;
 u2 += du;  
-if((col = tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]) != 0)  rgb[x1+3]=  (   (  ( (col&0xFF00FF)*invpower + f2)  &0xFF00FF00  )  | (   ( (col&0x00FF00)*invpower  + f22)  &0x00FF0000  )   ) >>>8;
+if((col = tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]) != 0)  rgb[x1+3]=  (   (  ( (col&0xFF00FF)*invpower + f2)  &0xFF00FF00  )  | (   ( (col&0x00FF00)*invpower  + f22)  &0x00FF0000  )   ) >>>8;
 u2 += du;  
 }
 }
 
 for(; x1 < texh; x1+=1) {
-if((col = tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]) != 0)  rgb[x1]=  (   (  ( (col&0xFF00FF)*invpower + f2)  &0xFF00FF00  )  | (   ( (col&0x00FF00)*invpower  + f22)  &0x00FF0000  )   ) >>>8;
+if((col = tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]) != 0)  rgb[x1]=  (   (  ( (col&0xFF00FF)*invpower + f2)  &0xFF00FF00  )  | (   ( (col&0x00FF00)*invpower  + f22)  &0x00FF0000  )   ) >>>8;
 u2 += du;  
 }
 
@@ -379,6 +391,10 @@ u2 += du;
       int texw = texture.rImg.w;
       int texh = texture.rImg.h;
       int texLength = tex.length;
+      //Textures are nearly always 2^n, and then the wrap around is a plain
+      //mask. The division is kept only for the odd sized texture.
+      final int texMask = texLength - 1;
+      final boolean texPow2 = (texLength & texMask) == 0;
       int u2,col;
                 while(y_start < y_end) {
             int x1 = x_start + rgbWidth * y_start;
@@ -386,17 +402,17 @@ u2 += du;
 u2 = (v_start & -4096) * texw + u_start;
 if(Main.s60Optimization==1) {
             for(; texh-x1>=3; x1+=3) {
-                   col = tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength];
+                   col = tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)];
                    col=(col&0xFEFEFE)+(rgb[x1]&0xFEFEFE);
                    col|=(( col>>8 ) &0x010101)*0xFF;
                    rgb[x1]=col;
                u2 += du;
-                   col = tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength];
+                   col = tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)];
                    col=(col&0xFEFEFE)+(rgb[x1+1]&0xFEFEFE);
                    col|=(( col>>8 ) &0x010101)*0xFF;
                    rgb[x1+1]=col;
                u2 += du;                   
-               col = tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength];
+               col = tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)];
                    col=(col&0xFEFEFE)+(rgb[x1+2]&0xFEFEFE);
                    col|=(( col>>8 ) &0x010101)*0xFF;
                    rgb[x1+2]=col;
@@ -404,7 +420,7 @@ if(Main.s60Optimization==1) {
             }
 }
             for(; x1 < texh; x1++) {
-                   col = tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength];
+                   col = tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)];
                    col=(col&0xFEFEFE)+(rgb[x1]&0xFEFEFE);
                    col|=(( col>>8 ) &0x010101)*0xFF;
                    rgb[x1]=col;
@@ -424,6 +440,10 @@ if(Main.s60Optimization==1) {
       int texw = texture.rImg.w;
       int texh = texture.rImg.h;
       int texLength = tex.length;
+      //Textures are nearly always 2^n, and then the wrap around is a plain
+      //mask. The division is kept only for the odd sized texture.
+      final int texMask = texLength - 1;
+      final boolean texPow2 = (texLength & texMask) == 0;
       int u2,col,bri,col2;
                 while(y_start < y_end) {
             int x1 = x_start + rgbWidth * y_start;
@@ -431,7 +451,7 @@ if(Main.s60Optimization==1) {
 u2 = (v_start & -4096) * texw + u_start;
            if(Main.s60Optimization==1) {
                for(; texh-x1>=2; x1+=2) {
-bri=((tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]&0x000000FF)); // Получаем яркость
+bri=((tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]&0x000000FF)); // Получаем яркость
 if(bri!=69) {
 col=rgb[x1]; // Получаем цвет
 col2=col;
@@ -439,7 +459,7 @@ col=((  ( (col&0xFF0000)*bri )  &0xFE000000  )) >>>6; // Затемняем и �
 rgb[x1]=(col|(( col>>8 ) &0x030303)*0xFF)|(col2&0x00FFFF); // Лимитер
 }
 u2+=du;
-bri=((tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]&0x000000FF)); // Получаем яркость
+bri=((tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]&0x000000FF)); // Получаем яркость
 if(bri!=69) {
 col=rgb[x1+1]; // Получаем цвет
 col2=col;
@@ -450,7 +470,7 @@ u2+=du;
             }
            }
             for(; x1 < texh; x1++) {
-bri=((tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]&0x000000FF)); // Получаем яркость
+bri=((tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]&0x000000FF)); // Получаем яркость
 if(bri!=69) {
 col=rgb[x1]; // Получаем цвет
 col2=col;
@@ -473,6 +493,10 @@ u2+=du;
       int texw = texture.rImg.w;
       int texh = texture.rImg.h;
       int texLength = tex.length;
+      //Textures are nearly always 2^n, and then the wrap around is a plain
+      //mask. The division is kept only for the odd sized texture.
+      final int texMask = texLength - 1;
+      final boolean texPow2 = (texLength & texMask) == 0;
       int u2,col,bri,col2;
                 while(y_start < y_end) {
             int x1 = x_start + rgbWidth * y_start;
@@ -480,7 +504,7 @@ u2+=du;
 u2 = (v_start & -4096) * texw + u_start;
            if(Main.s60Optimization==1) {
                for(; texh-x1>=2; x1+=2) {
-bri=((tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]&0x000000FF)); // Получаем яркость
+bri=((tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]&0x000000FF)); // Получаем яркость
 if(bri!=69) {
 col=rgb[x1]; // Получаем цвет
 col2=col;
@@ -488,7 +512,7 @@ col=((  ( (col&0x00FF00)*bri )  &0x00FE0000  )) >>>6; // Затемняем и �
 rgb[x1]=(col|(( col>>8 ) &0x030303)*0xFF)|(col2&0xFF00FF); // Лимитер
 }
 u2+=du;
-bri=((tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]&0x000000FF)); // Получаем яркость
+bri=((tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]&0x000000FF)); // Получаем яркость
 if(bri!=69) {
 col=rgb[x1+1]; // Получаем цвет
 col2=col;
@@ -499,7 +523,7 @@ u2+=du;
             }
            }
             for(; x1 < texh; x1++) {
-bri=((tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]&0x000000FF)); // Получаем яркость
+bri=((tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]&0x000000FF)); // Получаем яркость
 if(bri!=69) {
 col=rgb[x1]; // Получаем цвет
 col2=col;
@@ -522,6 +546,10 @@ final void renderMulBlue(DirectX7 g3d, Texture texture,int x_start,int y_start,i
       int texw = texture.rImg.w;
       int texh = texture.rImg.h;
       int texLength = tex.length;
+      //Textures are nearly always 2^n, and then the wrap around is a plain
+      //mask. The division is kept only for the odd sized texture.
+      final int texMask = texLength - 1;
+      final boolean texPow2 = (texLength & texMask) == 0;
       int u2,col,bri,col2;
                 while(y_start < y_end) {
             int x1 = x_start + rgbWidth * y_start;
@@ -529,7 +557,7 @@ final void renderMulBlue(DirectX7 g3d, Texture texture,int x_start,int y_start,i
 u2 = (v_start & -4096) * texw + u_start;
            if(Main.s60Optimization==1) {
                for(; texh-x1>=2; x1+=2) {
-bri=((tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]&0x000000FF)); // Получаем яркость
+bri=((tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]&0x000000FF)); // Получаем яркость
 if(bri!=69) {
 col=rgb[x1]; // Получаем цвет
 col2=col;
@@ -537,7 +565,7 @@ col=((  ( (col&0x0000FF)*bri )  &0x0000FE00  )) >>>6; // Затемняем и �
 rgb[x1]=(col|(( col>>8 ) &0x030303)*0xFF)|(col2&0xFFFF00); // Лимитер
 }
 u2+=du;
-bri=((tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]&0x000000FF)); // Получаем яркость
+bri=((tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]&0x000000FF)); // Получаем яркость
 if(bri!=69) {
 col=rgb[x1+1]; // Получаем цвет
 col2=col;
@@ -548,7 +576,7 @@ u2+=du;
             }
            }
             for(; x1 < texh; x1++) {
-bri=((tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]&0x000000FF)); // Получаем яркость
+bri=((tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]&0x000000FF)); // Получаем яркость
 if(bri!=69) {
 col=rgb[x1]; // Получаем цвет
 col2=col;
@@ -571,6 +599,10 @@ final void renderMulViolet(DirectX7 g3d, Texture texture,int x_start,int y_start
       int texw = texture.rImg.w;
       int texh = texture.rImg.h;
       int texLength = tex.length;
+      //Textures are nearly always 2^n, and then the wrap around is a plain
+      //mask. The division is kept only for the odd sized texture.
+      final int texMask = texLength - 1;
+      final boolean texPow2 = (texLength & texMask) == 0;
       int u2,col,bri,col2;
                 while(y_start < y_end) {
             int x1 = x_start + rgbWidth * y_start;
@@ -578,7 +610,7 @@ final void renderMulViolet(DirectX7 g3d, Texture texture,int x_start,int y_start
 u2 = (v_start & -4096) * texw + u_start;
            if(Main.s60Optimization==1) {
                for(; texh-x1>=2; x1+=2) {
-bri=((tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]&0x000000FF)); // Получаем яркость
+bri=((tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]&0x000000FF)); // Получаем яркость
 if(bri!=69) {
 col=rgb[x1]; // Получаем цвет
 col2=col;
@@ -586,7 +618,7 @@ col=((  ( (col&0xFF00FF)*bri )  &0xFE00FE00  )) >>>6; // Затемняем и �
 rgb[x1]=(col|(( col>>8 ) &0x030303)*0xFF)|(col2&0x00FF00); // Лимитер
 }
 u2+=du;
-bri=((tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]&0x000000FF)); // Получаем яркость
+bri=((tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]&0x000000FF)); // Получаем яркость
 if(bri!=69) {
 col=rgb[x1+1]; // Получаем цвет
 col2=col;
@@ -597,7 +629,7 @@ u2+=du;
             }
            }
             for(; x1 < texh; x1++) {
-bri=((tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]&0x000000FF)); // Получаем яркость
+bri=((tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]&0x000000FF)); // Получаем яркость
 if(bri!=69) {
 col=rgb[x1]; // Получаем цвет
 col2=col;
@@ -620,6 +652,10 @@ final void renderMulYellow(DirectX7 g3d, Texture texture,int x_start,int y_start
       int texw = texture.rImg.w;
       int texh = texture.rImg.h;
       int texLength = tex.length;
+      //Textures are nearly always 2^n, and then the wrap around is a plain
+      //mask. The division is kept only for the odd sized texture.
+      final int texMask = texLength - 1;
+      final boolean texPow2 = (texLength & texMask) == 0;
       int u2,col,bri,col2;
                 while(y_start < y_end) {
             int x1 = x_start + rgbWidth * y_start;
@@ -627,7 +663,7 @@ final void renderMulYellow(DirectX7 g3d, Texture texture,int x_start,int y_start
 u2 = (v_start & -4096) * texw + u_start;
            if(Main.s60Optimization==1) {
                for(; texh-x1>=2; x1+=2) {
-bri=((tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]&0x000000FF)); // Получаем яркость
+bri=((tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]&0x000000FF)); // Получаем яркость
 if(bri!=69) {
 col=rgb[x1]; // Получаем цвет
 col2=col;
@@ -635,7 +671,7 @@ col=(((  ( (col&0xFF0000)*bri )  &0xFE000000  )) | ((  ( (col&0x00FF00)*bri )  &
 rgb[x1]=(col|(( col>>8 ) &0x030303)*0xFF)|(col2&0x0000FF); // Лимитер
 }
 u2+=du;
-bri=((tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]&0x000000FF)); // Получаем яркость
+bri=((tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]&0x000000FF)); // Получаем яркость
 if(bri!=69) {
 col=rgb[x1+1]; // Получаем цвет
 col2=col;
@@ -646,7 +682,7 @@ u2+=du;
             }
            }
             for(; x1 < texh; x1++) {
-bri=((tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]&0x000000FF)); // Получаем яркость
+bri=((tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]&0x000000FF)); // Получаем яркость
 if(bri!=69) {
 col=rgb[x1]; // Получаем цвет
 col2=col;
@@ -669,6 +705,10 @@ final void renderMulAqua(DirectX7 g3d, Texture texture,int x_start,int y_start,i
       int texw = texture.rImg.w;
       int texh = texture.rImg.h;
       int texLength = tex.length;
+      //Textures are nearly always 2^n, and then the wrap around is a plain
+      //mask. The division is kept only for the odd sized texture.
+      final int texMask = texLength - 1;
+      final boolean texPow2 = (texLength & texMask) == 0;
       int u2,col,bri,col2;
                 while(y_start < y_end) {
             int x1 = x_start + rgbWidth * y_start;
@@ -676,7 +716,7 @@ final void renderMulAqua(DirectX7 g3d, Texture texture,int x_start,int y_start,i
 u2 = (v_start & -4096) * texw + u_start;
            if(Main.s60Optimization==1) {
                for(; texh-x1>=2; x1+=2) {
-bri=((tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]&0x000000FF)); // Получаем яркость
+bri=((tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]&0x000000FF)); // Получаем яркость
 if(bri!=69) {
 col=rgb[x1]; // Получаем цвет
 col2=col;
@@ -684,7 +724,7 @@ col=(((  ( (col&0x0000FF)*bri )  &0x0000FE00  )) | ((  ( (col&0x00FF00)*bri )  &
 rgb[x1]=(col|(( col>>8 ) &0x030303)*0xFF)|(col2&0xFF0000); // Лимитер
 }
 u2+=du;
-bri=((tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]&0x000000FF)); // Получаем яркость
+bri=((tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]&0x000000FF)); // Получаем яркость
 if(bri!=69) {
 col=rgb[x1+1]; // Получаем цвет
 col2=col;
@@ -695,7 +735,7 @@ u2+=du;
             }
            }
             for(; x1 < texh; x1++) {
-bri=((tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]&0x000000FF)); // Получаем яркость
+bri=((tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]&0x000000FF)); // Получаем яркость
 if(bri!=69) {
 col=rgb[x1]; // Получаем цвет
 col2=col;
@@ -719,6 +759,10 @@ u2+=du;
       int texw = texture.rImg.w;
       int texh = texture.rImg.h;
       int texLength = tex.length;
+      //Textures are nearly always 2^n, and then the wrap around is a plain
+      //mask. The division is kept only for the odd sized texture.
+      final int texMask = texLength - 1;
+      final boolean texPow2 = (texLength & texMask) == 0;
       int u2,col,bri;
                 while(y_start < y_end) {
             int x1 = x_start + rgbWidth * y_start;
@@ -726,14 +770,14 @@ u2+=du;
 u2 = (v_start & -4096) * texw + u_start;
            if(Main.s60Optimization==1) {
                for(; texh-x1>=2; x1+=2) {
-bri=((tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]&0x000000FF)); // Получаем яркость
+bri=((tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]&0x000000FF)); // Получаем яркость
 if(bri!=69) {
 col=rgb[x1]; // Получаем цвет
 col=((  ( (col&0xFF00FF)*bri )  &0xFE00FE00  )  | (   ( (col&0x00FF00)*bri  )  &0x00FE0000  )   ) >>>6; // Затемняем и осветляем
 rgb[x1]=col|(( col>>8 ) &0x030303)*0xFF; // Лимитер
 }
 u2+=du;
-bri=((tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]&0x000000FF)); // Получаем яркость
+bri=((tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]&0x000000FF)); // Получаем яркость
 if(bri!=69) {
 col=rgb[x1+1]; // Получаем цвет
 col=((  ( (col&0xFF00FF)*bri )  &0xFE00FE00  )  | (   ( (col&0x00FF00)*bri  )  &0x00FE0000  )   ) >>>6; // Затемняем и осветляем
@@ -743,7 +787,7 @@ u2+=du;
             }
            }
             for(; x1 < texh; x1++) {
-bri=((tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength]&0x000000FF)); // Получаем яркость
+bri=((tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)]&0x000000FF)); // Получаем яркость
 if(bri!=69) {
 col=rgb[x1]; // Получаем цвет
 col=((  ( (col&0xFF00FF)*bri )  &0xFE00FE00  )  | (   ( (col&0x00FF00)*bri  )  &0x00FE0000  )   ) >>>6; // Затемняем и осветляем
@@ -767,6 +811,10 @@ u2+=du;
       int texw = texture.rImg.w;
       int texh = texture.rImg.h;
       int texLength = tex.length;
+      //Textures are nearly always 2^n, and then the wrap around is a plain
+      //mask. The division is kept only for the odd sized texture.
+      final int texMask = texLength - 1;
+      final boolean texPow2 = (texLength & texMask) == 0;
       int u2,col,ca,cols;
                 while(y_start < y_end) {
             int x1 = x_start + rgbWidth * y_start;
@@ -774,7 +822,7 @@ u2+=du;
 u2 = (v_start & -4096) * texw + u_start;
            if(Main.s60Optimization==1) {
                for(; texh-x1>=3; x1+=3) {
-col=tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength];
+col=tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)];
 ca=(col >> 24) & 0xff;
 if(ca!=0) {
 cols=rgb[x1];
@@ -782,14 +830,14 @@ rgb[x1]=(   (  ( (col&0xFF00FF)*(ca ) + ( cols&0xFF00FF)*(255-ca))  &0xFF00FF00 
 }
 u2+=du;
 
-col=tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength];
+col=tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)];
 ca=(col >> 24) & 0xff;
 if(ca!=0) {
 cols=rgb[x1+1];
 rgb[x1+1]=(   (  ( (col&0xFF00FF)*(ca ) + ( cols&0xFF00FF)*(255-ca))  &0xFF00FF00  )  | (   ( (col&0x00FF00)*(ca )  + (cols&0x00FF00)*(255-ca))  &0x00FF0000  )   ) >>>8;
 }
 u2+=du;
-col=tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength];
+col=tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)];
 ca=(col >> 24) & 0xff;
 if(ca!=0) {
 cols=rgb[x1+2];
@@ -799,7 +847,7 @@ u2+=du;
             }
            }
             for(; x1 < texh; x1++) {
-col=tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength];
+col=tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)];
 ca=(col >> 24) & 0xff;
 if(ca!=0) {
 cols=rgb[x1];
@@ -821,6 +869,10 @@ u2+=du;
       int texw = texture.rImg.w;
       int texh = texture.rImg.h;
       int texLength = tex.length;
+      //Textures are nearly always 2^n, and then the wrap around is a plain
+      //mask. The division is kept only for the odd sized texture.
+      final int texMask = texLength - 1;
+      final boolean texPow2 = (texLength & texMask) == 0;
       int u2,col,ca,cols,power;
       power=0;
 if(DirectX7.fDist!=0) {
@@ -838,7 +890,7 @@ if(DirectX7.standartDrawmode==6) f2=f22=0;
 u2 = (v_start & -4096) * texw + u_start;
            if(Main.s60Optimization==1) {
                for(; texh-x1>=2; x1+=2) {
-col=tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength];
+col=tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)];
 ca=(col >> 24) & 0xff;
 if(ca!=0) {
 cols=rgb[x1];
@@ -847,7 +899,7 @@ rgb[x1]=(   (  ( (col&0xFF00FF)*(ca ) + ( cols&0xFF00FF)*(255-ca))  &0xFF00FF00 
 }
 u2+=du;
 
-col=tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength];
+col=tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)];
 ca=(col >> 24) & 0xff;
 if(ca!=0) {
 cols=rgb[x1+1];
@@ -858,7 +910,7 @@ u2+=du;
             }
            }
             for(; x1 < texh; x1++) {
-col=tex[(u2 >> 12 & Integer.MAX_VALUE) % texLength];
+col=tex[texPow2 ? (u2 >> 12 & texMask) : ((u2 >> 12 & Integer.MAX_VALUE) % texLength)];
 ca=(col >> 24) & 0xff;
 if(ca!=0) {
 cols=rgb[x1];

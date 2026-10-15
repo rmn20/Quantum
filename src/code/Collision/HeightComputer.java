@@ -59,6 +59,7 @@ public class HeightComputer {
         final RenderObject[] polygons = mesh.getPolygons();
         Vector3D pos = height.getPosition();
         final int x = pos.x, y = pos.y, z = pos.z;
+        Texture[] materials = null; //resolved once, on the first polygon that has one
         
         
         for(int i=0; i<polygons.length; i++) {
@@ -160,7 +161,8 @@ public class HeightComputer {
             }
             
             if(mat!=-1) {
-                Texture tex = mesh.getTexture().textures[mat];
+                if(materials == null) materials = mesh.getTexture().textures;
+                Texture tex = materials[mat];
                 if(!tex.collision) continue;
             }
             
